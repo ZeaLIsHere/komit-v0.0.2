@@ -107,10 +107,16 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2 text-[12px] uppercase tracking-[0.08em] text-[#bbc7c6]">
-                <span className="px-3 py-1 rounded-[6px] bg-[#012624]">Paket Full</span>
-                <span className="px-3 py-1 rounded-[6px] bg-[#012624]">Koding Saja</span>
-                <span className="px-3 py-1 rounded-[6px] bg-[#012624]">Ide & Blueprint</span>
+              <div className="grid grid-cols-3 gap-2.5 w-full text-[12px] uppercase tracking-[0.08em] text-[#bbc7c6]">
+                <span className="py-2.5 px-2 text-center rounded-[6px] bg-[#012624] border border-[#003734] flex items-center justify-center">
+                  Paket Full
+                </span>
+                <span className="py-2.5 px-2 text-center rounded-[6px] bg-[#012624] border border-[#003734] flex items-center justify-center">
+                  Koding Saja
+                </span>
+                <span className="py-2.5 px-2 text-center rounded-[6px] bg-[#012624] border border-[#003734] flex items-center justify-center">
+                  Ide & Blueprint
+                </span>
               </div>
             </div>
 
