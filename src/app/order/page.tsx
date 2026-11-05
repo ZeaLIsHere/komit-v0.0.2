@@ -179,30 +179,50 @@ export default function OrderPage() {
 
           {/* 3. Jumlah Anggota Kelompok */}
           {serviceType === 'project_joki' && (
-            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
+            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-[18px] font-medium text-white">
-                  Jumlah Anggota Kelompok (1–8 Orang)
+                  Jumlah Anggota Kelompok
                 </h2>
                 <span className="text-[20px] font-medium text-[#fde9ff] font-mono">
                   {memberCount} Orang
                 </span>
               </div>
-              <input
-                type="range"
-                min="1"
-                max="8"
-                step="1"
-                value={memberCount}
-                onChange={(e) => setMemberCount(Number(e.target.value))}
-                className="w-full accent-[#cbfffc] cursor-pointer"
-              />
-              <div className="flex justify-between text-[11px] text-[#bbc7c6] uppercase tracking-[0.08em]">
-                <span>1 org</span>
-                <span>2 org</span>
-                <span>4 org</span>
-                <span>6 org</span>
-                <span>8 org</span>
+
+              {/* Slider Track with Exact Value Synchronization */}
+              <div className="relative flex flex-col gap-3 py-1">
+                <input
+                  type="range"
+                  min="1"
+                  max="8"
+                  step="1"
+                  value={memberCount}
+                  onChange={(e) => setMemberCount(Number(e.target.value))}
+                  className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
+                />
+
+                {/* Synchronized Exact Position Ticks (1 to 8) */}
+                <div className="relative w-full h-5 text-[11px] font-mono text-[#bbc7c6]">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                    const percent = ((num - 1) / 7) * 100;
+                    const isActive = memberCount === num;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setMemberCount(num)}
+                        style={{ left: `${percent}%` }}
+                        className={`absolute -translate-x-1/2 transition-all ${
+                          isActive
+                            ? 'text-[#cbfffc] font-bold text-[12px]'
+                            : 'text-[#bbc7c6] hover:text-white'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
