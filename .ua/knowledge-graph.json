@@ -182,8 +182,8 @@
       "type": "file",
       "name": "HeroConstellation.tsx",
       "filePath": "src/components/HeroConstellation.tsx",
-      "summary": "Interactive constellation particle canvas visualization of collaborative git commits.",
-      "tags": ["component", "canvas", "interactive"]
+      "summary": "Three.js GPU-accelerated 32,000 alphanumeric particle sphere with GLSL fluid vortex and depth shader.",
+      "tags": ["component", "threejs", "webgl", "gpu-shader", "particle-sphere"]
     },
     {
       "id": "file:src/components/Navbar.tsx",
