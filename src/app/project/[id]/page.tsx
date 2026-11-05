@@ -198,8 +198,8 @@ export default function ProjectDashboardPage({
         {project.selected_idea?.gimmick && (
           <div className="p-6 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <span className="text-[11px] uppercase tracking-[0.15em] text-[#edfffe] font-medium block mb-1">
-                Gimmick Pemikat Nilai Dosen (UAS Ready)
+              <span className="text-[13px] text-[#cbfffc] font-medium block mb-1">
+                Gimmick Pemikat Nilai Dosen
               </span>
               <p className="text-[15px] text-white font-normal">
                 {project.selected_idea.gimmick}
@@ -328,14 +328,9 @@ export default function ProjectDashboardPage({
 
         {/* UAS Presentation Materials Section */}
         <section className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Persiapan Demo & Sidang UAS
-            </span>
-            <h2 className="text-[24px] font-medium text-white tracking-tight">
-              Bahan Presentasi & Panduan Tanya Jawab Dosen
-            </h2>
-          </div>
+          <h2 className="text-[24px] font-medium text-white tracking-tight">
+            Bahan Presentasi & Panduan Tanya Jawab Dosen
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}

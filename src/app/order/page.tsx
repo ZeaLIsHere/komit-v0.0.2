@@ -79,9 +79,6 @@ export default function OrderPage() {
 
       <main className="flex-1 max-w-[960px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-            Formulir Pemesanan
-          </span>
           <h1 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
             Pesan Layanan & Proyek Kuliah
           </h1>
@@ -99,9 +96,9 @@ export default function OrderPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* 1. Pilih Kategori Layanan */}
           <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              1. Kategori Layanan
-            </span>
+            <h2 className="text-[18px] font-medium text-white">
+              Kategori Layanan
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { id: 'project_joki', label: 'Joki Proyek Berkelompok', desc: 'Cicil commit GitHub tiap anggota' },
@@ -129,9 +126,9 @@ export default function OrderPage() {
           {/* 2. Pilih Paket (Khusus Proyek Berkelompok) */}
           {serviceType === 'project_joki' && (
             <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
-              <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-                2. Paket Proyek
-              </span>
+              <h2 className="text-[18px] font-medium text-white">
+                Paket Proyek
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   {
@@ -184,9 +181,9 @@ export default function OrderPage() {
           {serviceType === 'project_joki' && (
             <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-                  3. Jumlah Anggota Kelompok (1–8 Orang)
-                </span>
+                <h2 className="text-[18px] font-medium text-white">
+                  Jumlah Anggota Kelompok (1–8 Orang)
+                </h2>
                 <span className="text-[20px] font-medium text-[#fde9ff] font-mono">
                   {memberCount} Orang
                 </span>
@@ -212,9 +209,9 @@ export default function OrderPage() {
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              {serviceType === 'project_joki' ? '4. Data Ketua Kelompok' : '2. Data Pemesan'}
-            </span>
+            <h2 className="text-[18px] font-medium text-white">
+              {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[12px] text-[#bbc7c6]">Nama Lengkap</span>
@@ -244,9 +241,9 @@ export default function OrderPage() {
           {/* 5. Pembayaran QRIS Statis */}
           <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
             <div className="flex items-center justify-between">
-              <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-                {serviceType === 'project_joki' ? '5. Pembayaran QRIS Statis' : '3. Pembayaran QRIS'}
-              </span>
+              <h2 className="text-[18px] font-medium text-white">
+                Pembayaran QRIS
+              </h2>
               <div className="text-right">
                 <span className="text-[11px] text-[#bbc7c6] uppercase tracking-[0.08em] block">Total Tagihan</span>
                 <span className="text-[28px] font-medium text-[#fde9ff] font-mono leading-none">

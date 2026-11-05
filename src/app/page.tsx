@@ -41,15 +41,10 @@ export default function HomePage() {
         </section>
 
         {/* SECTION: CARA KERJA (FEATURE ROW CARDS) */}
-        <section id="cara-kerja" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-2">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Alur Operasional
-            </span>
-            <h2 className="text-[32px] md:text-[44px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
-              Pengerjaan bertahap dari pemesanan hingga sidang akhir.
-            </h2>
-          </div>
+        <section id="cara-kerja" className="flex flex-col gap-10">
+          <h2 className="text-[32px] md:text-[44px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+            Pengerjaan bertahap dari pemesanan hingga sidang akhir.
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
@@ -101,28 +96,18 @@ export default function HomePage() {
         </section>
 
         {/* SECTION: KATALOG LAYANAN (SURFACE CARDS LIQUID KELP #003734) */}
-        <section id="layanan" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-2">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Katalog Layanan IT
-            </span>
-            <h2 className="text-[32px] md:text-[44px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
-              Dirancang untuk kebutuhan akademik mahasiswa informatika.
-            </h2>
-          </div>
+        <section id="layanan" className="flex flex-col gap-10">
+          <h2 className="text-[32px] md:text-[44px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+            Dirancang untuk kebutuhan akademik mahasiswa informatika.
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                      Joki Proyek Kuliah Berkelompok
-                    </h3>
-                    <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe] block mt-2">
-                      Layanan Unggulan MVP
-                    </span>
-                  </div>
+                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                    Joki Proyek Kuliah Berkelompok
+                  </h3>
                   <span className="text-[15px] font-medium text-[#fde9ff] whitespace-nowrap bg-[#012624] px-3 py-1.5 rounded-[6px]">
                     N × Rp 50.000
                   </span>
@@ -142,14 +127,9 @@ export default function HomePage() {
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                      Makalah & Laporan Akademik
-                    </h3>
-                    <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe] block mt-2">
-                      Format Institusi
-                    </span>
-                  </div>
+                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                    Makalah & Laporan Akademik
+                  </h3>
                   <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
                     Lengkap Bab 1–5
                   </span>
@@ -167,14 +147,9 @@ export default function HomePage() {
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                      Slide Presentasi (PPT)
-                    </h3>
-                    <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe] block mt-2">
-                      Visual Demo Sidang
-                    </span>
-                  </div>
+                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                    Slide Presentasi (PPT)
+                  </h3>
                   <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
                     Add-on / Standalone
                   </span>
@@ -192,14 +167,9 @@ export default function HomePage() {
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                      Tugas Ringan & Praktikum
-                    </h3>
-                    <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe] block mt-2">
-                      Lab Mingguan
-                    </span>
-                  </div>
+                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                    Tugas Ringan & Praktikum
+                  </h3>
                   <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
                     Cepat & Akurat
                   </span>
@@ -219,9 +189,6 @@ export default function HomePage() {
         {/* SECTION: BIAYA TRANSPARAN (RECESSED CARD LIQUID DEEP #011d1c) */}
         <section id="harga" className="p-12 sm:p-16 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div className="flex flex-col gap-3 max-w-2xl">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Formula Biaya Transparan
-            </span>
             <h2 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
               N × Rp 50.000 per anggota.
             </h2>

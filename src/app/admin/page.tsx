@@ -207,9 +207,6 @@ export default function AdminPage() {
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#003734] pb-6">
           <div>
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Operator Control Surface
-            </span>
             <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
               Admin & Tim Joki Komit
             </h1>

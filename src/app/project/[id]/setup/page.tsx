@@ -198,9 +198,6 @@ export default function ProjectSetupPage({
         <Navbar />
         <main className="flex-1 max-w-[760px] w-full mx-auto px-6 py-20 flex flex-col gap-8">
           <div className="p-10 rounded-[16px] bg-[#003734] flex flex-col gap-6">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Verifikasi Pembayaran QRIS
-            </span>
             <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
               Menunggu Konfirmasi Operator
             </h1>
@@ -256,9 +253,9 @@ export default function ProjectSetupPage({
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
           <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-                Langkah 1: Rekomendasi Ide AI & Gimmick Dosen
-              </span>
+              <h2 className="text-[20px] font-medium text-white">
+                Rekomendasi Ide AI & Gimmick Dosen
+              </h2>
               <p className="text-[14px] text-[#bbc7c6]">
                 Ketik topik mata kuliah atau niche, AI akan menyajikan 3 opsi proyek berdaya saing tinggi.
               </p>
@@ -354,9 +351,9 @@ export default function ProjectSetupPage({
         {/* STEP 2: MEMBER DATA FORM */}
         <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Langkah 2: Data Anggota Kelompok ({project.member_count} Orang)
-            </span>
+            <h2 className="text-[20px] font-medium text-white">
+              Data Anggota Kelompok ({project.member_count} Orang)
+            </h2>
             <p className="text-[14px] text-[#bbc7c6]">
               Data ini dicantumkan dalam README laporan resmi dan dikaitkan dengan akun GitHub masing-masing anggota.
             </p>
@@ -427,9 +424,9 @@ export default function ProjectSetupPage({
         {/* STEP 3: CONNECT GITHUB INVITATION */}
         <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-              Langkah 3: Tautan Undangan Connect GitHub
-            </span>
+            <h2 className="text-[20px] font-medium text-white">
+              Tautan Undangan Connect GitHub
+            </h2>
             <p className="text-[14px] text-[#bbc7c6]">
               Bagikan link ini ke grup kelompok Anda. Masing-masing anggota klik &quot;Connect GitHub&quot; agar commit tercatat atas nama akun mereka.
             </p>

@@ -83,9 +83,6 @@ export default function JoinProjectPage({
 
       <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-            Undangan Kolaborator Kelompok
-          </span>
           <h1 className="text-[32px] sm:text-[42px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
             Hubungkan Akun GitHub Anda
           </h1>
