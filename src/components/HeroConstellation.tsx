@@ -1,168 +1,149 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
+
+interface Point3D {
+  x: number;
+  y: number;
+  z: number;
+  color: string;
+  size: number;
+}
 
 export default function HeroConstellation() {
-  const [activeTab, setActiveTab] = useState<'all' | 'commits' | 'gimmick'>('commits');
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const commitMockups = [
-    {
-      author: 'budisantoso',
-      role: 'Lead Architect',
-      message: 'feat: setup next.js app router & supabase connection',
-      time: 'Senin, 09:30',
-      hash: '7fa890c',
-      status: 'pushed',
-    },
-    {
-      author: 'sitirahma',
-      role: 'Auth Specialist',
-      message: 'feat: role-based auth middleware & session handler',
-      time: 'Rabu, 14:15',
-      hash: '3bc12de',
-      status: 'pushed',
-    },
-    {
-      author: 'dimasaditya',
-      role: 'Backend Dev',
-      message: 'feat: transaction query optimization & aggregate reports',
-      time: 'Sabtu, 11:00',
-      hash: '9e2114a',
-      status: 'scheduled',
-    },
-  ];
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number;
+    let width = (canvas.width = canvas.parentElement?.clientWidth || 700);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 450);
+
+    const handleResize = () => {
+      if (!canvas.parentElement) return;
+      width = canvas.width = canvas.parentElement.clientWidth;
+      height = canvas.height = canvas.parentElement.clientHeight;
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Generate points on a sphere (Fibonacci sphere algorithm)
+    const count = 120;
+    const radius = Math.min(width, height) * 0.38;
+    const colors = ['#00827c', '#cbfffc', '#ffffff', '#fde9ff', '#edfffe'];
+
+    const points: Point3D[] = [];
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+
+    for (let i = 0; i < count; i++) {
+      const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
+      const radiusAtY = Math.sqrt(1 - y * y);
+      const theta = phi * i;
+
+      const x = Math.cos(theta) * radiusAtY;
+      const z = Math.sin(theta) * radiusAtY;
+
+      points.push({
+        x: x * radius,
+        y: y * radius,
+        z: z * radius,
+        color: colors[i % colors.length],
+        size: Math.random() * 1.5 + 1.5,
+      });
+    }
+
+    let angleX = 0.002;
+    let angleY = 0.004;
+    const fov = 350;
+
+    const render = () => {
+      ctx.fillStyle = '#012624';
+      ctx.fillRect(0, 0, width, height);
+
+      const cx = width / 2;
+      const cy = height / 2;
+
+      // Project and sort points by Z
+      const projected = points.map((p) => {
+        // Rotate around Y
+        const cosY = Math.cos(angleY);
+        const sinY = Math.sin(angleY);
+        const x1 = p.x * cosY - p.z * sinY;
+        const z1 = p.z * cosY + p.x * sinY;
+
+        // Rotate around X
+        const cosX = Math.cos(angleX);
+        const sinX = Math.sin(angleX);
+        const y2 = p.y * cosX - z1 * sinX;
+        const z2 = z1 * cosX + p.y * sinX;
+
+        p.x = x1;
+        p.y = y2;
+        p.z = z2;
+
+        const scale = fov / (fov + z2);
+        return {
+          px: cx + x1 * scale,
+          py: cy + y2 * scale,
+          pz: z2,
+          scale,
+          color: p.color,
+          size: p.size * scale,
+        };
+      });
+
+      projected.sort((a, b) => a.pz - b.pz);
+
+      // Draw faint bioluminescent connecting lines for near points
+      for (let i = 0; i < projected.length; i++) {
+        for (let j = i + 1; j < projected.length; j++) {
+          const dx = projected[i].px - projected[j].px;
+          const dy = projected[i].py - projected[j].py;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 55) {
+            const alpha = (1 - dist / 55) * 0.15;
+            ctx.strokeStyle = `rgba(203, 255, 252, ${alpha})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(projected[i].px, projected[i].py);
+            ctx.lineTo(projected[j].px, projected[j].py);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw glowing sphere nodes
+      for (const p of projected) {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0.2, (p.pz + radius) / (2 * radius));
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, Math.max(1, p.size), 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1.0;
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl bg-[#040506] border border-[#1b1c1e] p-4 sm:p-8">
-      {/* Raycast signature atmospheric red/blue gradient geometry */}
-      <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[radial-gradient(ellipse_at_center,_rgba(4,63,150,0.45)_0%,_rgba(6,18,37,0)_70%)] blur-[40px] opacity-75" />
-      <div className="pointer-events-none absolute -top-12 right-1/4 w-[280px] h-[180px] bg-[#ff6363] blur-[70px] opacity-25" />
-
-      {/* App Window Mockup */}
-      <div className="relative z-10 max-w-[760px] mx-auto bg-[#07080a] border border-[#363739] rounded-xl key-shadow overflow-hidden">
-        {/* Command Window Bar */}
-        <div className="h-12 border-b border-[#1b1c1e] px-4 flex items-center justify-between bg-[#040506]">
-          <div className="flex items-center gap-3 flex-1">
-            <svg className="w-4 h-4 text-[#6a6b6c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.3-4.3" />
-            </svg>
-            <span className="text-[14px] text-[#9c9c9d] font-normal">
-              Cari jadwal commit kelompok, aksi joki, atau bahan UAS...
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-[#6a6b6c] bg-[#111214] border border-[#1b1c1e] px-2 py-0.5 rounded-[6px]">
-              ⌘K
-            </span>
-          </div>
-        </div>
-
-        {/* Filter Pills */}
-        <div className="px-4 py-2.5 border-b border-[#111214] bg-[#07080a] flex items-center gap-2 text-[12px]">
-          <button
-            onClick={() => setActiveTab('commits')}
-            className={`px-2.5 py-1 rounded-[6px] transition-all ${
-              activeTab === 'commits'
-                ? 'bg-[#1b1c1e] text-white font-medium border border-[#363739]'
-                : 'text-[#6a6b6c] hover:text-[#9c9c9d]'
-            }`}
-          >
-            Antrean Cicil Commit
-          </button>
-          <button
-            onClick={() => setActiveTab('gimmick')}
-            className={`px-2.5 py-1 rounded-[6px] transition-all ${
-              activeTab === 'gimmick'
-                ? 'bg-[#1b1c1e] text-white font-medium border border-[#363739]'
-                : 'text-[#6a6b6c] hover:text-[#9c9c9d]'
-            }`}
-          >
-            Gimmick Pemikat Dosen
-          </button>
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`px-2.5 py-1 rounded-[6px] transition-all ${
-              activeTab === 'all'
-                ? 'bg-[#1b1c1e] text-white font-medium border border-[#363739]'
-                : 'text-[#6a6b6c] hover:text-[#9c9c9d]'
-            }`}
-          >
-            Info Paket
-          </button>
-        </div>
-
-        {/* Interactive List Content */}
-        <div className="p-3 flex flex-col gap-1.5 font-sans">
-          {activeTab === 'commits' &&
-            commitMockups.map((c, i) => (
-              <div
-                key={c.hash}
-                className={`p-3 rounded-lg flex items-center justify-between text-[13px] transition-all ${
-                  i === 0
-                    ? 'bg-[#111214] border border-[#ff6363]/40'
-                    : 'hover:bg-[#111214]/60 border border-transparent'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      c.status === 'pushed' ? 'bg-[#59d499]' : 'bg-[#ff6363]'
-                    }`}
-                  />
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-medium">@{c.author}</span>
-                      <span className="text-[11px] text-[#6a6b6c]">({c.role})</span>
-                    </div>
-                    <div className="text-[12px] text-[#9c9c9d] font-mono mt-0.5">
-                      {c.message}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0 text-right">
-                  <span className="text-[11px] font-mono text-[#6a6b6c] hidden sm:inline">
-                    {c.time}
-                  </span>
-                  <span className="text-[11px] font-mono text-[#e6e6e6] bg-[#1b1c1e] px-2 py-0.5 rounded-[6px] border border-[#363739]">
-                    #{c.hash}
-                  </span>
-                </div>
-              </div>
-            ))}
-
-          {activeTab === 'gimmick' && (
-            <div className="p-4 rounded-lg bg-[#111214] border border-[#ff6363]/30 flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-[#ff6363]">
-                  Fitur Pemikat Nilai A Dosen
-                </span>
-                <span className="text-[11px] text-[#6a6b6c]">Demo Ready</span>
-              </div>
-              <p className="text-[14px] text-white font-normal leading-relaxed">
-                Live radar chart keselarasan skill dari commit GitHub + Generator test-fixtures otomatis untuk demonstrasi langsung saat sesi tanya jawab UAS.
-              </p>
-            </div>
-          )}
-
-          {activeTab === 'all' && (
-            <div className="p-4 rounded-lg bg-[#111214] flex flex-col gap-2 text-[13px] text-[#9c9c9d]">
-              <div>Paket Full: Ide AI + Gimmick + Koding + Cicil Commit + Bahan README.</div>
-              <div className="text-white font-mono">Formula Biaya: N x Rp 50.000 (Adil per anggota)</div>
-            </div>
-          )}
-        </div>
-
-        {/* Window Footer */}
-        <div className="h-9 px-4 bg-[#040506] border-t border-[#111214] flex items-center justify-between text-[11px] text-[#6a6b6c] font-mono">
-          <span>Kelompok UAS: 4 Anggota Terhubung</span>
-          <Link href="/project/demo-proyek-uas" className="hover:text-white transition-colors">
-            Lihat Dashboard Lengkap ↵
-          </Link>
-        </div>
+    <div className="relative w-full h-[360px] md:h-[480px] overflow-hidden rounded-[16px] bg-[#003734]/30 border border-[#003734]">
+      <canvas ref={canvasRef} className="w-full h-full block" />
+      <div className="pointer-events-none absolute inset-0 bg-radial-gradient from-transparent to-[#012624] opacity-40" />
+      <div className="absolute bottom-4 left-6 text-[11px] font-mono uppercase tracking-[0.12em] text-[#bbc7c6]">
+        Bioluminescent Commit Sphere • Autonomous Synchronizer
       </div>
     </div>
   );

@@ -74,35 +74,35 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="bg-[#040506] text-white min-h-screen flex flex-col selection:bg-[#ff6363]/30">
+    <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
       <Navbar />
 
-      <main className="flex-1 max-w-[800px] w-full mx-auto px-6 py-12 flex flex-col gap-10">
+      <main className="flex-1 max-w-[960px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <div className="inline-flex items-center gap-2 text-[11px] font-mono text-[#ff6363] uppercase tracking-[0.05em]">
+          <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
             Formulir Pemesanan
-          </div>
-          <h1 className="text-[32px] sm:text-[40px] font-normal tracking-[0.2px] text-white">
-            Pesan Proyek & Layanan Kuliah
+          </span>
+          <h1 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+            Pesan Layanan & Proyek Kuliah
           </h1>
-          <p className="text-[15px] text-[#9c9c9d] leading-relaxed">
-            Pilih paket, tentukan jumlah anggota kelompok, dan konfirmasi pembayaran via QRIS statis.
+          <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
+            Tentukan konfigurasi paket, kuota anggota kelompok, dan konfirmasi bukti bayar QRIS statis.
           </p>
         </div>
 
         {errorMsg && (
-          <div className="p-4 rounded-lg border border-red-500/30 bg-red-950/20 text-red-200 text-[13px] font-mono">
+          <div className="p-4 rounded-[6px] border border-red-500/40 bg-red-950/30 text-red-200 text-[13px] font-mono">
             {errorMsg}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* 1. Pilih Kategori Layanan */}
-          <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col gap-4">
-            <span className="text-[12px] font-mono uppercase tracking-[0.05em] text-[#9c9c9d]">
+          <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
+            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
               1. Kategori Layanan
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { id: 'project_joki', label: 'Joki Proyek Berkelompok', desc: 'Cicil commit GitHub tiap anggota' },
                 { id: 'makalah', label: 'Makalah & Laporan', desc: 'Format kampus, UML & ERD' },
@@ -113,14 +113,14 @@ export default function OrderPage() {
                   key={item.id}
                   type="button"
                   onClick={() => setServiceType(item.id as ServiceType)}
-                  className={`text-left p-3.5 rounded-lg border transition-all ${
+                  className={`text-left p-4 rounded-[6px] border transition-all ${
                     serviceType === item.id
-                      ? 'bg-[#111214] border-[#ff6363]/60 key-shadow-active text-white'
-                      : 'bg-[#040506] border-[#1b1c1e] hover:border-[#363739] text-[#9c9c9d]'
+                      ? 'bg-[#012624] border-[#cbfffc] text-white'
+                      : 'bg-[#011d1c] border-transparent hover:border-[#00827c] text-[#bbc7c6]'
                   }`}
                 >
-                  <div className="text-[14px] font-medium text-white">{item.label}</div>
-                  <div className="text-[12px] text-[#6a6b6c] mt-0.5">{item.desc}</div>
+                  <div className="text-[15px] font-medium text-white">{item.label}</div>
+                  <div className="text-[12px] text-[#bbc7c6] mt-1">{item.desc}</div>
                 </button>
               ))}
             </div>
@@ -128,11 +128,11 @@ export default function OrderPage() {
 
           {/* 2. Pilih Paket (Khusus Proyek Berkelompok) */}
           {serviceType === 'project_joki' && (
-            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col gap-4">
-              <span className="text-[12px] font-mono uppercase tracking-[0.05em] text-[#9c9c9d]">
+            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
+              <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
                 2. Paket Proyek
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   {
                     id: 'full',
@@ -155,22 +155,22 @@ export default function OrderPage() {
                     key={item.id}
                     type="button"
                     onClick={() => setPackageType(item.id as PackageType)}
-                    className={`text-left p-3.5 rounded-lg border flex flex-col justify-between transition-all ${
+                    className={`text-left p-4 rounded-[6px] border flex flex-col justify-between transition-all ${
                       packageType === item.id
-                        ? 'bg-[#111214] border-[#ff6363]/60 key-shadow-active text-white'
-                        : 'bg-[#040506] border-[#1b1c1e] hover:border-[#363739] text-[#9c9c9d]'
+                        ? 'bg-[#012624] border-[#cbfffc] text-white'
+                        : 'bg-[#011d1c] border-transparent hover:border-[#00827c] text-[#bbc7c6]'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[14px] font-medium text-white">{item.label}</span>
+                        <span className="text-[15px] font-medium text-white">{item.label}</span>
                         {item.badge && (
-                          <span className="text-[10px] font-mono text-[#ff6363] bg-[#ff6363]/10 px-1.5 py-0.5 rounded-[4px] border border-[#ff6363]/30">
+                          <span className="text-[10px] uppercase tracking-[0.08em] text-[#012624] bg-[#cbfffc] px-1.5 py-0.5 rounded-[4px] font-medium">
                             {item.badge}
                           </span>
                         )}
                       </div>
-                      <p className="text-[12px] text-[#6a6b6c] mt-2 leading-relaxed">
+                      <p className="text-[12px] text-[#bbc7c6] mt-2 leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -182,12 +182,12 @@ export default function OrderPage() {
 
           {/* 3. Jumlah Anggota Kelompok */}
           {serviceType === 'project_joki' && (
-            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col gap-4">
+            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] font-mono uppercase tracking-[0.05em] text-[#9c9c9d]">
+                <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
                   3. Jumlah Anggota Kelompok (1–8 Orang)
                 </span>
-                <span className="text-[16px] font-mono text-white bg-[#111214] border border-[#363739] px-2.5 py-0.5 rounded-md">
+                <span className="text-[20px] font-medium text-[#fde9ff] font-mono">
                   {memberCount} Orang
                 </span>
               </div>
@@ -198,9 +198,9 @@ export default function OrderPage() {
                 step="1"
                 value={memberCount}
                 onChange={(e) => setMemberCount(Number(e.target.value))}
-                className="w-full accent-[#e6e6e6] cursor-pointer"
+                className="w-full accent-[#cbfffc] cursor-pointer"
               />
-              <div className="flex justify-between text-[11px] text-[#6a6b6c] font-mono">
+              <div className="flex justify-between text-[11px] text-[#bbc7c6] uppercase tracking-[0.08em]">
                 <span>1 org</span>
                 <span>2 org</span>
                 <span>4 org</span>
@@ -211,52 +211,52 @@ export default function OrderPage() {
           )}
 
           {/* 4. Data Pemesan */}
-          <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col gap-4">
-            <span className="text-[12px] font-mono uppercase tracking-[0.05em] text-[#9c9c9d]">
+          <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
+            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
               {serviceType === 'project_joki' ? '4. Data Ketua Kelompok' : '2. Data Pemesan'}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[12px] text-[#9c9c9d]">Nama Lengkap</span>
+                <span className="text-[12px] text-[#bbc7c6]">Nama Lengkap</span>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: Budi Santoso"
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
-                  className="bg-white/[0.05] border border-white/10 focus:border-white/30 rounded-lg px-3.5 py-2 text-[14px] text-white outline-none"
+                  className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-[12px] text-[#9c9c9d]">Nomor WhatsApp</span>
+                <span className="text-[12px] text-[#bbc7c6]">Nomor WhatsApp</span>
                 <input
                   type="tel"
                   required
                   placeholder="Contoh: 081234567890"
                   value={buyerWhatsapp}
                   onChange={(e) => setBuyerWhatsapp(e.target.value)}
-                  className="bg-white/[0.05] border border-white/10 focus:border-white/30 rounded-lg px-3.5 py-2 text-[14px] text-white outline-none"
+                  className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
             </div>
           </div>
 
-          {/* 5. Pembayaran QRIS */}
-          <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col gap-4">
+          {/* 5. Pembayaran QRIS Statis */}
+          <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
             <div className="flex items-center justify-between">
-              <span className="text-[12px] font-mono uppercase tracking-[0.05em] text-[#9c9c9d]">
+              <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
                 {serviceType === 'project_joki' ? '5. Pembayaran QRIS Statis' : '3. Pembayaran QRIS'}
               </span>
               <div className="text-right">
-                <span className="text-[11px] text-[#6a6b6c] block">Total Tagihan</span>
-                <span className="text-[20px] font-medium text-white font-mono">
+                <span className="text-[11px] text-[#bbc7c6] uppercase tracking-[0.08em] block">Total Tagihan</span>
+                <span className="text-[28px] font-medium text-[#fde9ff] font-mono leading-none">
                   Rp {totalPrice.toLocaleString('id-ID')}
                 </span>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-[#040506] border border-[#1b1c1e] flex flex-col sm:flex-row items-center gap-6">
-              <div className="w-[140px] h-[140px] bg-white rounded-lg p-2 flex flex-col items-center justify-center shrink-0">
+            <div className="p-6 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-[140px] h-[140px] bg-white rounded-[6px] p-2 flex flex-col items-center justify-center shrink-0">
                 <div className="text-black text-center text-[9px] font-mono font-bold leading-tight">
                   <div className="text-[12px] tracking-wider mb-1">QRIS STATIS</div>
                   <div className="border-2 border-black p-1.5 my-1 text-[8px] uppercase">
@@ -266,24 +266,24 @@ export default function OrderPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 text-[13px] text-[#9c9c9d]">
-                <p className="leading-relaxed">
-                  Scan kode QRIS di samping menggunakan m-Banking atau e-Wallet pilihan Anda.
+              <div className="flex flex-col gap-2 text-[14px] text-[#bbc7c6]">
+                <p className="leading-[1.4]">
+                  Scan kode QRIS di samping menggunakan m-Banking atau e-Wallet Anda.
                 </p>
                 <p className="text-white">
-                  Nominal transfer:{' '}
-                  <span className="text-white font-mono font-medium">
+                  Nominal transfer tepat:{' '}
+                  <span className="text-[#fde9ff] font-mono font-medium">
                     Rp {totalPrice.toLocaleString('id-ID')}
                   </span>
                 </p>
                 <div className="mt-2 flex flex-col gap-1.5">
-                  <span className="text-[11px] text-[#6a6b6c]">Link / URL Bukti Transfer</span>
+                  <span className="text-[12px] text-[#edfffe]">Link / URL Bukti Transfer</span>
                   <input
                     type="text"
                     value={proofUrl}
                     onChange={(e) => setProofUrl(e.target.value)}
                     placeholder="URL gambar bukti bayar"
-                    className="bg-white/[0.05] border border-white/10 focus:border-white/30 rounded-lg px-3 py-1.5 text-[13px] text-white outline-none"
+                    className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2 text-[13px] text-white outline-none"
                   />
                 </div>
               </div>
@@ -291,16 +291,16 @@ export default function OrderPage() {
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-between pt-2">
-            <Link href="/" className="text-[13px] text-[#9c9c9d] hover:text-white transition-colors">
+          <div className="flex items-center justify-between pt-4">
+            <Link href="/" className="text-[13px] uppercase tracking-[0.12em] text-[#bbc7c6] hover:text-white transition-colors">
               ← Kembali ke Beranda
             </Link>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center bg-[#e6e6e6] hover:bg-white disabled:opacity-50 text-[#454647] text-[13px] font-medium rounded-lg px-6 py-2.5 transition-all shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
+              className="btn-aurora text-[14px] px-8 py-3.5 rounded-[6px] transition-all"
             >
-              {isSubmitting ? 'Memproses Pesanan...' : 'Kirim Pesanan & Bukti Bayar'}
+              {isSubmitting ? 'Memproses...' : 'Kirim Pesanan & Bukti Bayar ↗'}
             </button>
           </div>
         </form>

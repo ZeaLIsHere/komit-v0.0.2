@@ -22,8 +22,8 @@
       "type": "document",
       "name": "DESIGN.md",
       "filePath": "DESIGN.md",
-      "summary": "Raycast design system: Void Black #040506 canvas, Ink #07080a panels, Coral Pulse #ff6363 accent, Mist #e6e6e6 neutral filled buttons, keyboard key tactile shadows.",
-      "tags": ["design-system", "tokens", "raycast-style", "styling-spec"]
+      "summary": "Auros design system: Liquid Abyss #012624 canvas, Liquid Kelp #003734 raised cards, Aurora gradient CTA, Matter 500 typography, 3D bioluminescent particle sphere data orb.",
+      "tags": ["design-system", "tokens", "auros-style", "styling-spec"]
     },
     {
       "id": "document:AGENTS.md",

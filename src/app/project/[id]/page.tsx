@@ -127,7 +127,7 @@ export default function ProjectDashboardPage({
 
   if (loading) {
     return (
-      <div className="bg-[#040506] text-white min-h-screen flex items-center justify-center font-mono text-[14px]">
+      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex items-center justify-center font-mono text-[14px]">
         Memuat dashboard proyek...
       </div>
     );
@@ -135,9 +135,9 @@ export default function ProjectDashboardPage({
 
   if (errorMsg || !project) {
     return (
-      <div className="bg-[#040506] text-white min-h-screen flex flex-col items-center justify-center gap-4">
-        <h1 className="text-[20px] font-normal">Proyek Tidak Ditemukan</h1>
-        <Link href="/" className="text-[#9c9c9d] hover:text-white underline">
+      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
+        <h1 className="text-[20px] font-medium text-white">Proyek Tidak Ditemukan</h1>
+        <Link href="/" className="text-[#cbfffc] underline">
           Kembali ke Beranda
         </Link>
       </div>
@@ -147,33 +147,33 @@ export default function ProjectDashboardPage({
   const allConnected = members.length > 0 && members.every((m) => m.is_connected);
 
   return (
-    <div className="bg-[#040506] text-white min-h-screen flex flex-col selection:bg-[#ff6363]/30">
+    <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
       <Navbar />
 
-      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 py-12 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         {/* Top Header / Project Overview */}
-        <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-8 sm:p-10 rounded-[16px] bg-[#003734] flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-[0.05em] text-[#e6e6e6] bg-[#1b1c1e] px-2 py-0.5 rounded-[4px] border border-[#363739]">
+              <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#012624] bg-[#cbfffc] px-2 py-0.5 rounded-[4px]">
                 {project.package_type.toUpperCase()} • {project.service_type}
               </span>
-              <span className="text-[11px] text-[#6a6b6c] font-mono">
+              <span className="text-[12px] text-[#bbc7c6] font-mono">
                 ID: {project.id.slice(0, 8)}
               </span>
             </div>
-            <h1 className="text-[26px] sm:text-[34px] font-normal text-white">
+            <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
               {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
             </h1>
-            <p className="text-[14px] text-[#9c9c9d] max-w-2xl leading-relaxed">
+            <p className="text-[15px] text-[#bbc7c6] max-w-2xl leading-[1.4]">
               {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
               href={`/project/${id}/setup`}
-              className="text-[13px] bg-[#111214] hover:bg-[#1b1c1e] text-[#9c9c9d] hover:text-white border border-[#363739] px-4 py-2 rounded-lg transition-all"
+              className="text-[13px] bg-[#011d1c] hover:bg-[#012624] text-white border border-[#003734] px-5 py-2.5 rounded-[6px] transition-all"
             >
               Ubah Setup
             </Link>
@@ -182,12 +182,12 @@ export default function ProjectDashboardPage({
                 href={project.github_repo_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[13px] bg-[#e6e6e6] hover:bg-white text-[#454647] font-medium px-4 py-2 rounded-lg transition-all"
+                className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
               >
                 GitHub Repo ↗
               </a>
             ) : (
-              <span className="text-[12px] text-[#6a6b6c] px-3 py-1.5 bg-[#111214] rounded-lg border border-[#1b1c1e] font-mono">
+              <span className="text-[12px] text-[#bbc7c6] px-4 py-2 bg-[#011d1c] rounded-[6px] font-mono">
                 Repo Sedang Dibuat
               </span>
             )}
@@ -196,59 +196,59 @@ export default function ProjectDashboardPage({
 
         {/* Gimmick Banner */}
         {project.selected_idea?.gimmick && (
-          <div className="p-4 rounded-xl bg-[#07080a] border border-[#ff6363]/40 key-shadow-active flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#ff6363] block mb-0.5">
+              <span className="text-[11px] uppercase tracking-[0.15em] text-[#edfffe] font-medium block mb-1">
                 Gimmick Pemikat Nilai Dosen (UAS Ready)
               </span>
-              <p className="text-[14px] text-white">
+              <p className="text-[15px] text-white font-normal">
                 {project.selected_idea.gimmick}
               </p>
             </div>
-            <span className="text-[11px] font-mono text-[#6a6b6c] shrink-0">
+            <span className="text-[12px] text-[#fde9ff] font-mono shrink-0 uppercase tracking-wider">
               Target Nilai A
             </span>
           </div>
         )}
 
         {/* Members Status Section */}
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-[16px] font-medium text-white">
+            <h2 className="text-[20px] font-medium text-white tracking-tight">
               Status GitHub Anggota ({members.length} Orang)
             </h2>
             {!allConnected && (
               <Link
                 href={`/join/${id}`}
-                className="text-[12px] text-[#ff6363] hover:underline font-mono"
+                className="text-[13px] uppercase tracking-[0.08em] text-[#cbfffc] hover:underline font-medium"
               >
-                Undang / Connect Anggota Lain →
+                Undang / Connect Anggota Lain ↗
               </Link>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-4 rounded-xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-3"
+                className="p-6 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-4"
               >
                 <div>
-                  <div className="text-[14px] font-medium text-white">{m.name}</div>
-                  <div className="text-[12px] text-[#6a6b6c] font-mono mt-0.5">
+                  <div className="text-[16px] font-medium text-white">{m.name}</div>
+                  <div className="text-[12px] text-[#bbc7c6] font-mono mt-1">
                     NIM: {m.nim} • KOM {m.kom}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-[#111214] pt-2">
-                  <span className="text-[11px] font-mono text-[#9c9c9d]">
+                <div className="flex items-center justify-between border-t border-[#012624] pt-3">
+                  <span className="text-[12px] font-mono text-[#bbc7c6]">
                     @{m.github_username || 'unconnected'}
                   </span>
                   <span
-                    className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-[4px] ${
+                    className={`text-[10px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-[4px] ${
                       m.is_connected
-                        ? 'bg-[#59d499]/10 text-[#59d499] border border-[#59d499]/30'
-                        : 'bg-[#1b1c1e] text-[#6a6b6c]'
+                        ? 'bg-[#cbfffc] text-[#012624] font-medium'
+                        : 'bg-[#011d1c] text-[#bbc7c6]'
                     }`}
                   >
                     {m.is_connected ? 'Connected' : 'Pending'}
@@ -259,40 +259,40 @@ export default function ProjectDashboardPage({
           </div>
         </section>
 
-        {/* Commit Schedule & History */}
-        <section className="flex flex-col gap-3">
+        {/* Commit Schedule & History (Cicil Commit) */}
+        <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-[16px] font-medium text-white">
+              <h2 className="text-[20px] font-medium text-white tracking-tight">
                 Antrean & Riwayat Cicil Commit GitHub
               </h2>
-              <p className="text-[13px] text-[#6a6b6c]">
-                Commit didorong secara natural atas nama akun masing-masing anggota kelompok hingga UAS.
+              <p className="text-[14px] text-[#bbc7c6]">
+                Commit didorong secara natural atas nama masing-masing anggota kelompok hingga batas UAS.
               </p>
             </div>
-            <span className="text-[12px] text-[#9c9c9d] font-mono">
+            <span className="text-[14px] text-[#fde9ff] font-mono">
               {schedules.filter((s) => s.status === 'pushed').length} / {schedules.length} Selesai
             </span>
           </div>
 
-          <div className="border border-[#363739] rounded-2xl overflow-hidden bg-[#07080a] key-shadow">
+          <div className="border border-[#003734] rounded-[16px] overflow-hidden bg-[#003734]">
             {schedules.length === 0 ? (
-              <div className="p-8 text-center text-[#6a6b6c] text-[13px] font-mono">
+              <div className="p-8 text-center text-[#bbc7c6] text-[14px] font-mono">
                 Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
               </div>
             ) : (
-              <div className="divide-y divide-[#111214]">
+              <div className="divide-y divide-[#012624]">
                 {schedules.map((s) => (
                   <div
                     key={s.id}
-                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px] hover:bg-[#111214]/50 transition-colors"
+                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[14px] hover:bg-[#012624]/60 transition-colors"
                   >
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-[11px] font-mono text-white bg-[#1b1c1e] px-1.5 py-0.5 rounded">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[12px] font-mono text-[#edfffe] bg-[#012624] px-2 py-0.5 rounded-[4px]">
                           @{s.github_username || 'member'}
                         </span>
-                        <span className="text-[11px] text-[#6a6b6c] font-mono">
+                        <span className="text-[12px] text-[#bbc7c6] font-mono">
                           {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'short',
@@ -303,17 +303,17 @@ export default function ProjectDashboardPage({
                       <span className="text-white font-mono text-[13px]">{s.commit_message}</span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+                    <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
                       {s.commit_hash && (
-                        <span className="text-[11px] font-mono text-[#e6e6e6] bg-[#111214] px-2 py-0.5 rounded border border-[#1b1c1e]">
+                        <span className="text-[11px] font-mono text-[#fde9ff] bg-[#011d1c] px-2 py-0.5 rounded-[4px]">
                           #{s.commit_hash}
                         </span>
                       )}
                       <span
-                        className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-[4px] ${
+                        className={`text-[11px] uppercase tracking-[0.08em] px-2.5 py-0.5 rounded-[4px] ${
                           s.status === 'pushed'
-                            ? 'bg-[#59d499]/10 text-[#59d499] border border-[#59d499]/30'
-                            : 'bg-[#1b1c1e] text-[#6a6b6c]'
+                            ? 'bg-[#cbfffc] text-[#012624] font-medium'
+                            : 'bg-[#011d1c] text-[#bbc7c6]'
                         }`}
                       >
                         {s.status === 'pushed' ? 'Pushed' : 'Scheduled'}
@@ -329,43 +329,43 @@ export default function ProjectDashboardPage({
         {/* UAS Presentation Materials Section */}
         <section className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-[11px] font-mono uppercase tracking-[0.05em] text-[#ff6363]">
+            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
               Persiapan Demo & Sidang UAS
             </span>
-            <h2 className="text-[20px] font-medium text-white">
-              Bahan Presentasi & Tanya Jawab Dosen
+            <h2 className="text-[24px] font-medium text-white tracking-tight">
+              Bahan Presentasi & Panduan Tanya Jawab Dosen
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}
-            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-4">
+            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
-                <span className="text-[11px] font-mono uppercase text-[#59d499]">
+                <span className="text-[11px] uppercase tracking-[0.12em] text-[#cbfffc] font-medium">
                   Termasuk di Paket (Gratis)
                 </span>
-                <h3 className="text-[17px] font-medium text-white">
+                <h3 className="text-[22px] font-medium text-white leading-tight">
                   Generate Bahan Presentasi (README)
                 </h3>
-                <p className="text-[13px] text-[#9c9c9d] leading-relaxed">
-                  Menyusun pembagian tugas per anggota, penjelasan arsitektur kode, dan bocoran argumen saat dosen menguji.
+                <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
+                  Menyusun pembagian tugas per anggota, penjelasan arsitektur kode, dan bocoran argumen jawaban saat dosen menguji.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handleGenerateReadme}
                   disabled={isGeneratingReadme}
-                  className="bg-[#e6e6e6] hover:bg-white disabled:opacity-50 text-[#454647] text-[12px] font-medium px-4 py-2 rounded-lg transition-all"
+                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px]"
                 >
-                  {isGeneratingReadme ? 'Menyusun...' : 'Generate README'}
+                  {isGeneratingReadme ? 'Menyusun...' : 'Generate README ↗'}
                 </button>
                 {readmeContent && (
                   <button
                     type="button"
                     onClick={copyReadmeToClipboard}
-                    className="border border-[#363739] text-[#9c9c9d] hover:text-white text-[12px] px-3.5 py-2 rounded-lg transition-all"
+                    className="border border-[#003734] bg-[#011d1c] text-white text-[13px] px-4 py-2.5 rounded-[6px] hover:border-[#cbfffc] transition-all"
                   >
                     {copiedReadme ? '✓ Disalin' : 'Salin Markdown'}
                   </button>
@@ -374,41 +374,41 @@ export default function ProjectDashboardPage({
             </div>
 
             {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-4">
+            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
-                <span className="text-[11px] font-mono uppercase text-[#ff6363]">
+                <span className="text-[11px] uppercase tracking-[0.12em] text-[#fde9ff] font-medium">
                   Add-on Opsional
                 </span>
-                <h3 className="text-[17px] font-medium text-white">
+                <h3 className="text-[22px] font-medium text-white leading-tight">
                   Slide Presentasi PPT Jadi
                 </h3>
-                <p className="text-[13px] text-[#9c9c9d] leading-relaxed">
-                  Tidak sempat merangkum ke slide? Tim kami siapkan slide PowerPoint (.pptx/.pdf) siap pakai untuk demo kelompok.
+                <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
+                  Tidak sempat merangkum ke slide? Tim kami siapkan slide PowerPoint (.pptx/.pdf) siap pakai untuk demo kelompok Anda.
                 </p>
               </div>
 
               <div>
                 {project.ppt_addon_paid ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] text-[#59d499] font-mono">✓ Add-on Aktif</span>
+                    <span className="text-[12px] text-[#cbfffc] font-mono">✓ Add-on Aktif</span>
                     {project.ppt_file_url ? (
                       <a
                         href={project.ppt_file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-[#e6e6e6] hover:bg-white text-[#454647] text-[12px] font-medium px-4 py-2 rounded-lg transition-all"
+                        className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] inline-block"
                       >
                         Unduh Slide PPT ↗
                       </a>
                     ) : (
-                      <span className="text-[12px] text-[#6a6b6c]">Admin sedang menyiapkan file</span>
+                      <span className="text-[13px] text-[#bbc7c6]">Admin sedang menyiapkan file</span>
                     )}
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setShowPptModal(true)}
-                    className="border border-[#363739] hover:border-[#ff6363] text-white text-[12px] font-medium px-4 py-2 rounded-lg transition-all"
+                    className="border border-[#00827c] text-white hover:border-[#cbfffc] text-[13px] font-medium uppercase tracking-[0.08em] px-5 py-2.5 rounded-[6px] transition-all"
                   >
                     Pesan Slide PPT (Rp 75.000)
                   </button>
@@ -418,17 +418,19 @@ export default function ProjectDashboardPage({
           </div>
 
           {readmeContent && (
-            <div className="p-6 rounded-2xl bg-[#040506] border border-[#1b1c1e] flex flex-col gap-3">
-              <div className="flex items-center justify-between border-b border-[#111214] pb-2">
-                <span className="text-[11px] font-mono text-[#9c9c9d]">README.md Output Preview</span>
+            <div className="p-8 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-[#003734] pb-3">
+                <span className="text-[12px] font-mono uppercase tracking-[0.12em] text-[#cbfffc]">
+                  README.md Output Preview
+                </span>
                 <button
                   onClick={copyReadmeToClipboard}
-                  className="text-[11px] text-[#6a6b6c] hover:text-white"
+                  className="text-[12px] text-[#bbc7c6] hover:text-white"
                 >
                   {copiedReadme ? '✓ Disalin ke clipboard' : 'Salin Semua'}
                 </button>
               </div>
-              <pre className="text-[12px] font-mono text-[#9c9c9d] whitespace-pre-wrap leading-relaxed max-h-[360px] overflow-y-auto">
+              <pre className="text-[13px] font-mono text-[#bbc7c6] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto">
                 {readmeContent}
               </pre>
             </div>
@@ -438,29 +440,29 @@ export default function ProjectDashboardPage({
         {/* Modal Buy PPT */}
         {showPptModal && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-[#07080a] border border-[#363739] key-shadow rounded-2xl p-6 flex flex-col gap-5">
+            <div className="max-w-md w-full bg-[#003734] rounded-[16px] p-8 flex flex-col gap-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-[18px] font-medium text-white">Pesan Slide PPT Jadi</h3>
+                <h3 className="text-[20px] font-medium text-white">Pesan Slide PPT Jadi</h3>
                 <button
                   onClick={() => setShowPptModal(false)}
-                  className="text-[#6a6b6c] hover:text-white text-[16px]"
+                  className="text-[#bbc7c6] hover:text-white text-[18px]"
                 >
                   ✕
                 </button>
               </div>
-              <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
-                Biaya add-on slide presentasi UAS: <strong className="text-white font-mono">Rp 75.000</strong>. File PPTX & PDF akan diunggah admin ke dashboard ini.
+              <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
+                Biaya add-on slide presentasi UAS: <strong className="text-[#fde9ff] font-mono">Rp 75.000</strong>. File PPTX & PDF akan diunggah admin ke dashboard ini dalam 1-2 hari kerja.
               </p>
-              <div className="p-3.5 bg-[#040506] rounded-xl border border-[#1b1c1e] flex flex-col items-center gap-1.5">
-                <span className="text-[10px] font-mono uppercase text-[#6a6b6c]">QRIS Statis Pembayaran</span>
-                <span className="text-[16px] text-white font-mono font-medium">Rp 75.000</span>
-                <span className="text-[10px] text-[#6a6b6c] font-mono">NMID: ID102938475 (KOMIT PLATFORM)</span>
+              <div className="p-4 bg-[#011d1c] rounded-[6px] flex flex-col items-center gap-1.5">
+                <span className="text-[11px] uppercase tracking-[0.12em] text-[#edfffe]">QRIS Statis Pembayaran</span>
+                <span className="text-[20px] text-[#fde9ff] font-mono font-medium">Rp 75.000</span>
+                <span className="text-[11px] text-[#bbc7c6]">NMID: ID102938475 (KOMIT PLATFORM)</span>
               </div>
-              <div className="flex justify-end gap-2.5">
+              <div className="flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowPptModal(false)}
-                  className="text-[12px] text-[#6a6b6c] hover:text-white px-3 py-1.5"
+                  className="text-[13px] text-[#bbc7c6] hover:text-white px-3 py-1.5"
                 >
                   Batal
                 </button>
@@ -468,9 +470,9 @@ export default function ProjectDashboardPage({
                   type="button"
                   onClick={handleBuyPptAddon}
                   disabled={isBuyingPpt}
-                  className="bg-[#e6e6e6] hover:bg-white text-[#454647] text-[12px] font-medium px-4 py-2 rounded-lg transition-all"
+                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px]"
                 >
-                  {isBuyingPpt ? 'Memproses...' : 'Konfirmasi Pembayaran'}
+                  {isBuyingPpt ? 'Memproses...' : 'Konfirmasi Pembayaran ↗'}
                 </button>
               </div>
             </div>
