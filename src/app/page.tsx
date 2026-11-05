@@ -5,196 +5,233 @@ import HeroConstellation from '@/components/HeroConstellation';
 
 export default function HomePage() {
   return (
-    <div className="bg-[#000000] text-[#ffffff] min-h-screen flex flex-col">
+    <div className="bg-[#040506] text-white min-h-screen flex flex-col selection:bg-[#ff6363]/30">
       <Navbar />
 
-      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 py-12 md:py-24 flex flex-col gap-24 md:gap-36">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 py-12 md:py-20 flex flex-col gap-24 md:gap-32">
         {/* HERO SECTION */}
-        <section className="flex flex-col gap-10">
-          <div className="max-w-4xl flex flex-col gap-6">
-            <span className="text-[14px] uppercase tracking-[0.2em] text-[#ffb829] font-normal">
-              Productized Service & SaaS Mahasiswa IT
-            </span>
-            <h1 className="text-[44px] sm:text-[64px] md:text-[84px] leading-[1.05] font-normal tracking-[-0.04em] text-[#ffffff]">
-              Proyek kelompok selesai, commit natural di mata dosen.
+        <section className="flex flex-col items-center text-center gap-8 pt-6">
+          {/* Eyebrow badge tag */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#1b1c1e] border border-[#363739] text-[11px] font-mono tracking-[0.05em] text-[#9c9c9d]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff6363]" />
+            KOMIT PRODUCTIZED SERVICE
+          </div>
+
+          <div className="max-w-3xl flex flex-col gap-4">
+            {/* Signature Raycast 56px Inter 400 headline with subtle positive tracking */}
+            <h1 className="text-[38px] sm:text-[56px] leading-[1.15] font-normal tracking-[0.22px] text-white">
+              Proyek kuliah kelompok selesai. Commit natural di mata dosen.
             </h1>
-            <p className="text-[18px] md:text-[20px] text-[#9a9a9a] font-extralight leading-relaxed max-w-2xl">
-              Cicil commit GitHub otomatis terjadwal atas nama akun asli masing-masing anggota kelompok hingga UAS. Dilengkapi ide AI ber-gimmick pemikat dosen dan bahan presentasi siap pakai.
+            <p className="text-[16px] text-[#9c9c9d] font-normal leading-relaxed max-w-xl mx-auto">
+              Cicil commit GitHub terjadwal menggunakan akun asli masing-masing anggota kelompok hingga UAS. Lengkap dengan rekomendasi ide AI dan bahan presentasi.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6">
+          {/* Action Button Group: Neutral Filled Button (Mist #e6e6e6 / Iron #454647) */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/order"
-              className="inline-flex items-center justify-center bg-[#8052ff] hover:bg-[#7042ef] text-[#ffffff] text-[14px] font-normal uppercase tracking-[0.025em] px-8 py-3.5 rounded-full transition-all duration-200"
+              className="inline-flex items-center justify-center bg-[#e6e6e6] hover:bg-white text-[#454647] text-[13px] font-medium rounded-lg px-5 py-2.5 transition-all shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
             >
               Mulai Pesan Proyek
             </Link>
             <Link
               href="/project/demo-proyek-uas"
-              className="text-[14px] text-[#9a9a9a] hover:text-[#ffffff] transition-colors underline underline-offset-8"
+              className="inline-flex items-center justify-center bg-[#111214] hover:bg-[#1b1c1e] text-[#9c9c9d] hover:text-white border border-[#363739] text-[13px] font-medium rounded-lg px-5 py-2.5 transition-all"
             >
-              Lihat Contoh Dashboard Proyek
+              Buka Demo Dashboard
             </Link>
           </div>
 
-          {/* Interactive Constellation Visualizer */}
-          <div className="mt-6 border border-white/5 rounded-[24px] bg-[#050505]">
+          {/* Monospace Metadata Sub-strip */}
+          <div className="text-[12px] font-mono text-[#6a6b6c] tracking-[0.017em]">
+            v2.104 <span className="mx-1.5 text-[#2f3031]">|</span> N × Rp 50.000 <span className="mx-1.5 text-[#2f3031]">|</span> GitHub OAuth Scope: repo, workflow
+          </div>
+
+          {/* Hero Atmospheric Visualizer & Command Center */}
+          <div className="w-full mt-4">
             <HeroConstellation />
           </div>
         </section>
 
-        {/* FITUR UNGGULAN / THE PROBLEM WE SOLVE */}
-        <section id="cara-kerja" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-3">
-            <span className="text-[14px] uppercase tracking-[0.2em] text-[#8052ff]">
-              Cara Kerja
+        {/* SECTION 2: CARA KERJA (FEATURE CARDS WITH KEY SHADOW) */}
+        <section id="cara-kerja" className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2">
+            <span className="text-[11px] font-mono uppercase tracking-[0.05em] text-[#ff6363]">
+              Workflow Otomatisasi
             </span>
-            <h2 className="text-[36px] md:text-[48px] font-normal tracking-[-0.04em]">
-              Satu alur rapi dari bayar sampai presentasi UAS.
+            <h2 className="text-[28px] sm:text-[32px] font-normal text-white tracking-normal">
+              Satu alur terstruktur dari pembayaran hingga demo UAS.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-            <div className="flex flex-col gap-4">
-              <span className="text-[14px] font-mono text-[#ffb829]">01</span>
-              <h3 className="text-[22px] font-normal tracking-[-0.02em] text-[#ffffff]">
-                Pilih Layanan & Bayar QRIS
-              </h3>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Tentukan paket, atur jumlah anggota kelompok (1–8 orang), dan bayar dengan nominal terjangkau via QRIS statis.
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                step: '01',
+                title: 'Order & Pembayaran QRIS',
+                desc: 'Pilih paket, atur jumlah anggota (1–8 orang), dan bayar biaya transparan via QRIS statis.',
+                icon: '💳',
+              },
+              {
+                step: '02',
+                title: 'Ide AI & Gimmick Dosen',
+                desc: 'Input topik kuliah, AI menyajikan 3 ide berdaya saing dengan fitur gimmick pemikat nilai dosen.',
+                icon: '⚡',
+              },
+              {
+                step: '03',
+                title: 'Connect GitHub Anggota',
+                desc: 'Bagikan link unik ke kelompok. Masing-masing anggota menghubungkan akun GitHub via OAuth aman.',
+                icon: '🔗',
+              },
+              {
+                step: '04',
+                title: 'Cicil Commit & README',
+                desc: 'Kode di-push bertahap mingguan atas nama akun masing-masing. Dilengkapi bahan presentasi siap pakai.',
+                icon: '🚀',
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-6"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-full bg-[#111214] border border-[#1b1c1e] flex items-center justify-center text-[16px]">
+                    {item.icon}
+                  </div>
+                  <span className="text-[11px] font-mono text-[#6a6b6c]">{item.step}</span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-[17px] font-medium text-white">{item.title}</h3>
+                  <p className="text-[14px] text-[#9c9c9d] font-normal leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION 3: KATALOG LAYANAN */}
+        <section id="layanan" className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2">
+            <span className="text-[11px] font-mono uppercase tracking-[0.05em] text-[#ff6363]">
+              Pilihan Layanan
+            </span>
+            <h2 className="text-[28px] sm:text-[32px] font-normal text-white">
+              Katalog pengerjaan tugas & proyek IT.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[20px] font-medium text-white">
+                    Joki Proyek Kuliah Berkelompok
+                  </h3>
+                  <span className="text-[12px] font-mono text-[#e6e6e6] bg-[#1b1c1e] px-2.5 py-1 rounded-[6px] border border-[#363739]">
+                    N × Rp 50.000
+                  </span>
+                </div>
+                <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
+                  Layanan utama kami: pengerjaan koding fullstack, auto-commit terjadwal berkala atas nama akun GitHub anggota kelompok, integrasi branch, dan bahan presentasi UAS.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-[12px] font-mono text-[#9c9c9d]">
+                <span className="px-2.5 py-1 rounded-md bg-[#111214] border border-[#1b1c1e]">Paket Full</span>
+                <span className="px-2.5 py-1 rounded-md bg-[#111214] border border-[#1b1c1e]">Koding Saja</span>
+                <span className="px-2.5 py-1 rounded-md bg-[#111214] border border-[#1b1c1e]">Ide & Blueprint</span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <span className="text-[14px] font-mono text-[#ffb829]">02</span>
-              <h3 className="text-[22px] font-normal tracking-[-0.02em] text-[#ffffff]">
-                Ide AI & Gimmick Dosen
-              </h3>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Ketik topik mata kuliah, AI menyajikan 3 rekomendasi ide lengkap dengan fitur gimmick pemikat nilai dosen saat demo.
-              </p>
+            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[20px] font-medium text-white">
+                    Makalah & Laporan Akademik
+                  </h3>
+                  <span className="text-[12px] font-mono text-[#6a6b6c] bg-[#111214] px-2.5 py-1 rounded-[6px]">
+                    Format Kampus
+                  </span>
+                </div>
+                <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
+                  Penyusunan dokumen teknis bab 1 hingga bab 5, diagram UML lengkap (Use Case, Sequence, Activity), relasi ERD database, dan referensi jurnal terakreditasi.
+                </p>
+              </div>
+
+              <div className="text-[12px] text-[#6a6b6c] font-mono">
+                Revisi sampai disetujui dosen pembimbing
+              </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <span className="text-[14px] font-mono text-[#ffb829]">03</span>
-              <h3 className="text-[22px] font-normal tracking-[-0.02em] text-[#ffffff]">
-                Connect GitHub Anggota
-              </h3>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Bagikan link undangan ke teman kelompok untuk menghubungkan akun GitHub. Token tersimpan aman di server untuk cicil commit.
-              </p>
+            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[20px] font-medium text-white">
+                    Slide Presentasi (PPT)
+                  </h3>
+                  <span className="text-[12px] font-mono text-[#6a6b6c] bg-[#111214] px-2.5 py-1 rounded-[6px]">
+                    Add-on / Standalone
+                  </span>
+                </div>
+                <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
+                  Slide presentasi PPTX & PDF ringkas, estetis, dan profesional untuk demo proyek di hadapan dosen penguji tanpa rasa cemas.
+                </p>
+              </div>
+
+              <div className="text-[12px] text-[#6a6b6c] font-mono">
+                Tersedia sebagai opsi add-on dashboard
+              </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <span className="text-[14px] font-mono text-[#ffb829]">04</span>
-              <h3 className="text-[22px] font-normal tracking-[-0.02em] text-[#ffffff]">
-                Cicil Commit & README Presentasi
-              </h3>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Kode di-push bertahap tiap minggu. Saat UAS tiba, generate bahan presentasi dan Q&A dosen atau beli add-on slide PPT jadi.
-              </p>
+            <div className="p-6 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col justify-between gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[20px] font-medium text-white">
+                    Tugas Praktikum & Koding Harian
+                  </h3>
+                  <span className="text-[12px] font-mono text-[#6a6b6c] bg-[#111214] px-2.5 py-1 rounded-[6px]">
+                    Cepat & Tepat
+                  </span>
+                </div>
+                <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
+                  Penyelesaian modul praktikum lab, query SQL kompleks, algoritma & struktur data, serta debugging script koding mingguan.
+                </p>
+              </div>
+
+              <div className="text-[12px] text-[#6a6b6c] font-mono">
+                Garansi nilai & penjelasan baris kode
+              </div>
             </div>
           </div>
         </section>
 
-        {/* LAYANAN & HARGA */}
-        <section id="layanan" className="flex flex-col gap-12">
-          <div className="flex flex-col gap-3">
-            <span className="text-[14px] uppercase tracking-[0.2em] text-[#15846e]">
-              Katalog Layanan
+        {/* SECTION 4: HARGA TRANSPARAN */}
+        <section id="harga" className="p-8 sm:p-12 rounded-2xl bg-[#07080a] border border-[#363739] key-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div className="flex flex-col gap-2 max-w-xl">
+            <span className="text-[11px] font-mono uppercase tracking-[0.05em] text-[#ff6363]">
+              Formula Biaya Transparan
             </span>
-            <h2 className="text-[36px] md:text-[48px] font-normal tracking-[-0.04em]">
-              Dirancang khusus untuk kebutuhan mahasiswa IT.
+            <h2 className="text-[28px] sm:text-[36px] font-normal text-white">
+              N × Rp 50.000 per anggota.
             </h2>
+            <p className="text-[14px] text-[#9c9c9d] leading-relaxed">
+              Biaya dibagi rata sejumlah anggota kelompok. Jika kelompok Anda beranggotakan 4 orang, total tagihan adalah Rp 200.000. Tiap anggota mendapatkan kontribusi commit di repository GitHub.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="flex flex-col gap-4 border-t border-white/10 pt-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[24px] font-normal tracking-[-0.02em]">
-                  Joki Proyek Kuliah Berkelompok
-                </h3>
-                <span className="text-[14px] text-[#ffb829] font-mono tabular-nums">
-                  Rp 50.000 / anggota
-                </span>
-              </div>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Layanan utama kami. Solusi komprehensif dari ide aplikasi, koding full-stack, auto-commit terjadwal via akun GitHub masing-masing anggota kelompok, hingga panduan presentasi.
-              </p>
-              <div className="text-[14px] text-[#bdbdbd] flex flex-wrap gap-2 mt-2">
-                <span className="px-3 py-1 rounded-full bg-white/5">Paket Full</span>
-                <span className="px-3 py-1 rounded-full bg-white/5">Paket Koding Saja</span>
-                <span className="px-3 py-1 rounded-full bg-white/5">Paket Ide & Blueprint</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 border-t border-white/10 pt-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[24px] font-normal tracking-[-0.02em]">
-                  Makalah & Laporan Akademik
-                </h3>
-                <span className="text-[14px] text-[#9a9a9a] font-mono">
-                  Sesuai format kampus
-                </span>
-              </div>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Penyusunan laporan bab 1 hingga bab 5, perancangan diagram UML (Use Case, Activity, Sequence), ERD database, serta tinjauan pustaka jurnal terindeks.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 border-t border-white/10 pt-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[24px] font-normal tracking-[-0.02em]">
-                  Slide Presentasi (PPT)
-                </h3>
-                <span className="text-[14px] text-[#9a9a9a] font-mono">
-                  Desain profesional
-                </span>
-              </div>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Slide presentasi ringkas, estetis, dan terstruktur untuk demo proyek di hadapan dosen penguji. Tersedia sebagai layanan terpisah atau add-on dashboard.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 border-t border-white/10 pt-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[24px] font-normal tracking-[-0.02em]">
-                  Tugas Ringan & Praktikum
-                </h3>
-                <span className="text-[14px] text-[#9a9a9a] font-mono">
-                  Cepat & bergaransi
-                </span>
-              </div>
-              <p className="text-[16px] text-[#9a9a9a] font-extralight leading-relaxed">
-                Penyelesaian tugas mingguan algoritma, struktur data, basis data SQL, pembuatan query, perbaikan bug kodingan, dan modul praktikum lab.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* PRICING TRANSPARENCY */}
-        <section id="harga" className="flex flex-col gap-10 border-t border-white/10 pt-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <span className="text-[14px] uppercase tracking-[0.2em] text-[#ffb829]">
-                Skema Biaya Transparan
-              </span>
-              <h2 className="text-[36px] md:text-[54px] font-normal tracking-[-0.04em] mt-2">
-                N × Rp 50.000. Adil untuk semua anggota.
-              </h2>
-            </div>
+          <div className="shrink-0 flex flex-col sm:flex-row items-center gap-3">
             <Link
               href="/order"
-              className="inline-flex items-center justify-center bg-[#8052ff] hover:bg-[#7042ef] text-[#ffffff] text-[14px] font-normal uppercase tracking-[0.025em] px-8 py-3 rounded-full transition-all duration-200 self-start md:self-auto"
+              className="inline-flex items-center justify-center bg-[#e6e6e6] hover:bg-white text-[#454647] text-[13px] font-medium rounded-lg px-6 py-3 transition-all shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
             >
               Order Sekarang
             </Link>
           </div>
-
-          <p className="text-[18px] text-[#9a9a9a] font-extralight max-w-3xl leading-relaxed">
-            Tidak ada biaya tersembunyi. Jika kelompok beranggotakan 4 orang, total biaya cukup Rp 200.000. Tiap anggota kelompok mendapatkan grafik commit GitHub yang terdistribusi rapi untuk verifikasi dosen.
-          </p>
         </section>
       </main>
 

@@ -22,8 +22,8 @@
       "type": "document",
       "name": "DESIGN.md",
       "filePath": "DESIGN.md",
-      "summary": "Dala design tokens: void black canvas, Electric Iris pill CTA, Saffron Spark accents, 6px base unit.",
-      "tags": ["design-system", "tokens", "styling-spec"]
+      "summary": "Raycast design system: Void Black #040506 canvas, Ink #07080a panels, Coral Pulse #ff6363 accent, Mist #e6e6e6 neutral filled buttons, keyboard key tactile shadows.",
+      "tags": ["design-system", "tokens", "raycast-style", "styling-spec"]
     },
     {
       "id": "document:AGENTS.md",

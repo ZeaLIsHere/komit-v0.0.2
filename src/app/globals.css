@@ -2,59 +2,75 @@
 
 @theme {
   /* Colors */
-  --color-void: #000000;
-  --color-bone-white: #ffffff;
-  --color-ash-gray: #9a9a9a;
-  --color-silver-mist: #bdbdbd;
-  --color-electric-iris: #8052ff;
-  --color-saffron-spark: #ffb829;
-  --color-deep-verdant: #15846e;
+  --color-void-black: #040506;
+  --color-ink: #07080a;
+  --color-obsidian: #111214;
+  --color-graphite: #1b1c1e;
+  --color-smoke: #6a6b6c;
+  --color-ash: #9c9c9d;
+  --color-mist: #e6e6e6;
+  --color-iron: #454647;
+  --color-slate: #2f3031;
+  --color-pure-white: #ffffff;
+  --color-coral-pulse: #ff6363;
+  --color-ember-hush: #452324;
+  --color-electric-sky: #63a1ff;
+  --color-cobalt-edge: #143ca3;
+  --color-deep-space: #02193b;
+  --color-info-blue: #56c2ff;
+  --color-success-green: #59d499;
+  --color-border-hairline: #363739;
 
   /* Typography */
-  --font-ppneuemontreal: 'PPNeueMontreal', var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-geistmono: var(--font-geist-mono), 'GeistMono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Typography — Scale */
-  --text-caption: 12px;
-  --leading-caption: 1.5;
-  --text-nav-label: 14px;
-  --leading-nav-label: 1.2;
-  --tracking-nav-label: 0.35px;
-  --text-body: 18px;
-  --leading-body: 1.5;
-  --text-heading-2xs: 24px;
-  --leading-heading-2xs: 1.25;
-  --tracking-heading-2xs: -0.48px;
-  --text-heading-xs: 27px;
-  --leading-heading-xs: 1;
-  --text-subheading: 36px;
+  --text-eyebrow: 11px;
+  --leading-eyebrow: 0.91;
+  --tracking-eyebrow: 0.8px;
+  --text-body: 16px;
+  --leading-body: 1.15;
+  --tracking-body: 0px;
+  --text-body-lg: 18px;
+  --leading-body-lg: 1.15;
+  --tracking-body-lg: 0px;
+  --text-subheading: 20px;
   --leading-subheading: 1.2;
-  --text-heading-sm: 42px;
-  --leading-heading-sm: 1.2;
-  --tracking-heading-sm: -1.68px;
-  --text-heading: 48px;
-  --leading-heading: 1.1;
-  --tracking-heading: -1.68px;
-  --text-heading-lg: 78px;
-  --leading-heading-lg: 1.1;
-  --tracking-heading-lg: -3.12px;
-  --text-display: 113px;
+  --tracking-subheading: 0.2px;
+  --text-heading-sm: 24px;
+  --leading-heading-sm: 1.15;
+  --tracking-heading-sm: 0px;
+  --text-heading: 32px;
+  --leading-heading: 1.15;
+  --tracking-heading: 0px;
+  --text-heading-lg: 56px;
+  --leading-heading-lg: 1.17;
+  --tracking-heading-lg: 0.22px;
+  --text-display: 64px;
   --leading-display: 1.1;
-  --tracking-display: -4.52px;
+  --tracking-display: 0px;
 
-  /* Spacing (Base unit 6px) */
-  --spacing-6: 6px;
-  --spacing-12: 12px;
-  --spacing-18: 18px;
+  /* Spacing */
+  --spacing-8: 8px;
+  --spacing-16: 16px;
   --spacing-24: 24px;
-  --spacing-30: 30px;
-  --spacing-36: 36px;
-  --spacing-60: 60px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-56: 56px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
   --spacing-96: 96px;
   --spacing-120: 120px;
+  --spacing-224: 224px;
 
   /* Border Radius */
-  --radius-3xl: 24px;
+  --radius-lg: 8px;
+  --radius-2xl: 16px;
+  --radius-2xl-2: 20px;
   --radius-full: 9999px;
+  --radius-circle: 99999px;
 }
 
 :root {
@@ -62,18 +78,31 @@
 }
 
 body {
-  background-color: var(--color-void);
-  color: var(--color-bone-white);
-  font-family: var(--font-ppneuemontreal);
-  font-weight: 200;
+  background-color: #040506;
+  color: #ffffff;
+  font-family: var(--font-inter);
+  font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: var(--color-electric-iris);
-  color: var(--color-bone-white);
+  background-color: rgba(255, 99, 99, 0.3);
+  color: #ffffff;
+}
+
+/* Raycast signature keyboard-key tactile shadow stack */
+.key-shadow {
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 1px 0px 0px inset,
+              rgba(255, 255, 255, 0.15) 0px 0px 0px 1px,
+              rgba(0, 0, 0, 0.3) 0px -1px 0px 0px inset;
+}
+
+.key-shadow-active {
+  box-shadow: rgba(255, 99, 99, 0.2) 0px 1px 0px 0px inset,
+              rgba(255, 99, 99, 0.4) 0px 0px 0px 1px,
+              rgba(0, 0, 0, 0.4) 0px -1px 0px 0px inset;
 }
 
 /* Subtle dark scrollbar */
@@ -82,12 +111,12 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #040506;
 }
 ::-webkit-scrollbar-thumb {
-  background: #222222;
+  background: #1b1c1e;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #333333;
+  background: #2f3031;
 }

@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
   display: "swap",
 });
 
@@ -20,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`${inter.variable}`}>
-      <body className="bg-[#000000] text-[#ffffff] min-h-screen selection:bg-[#8052ff] selection:text-[#ffffff]">
+    <html lang="id" className={`${inter.variable} ${geistMono.variable}`}>
+      <body className="bg-[#040506] text-white min-h-screen font-sans selection:bg-[#ff6363]/30 selection:text-white">
         {children}
       </body>
     </html>
