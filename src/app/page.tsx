@@ -178,7 +178,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="shrink-0">
+          <div className="shrink-0 md:mr-6">
             <Link
               href="/order"
               className="btn-aurora text-[14px] px-8 py-4 rounded-[6px] transition-all inline-block"
