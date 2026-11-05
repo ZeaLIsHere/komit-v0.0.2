@@ -99,14 +99,9 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                    Joki Proyek Kuliah Berkelompok
-                  </h3>
-                  <span className="text-[15px] font-medium text-[#fde9ff] whitespace-nowrap bg-[#012624] px-3 py-1.5 rounded-[6px]">
-                    N × Rp 50.000
-                  </span>
-                </div>
+                <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                  Joki Proyek Kuliah Berkelompok
+                </h3>
                 <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
                   Pengerjaan kode aplikasi fullstack, cicil commit terjadwal mingguan atas nama akun asli masing-masing anggota kelompok via GitHub OAuth, dan bahan presentasi UAS siap pakai.
                 </p>
@@ -121,14 +116,9 @@ export default function HomePage() {
 
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                    Makalah & Laporan Akademik
-                  </h3>
-                  <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
-                    Lengkap Bab 1–5
-                  </span>
-                </div>
+                <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                  Makalah & Laporan Akademik
+                </h3>
                 <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
                   Penyusunan laporan akademik terstandar, diagram UML komprehensif (Use Case, Activity, Sequence), relasi ERD database, dan referensi jurnal ilmiah terindeks.
                 </p>
@@ -141,14 +131,9 @@ export default function HomePage() {
 
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                    Slide Presentasi (PPT)
-                  </h3>
-                  <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
-                    Add-on / Standalone
-                  </span>
-                </div>
+                <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                  Slide Presentasi (PPT)
+                </h3>
                 <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
                   Slide presentasi ringkas, estetis, dan terstruktur untuk presentasi demo aplikasi di hadapan dosen penguji tanpa rasa cemas.
                 </p>
@@ -161,14 +146,9 @@ export default function HomePage() {
 
             <div className="p-9 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-4">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-[28px] font-medium leading-[1.0] text-white">
-                    Tugas Ringan & Praktikum
-                  </h3>
-                  <span className="text-[14px] text-[#bbc7c6] bg-[#012624] px-3 py-1.5 rounded-[6px]">
-                    Cepat & Akurat
-                  </span>
-                </div>
+                <h3 className="text-[28px] font-medium leading-[1.0] text-white">
+                  Tugas Ringan & Praktikum
+                </h3>
                 <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
                   Penyelesaian modul tugas mingguan algoritma, struktur data, basis data SQL, pembuatan query, dan modul praktikum lab komputer.
                 </p>
