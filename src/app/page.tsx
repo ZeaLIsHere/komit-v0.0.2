@@ -171,7 +171,7 @@ export default function HomePage() {
         <section id="harga" className="p-12 sm:p-16 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div className="flex flex-col gap-3 max-w-2xl">
             <h2 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
-              N × Rp 50.000 per anggota.
+              Mulai dari Rp 50.000 per anggota.
             </h2>
             <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
               Biaya dibagi rata sejumlah anggota kelompok. Jika kelompok Anda beranggotakan 4 orang, total tagihan adalah Rp 200.000. Tiap anggota kelompok mendapatkan kontribusi commit di repository GitHub.
