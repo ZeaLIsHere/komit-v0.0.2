@@ -16,9 +16,6 @@ export default function HomePage() {
 
           {/* Foreground Content Stack */}
           <div className="relative z-10 max-w-4xl flex flex-col items-center gap-6">
-            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] bg-[#003734]/40 px-3 py-1 rounded-[6px] border border-[#003734]">
-              AUROS PRODUCTIZED ECOSYSTEM • KOMIT V2
-            </span>
             <h1 className="text-[44px] sm:text-[68px] md:text-[86px] leading-[1.0] font-medium tracking-[-0.04em] text-white">
               Proyek kelompok selesai. Commit natural di mata dosen.
             </h1>
