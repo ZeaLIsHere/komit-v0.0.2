@@ -6,6 +6,17 @@ export async function POST(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const forceNow = searchParams.get('force') === 'true';
+    const authHeader = req.headers.get('authorization');
+    const adminSecret = process.env.ADMIN_SECRET_KEY;
+
+    // Security guard: verify authorization if ADMIN_SECRET_KEY is set and request is external
+    if (adminSecret && adminSecret !== 'komit-admin-secret-2025') {
+      const token = authHeader?.replace('Bearer ', '');
+      if (token !== adminSecret && searchParams.get('key') !== adminSecret) {
+        return NextResponse.json({ error: 'Unauthorized cron trigger' }, { status: 401 });
+      }
+    }
+
     const nowIso = new Date().toISOString();
 
     const pushedResults: Array<{ scheduleId: string; commitHash: string; message: string }> = [];

@@ -20,10 +20,15 @@ export default function OrderPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Handle image upload from file picker
+  // Handle image upload from file picker with 5MB validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMsg('Ukuran file maksimal 5 MB');
+        return;
+      }
+      setErrorMsg(null);
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;

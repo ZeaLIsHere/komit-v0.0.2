@@ -146,7 +146,7 @@ export default function PresentPage({
             <span className="text-[12px] font-mono uppercase tracking-[0.2em] text-[#cbfffc] bg-[#003734] px-3 py-1 rounded-[4px]">
               Presentasi Sidang Akhir Semester
             </span>
-            <h1 className="text-[44px] sm:text-[64px] font-medium leading-[1.05] text-white max-w-4xl tracking-[-0.03em]">
+            <h1 className="text-[30px] sm:text-[48px] md:text-[60px] font-medium leading-[1.1] text-white max-w-4xl tracking-[-0.03em]">
               {idea.title}
             </h1>
             <p className="text-[18px] text-[#bbc7c6] max-w-2xl leading-[1.4]">
