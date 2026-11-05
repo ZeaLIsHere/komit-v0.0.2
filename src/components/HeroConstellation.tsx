@@ -53,8 +53,8 @@ export default function HeroConstellation() {
     glyphTexture.minFilter = THREE.LinearMipMapLinearFilter;
     glyphTexture.magFilter = THREE.LinearFilter;
 
-    // 4. Generate 32,000 Particles distributed in Fibonacci Spherical Shell
-    const particleCount = 32000;
+    // 4. Generate 20,000 Fluid Particles with varying streams & tendrils
+    const particleCount = 20000;
     const geometry = new THREE.BufferGeometry();
 
     const positions = new Float32Array(particleCount * 3);
@@ -71,8 +71,9 @@ export default function HeroConstellation() {
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = goldenAngle * i;
 
-      // Volumetric shell thickness (creates dense liquid depth)
-      const r = sphereRadius * (0.84 + Math.random() * 0.20);
+      // Organic fluid volume: some particles cluster in inner drops, some in outer streams
+      const streamFactor = Math.sin(i * 0.05) * 0.18;
+      const r = sphereRadius * (0.80 + Math.random() * 0.28 + streamFactor);
 
       const x = Math.cos(theta) * radiusAtY * r;
       const z = Math.sin(theta) * radiusAtY * r;
@@ -82,9 +83,10 @@ export default function HeroConstellation() {
       positions[i * 3 + 2] = z;
 
       charIndices[i] = i % 16;
-      masses[i] = 0.7 + Math.random() * 1.6;
+      masses[i] = 0.6 + Math.random() * 2.2;
       phases[i] = Math.random() * Math.PI * 2;
-      sizes[i] = 9.0 + Math.random() * 8.0;
+      // Slightly more delicate particle sizes so negative space lets the fluid breathe
+      sizes[i] = 7.0 + Math.random() * 7.5;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -119,12 +121,30 @@ export default function HeroConstellation() {
       varying vec3 vColor;
       varying float vAlpha;
 
+      // Simplex-inspired 3D fluid wave function
+      vec3 computeFluidCurl(vec3 p, float t, float phase, float mass) {
+        float f1 = sin(p.y * 0.012 + t * 1.6 + phase) * cos(p.z * 0.014 + t * 1.1);
+        float f2 = sin(p.x * 0.015 - t * 1.3) * cos(p.y * 0.016 + t * 0.8 + phase);
+        float f3 = sin(p.z * 0.018 + t * 1.9 + phase) * cos(p.x * 0.012 - t * 1.4);
+
+        // Viscous undulating fluid blob ripples
+        float blob = sin(t * 0.9 + length(p) * 0.018 + phase) * 22.0;
+
+        return vec3(
+          (f1 + f2 * 0.5) * 42.0,
+          (f2 + f3 * 0.5) * 48.0 + blob * (1.0 / mass),
+          (f3 + f1 * 0.5) * 38.0
+        );
+      }
+
       void main() {
         vCharIndex = aCharIndex;
         vec3 pos = position;
 
-        // 1. Vortex Cyclonic Rotation along outer perimeter
-        float orbitSpeed = (0.28 + (1.0 / aMass) * 0.12) * (1.0 - uGravity * 0.65);
+        // 1. Viscous Liquid Swirl (Vortex with radial shear like stirring water)
+        float distCenter = length(pos);
+        float radialShear = (distCenter / uRadius);
+        float orbitSpeed = (0.24 + (1.0 / aMass) * 0.16 + radialShear * 0.15) * (1.0 - uGravity * 0.65);
         float angle = uTime * orbitSpeed;
         float cosA = cos(angle);
         float sinA = sin(angle);
@@ -134,47 +154,52 @@ export default function HeroConstellation() {
         rotated.z = pos.z * cosA + pos.x * sinA;
         rotated.y = pos.y;
 
-        // 2. Fluid Wave Turbulence & Swirl Shear
-        float distCenter = length(rotated);
-        float swirl = (distCenter / uRadius) * 0.75 + uTime * 1.4;
-        rotated.x += sin(swirl + aPhase) * 12.0;
-        rotated.y += cos(swirl * 1.3 + aPhase) * 10.0;
-        rotated.z += sin(pos.x * 0.02 + uTime) * 11.0;
+        // 2. High-Amplitude Organic Fluid Curl & Wave Distortion
+        vec3 fluidCurl = computeFluidCurl(rotated, uTime, aPhase, aMass);
+        rotated += fluidCurl;
 
-        // 3. Periodic Gravity Waterfall Cascade
+        // 3. Periodic Gravity Waterfall Cascade (Liquid droplets tearing and splashing)
         if (uGravity > 0.001) {
-          float dropForce = uGravity * aMass * 26.0;
+          float dropForce = uGravity * aMass * 38.0;
           rotated.y -= dropForce;
-          // Spray wave as water falls
-          rotated.x += sin(rotated.y * 0.04 + uTime * 4.0) * 8.0;
+          
+          // Fluid spray turbulence as it falls
+          float spray = sin(rotated.y * 0.035 + uTime * 4.5 + aPhase) * 16.0;
+          rotated.x += spray * uGravity;
+          rotated.z += cos(rotated.y * 0.035 + uTime * 3.5) * 14.0 * uGravity;
         }
 
-        // 4. Spherical Container Boundary (Glass Barrier Constraint)
+        // 4. Elastic Liquid Surface Tension Boundary (Soft bounce instead of hard scissor cut)
         float d = length(rotated);
         if (d > uRadius) {
           vec3 norm = normalize(rotated);
-          rotated = norm * uRadius;
-          // When water hits bottom of sphere during drop, deflect upwards/sideways
+          // Soft elastic spring pull back towards fluid core
+          float overflow = d - uRadius;
+          rotated -= norm * (overflow * 0.75);
+
+          // Liquid splash deflecting off bottom of container
           if (rotated.y < -uRadius * 0.6) {
-            rotated.y += 18.0 * uGravity;
-            rotated.x += (norm.x > 0.0 ? 1.0 : -1.0) * 14.0 * uGravity;
+            rotated.y += 24.0 * uGravity;
+            rotated.x += (norm.x > 0.0 ? 1.0 : -1.0) * 18.0 * uGravity;
           }
         }
 
-        // 5. Mouse Interaction Push & Swirl
+        // 5. Liquid Ripple from Mouse Interaction
         vec2 screenDist = vec2(rotated.x - uMouse.x, rotated.y - uMouse.y);
         float mouseDist = length(screenDist);
-        if (mouseDist < 160.0) {
-          float push = (1.0 - mouseDist / 160.0) * 35.0;
-          rotated.xy += normalize(screenDist) * push;
+        if (mouseDist < 190.0) {
+          float rippleForce = (1.0 - mouseDist / 190.0);
+          float fluidWave = sin(mouseDist * 0.08 - uTime * 6.0) * 18.0 * rippleForce;
+          rotated.xy += normalize(screenDist) * (rippleForce * 40.0 + fluidWave);
         }
 
         // 6. Camera View Transform
         vec4 mvPosition = modelViewMatrix * vec4(rotated, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
-        // Perspective-based point size
-        gl_PointSize = aSize * (350.0 / -mvPosition.z);
+        // Perspective-based point size with fluid breath scaling
+        float sizeScale = (1.0 + sin(aPhase + uTime * 2.0) * 0.18);
+        gl_PointSize = (aSize * sizeScale) * (340.0 / -mvPosition.z);
 
         // 7. Depth Layering Color Logic (Inverted as requested):
         // Layer Depan (Z > threshold): Hijau Gelap
@@ -186,7 +211,7 @@ export default function HeroConstellation() {
         if (zDepth > threshold) {
           // DEPAN: Hijau Gelap
           vColor = vec3(0.004, 0.21, 0.18);
-          vAlpha = 0.85;
+          vAlpha = 0.82;
         } else if (zDepth < -threshold) {
           // BELAKANG: Putih Kehijauan Luminous Glow
           vColor = vec3(0.93, 1.0, 0.99);
@@ -194,7 +219,7 @@ export default function HeroConstellation() {
         } else {
           // TENGAH: Hijau Web Auros (Cyan / Aqua)
           vColor = mod(aCharIndex, 2.0) == 0.0 ? vec3(0.0, 0.96, 0.83) : vec3(0.0, 0.71, 0.65);
-          vAlpha = 0.78;
+          vAlpha = 0.75;
         }
       }
     `;
