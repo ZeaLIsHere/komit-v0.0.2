@@ -31,6 +31,22 @@ export default function ProjectSetupPage({
   const [isSavingMembers, setIsSavingMembers] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
+  // Quick fill demo members
+  const handleQuickFillMembers = () => {
+    const dummyList = [
+      { name: 'Fadhil Pratama', nim: '221401010', kom: 'A', github_username: 'fadhilpratama' },
+      { name: 'Sarah Amanda', nim: '221401011', kom: 'A', github_username: 'sarahamanda' },
+      { name: 'Reza Fauzan', nim: '221401012', kom: 'A', github_username: 'rezafauzan' },
+      { name: 'Nabila Putri', nim: '221401013', kom: 'A', github_username: 'nabilaputri' },
+      { name: 'Ilham Hidayat', nim: '221401014', kom: 'B', github_username: 'ilhamhidayat' },
+      { name: 'Aisyah Zahra', nim: '221401015', kom: 'B', github_username: 'aisyahzahra' },
+      { name: 'Kevin Santoso', nim: '221401016', kom: 'C', github_username: 'kevinsantoso' },
+      { name: 'Tiara Maharani', nim: '221401017', kom: 'C', github_username: 'tiaramaharani' },
+    ];
+    const count = project?.member_count || 4;
+    setMembers(dummyList.slice(0, count));
+  };
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -350,13 +366,22 @@ export default function ProjectSetupPage({
 
         {/* STEP 2: MEMBER DATA FORM */}
         <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-[20px] font-medium text-white">
-              Data Anggota Kelompok ({project.member_count} Orang)
-            </h2>
-            <p className="text-[14px] text-[#bbc7c6]">
-              Data ini dicantumkan dalam README laporan resmi dan dikaitkan dengan akun GitHub masing-masing anggota.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-[20px] font-medium text-white">
+                Data Anggota Kelompok ({project.member_count} Orang)
+              </h2>
+              <p className="text-[14px] text-[#bbc7c6]">
+                Data ini dicantumkan dalam README laporan resmi dan dikaitkan dengan akun GitHub masing-masing anggota.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleQuickFillMembers}
+              className="text-[12px] text-[#cbfffc] hover:underline self-start sm:self-auto shrink-0"
+            >
+              ⚡ Isi Data Contoh
+            </button>
           </div>
 
           <form onSubmit={handleSaveMembers} className="flex flex-col gap-4">
@@ -436,12 +461,28 @@ export default function ProjectSetupPage({
             <div className="text-[14px] font-mono text-[#bbc7c6] truncate max-w-md">
               {typeof window !== 'undefined' ? `${window.location.origin}/join/${id}` : `/join/${id}`}
             </div>
-            <button
-              onClick={copyInviteLink}
-              className="bg-[#003734] hover:bg-[#004d49] text-white text-[13px] px-5 py-2.5 rounded-[6px] transition-all shrink-0"
-            >
-              {copiedLink ? '✓ Tautan Disalin!' : 'Salin Tautan'}
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={copyInviteLink}
+                className="bg-[#003734] hover:bg-[#004d49] text-white text-[13px] px-4 py-2 rounded-[6px] transition-all"
+              >
+                {copiedLink ? '✓ Tautan Disalin!' : 'Salin Tautan'}
+              </button>
+              <a
+                href={
+                  typeof window !== 'undefined'
+                    ? `https://api.whatsapp.com/send?text=${encodeURIComponent(
+                        `Halo teman kelompok! Silakan hubungkan akun GitHub kalian untuk proyek "${project.selected_idea?.title || 'Proyek UAS'}" via tautan ini: ${window.location.origin}/join/${id}`
+                      )}`
+                    : '#'
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#25D366] hover:bg-[#20ba59] text-white text-[13px] font-medium px-4 py-2 rounded-[6px] transition-all inline-flex items-center gap-1.5"
+              >
+                Kirim ke WhatsApp ↗
+              </a>
+            </div>
           </div>
 
           {dbMembers.length > 0 && (

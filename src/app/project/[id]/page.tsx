@@ -152,45 +152,74 @@ export default function ProjectDashboardPage({
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         {/* Top Header / Project Overview */}
-        <div className="p-8 sm:p-10 rounded-[16px] bg-[#003734] flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#012624] bg-[#cbfffc] px-2 py-0.5 rounded-[4px]">
-                {project.package_type.toUpperCase()} • {project.service_type}
-              </span>
-              <span className="text-[12px] text-[#bbc7c6] font-mono">
-                ID: {project.id.slice(0, 8)}
-              </span>
+        <div className="p-8 sm:p-10 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#012624] bg-[#cbfffc] px-2 py-0.5 rounded-[4px]">
+                  {project.package_type.toUpperCase()} • {project.service_type}
+                </span>
+                <span className="text-[12px] text-[#bbc7c6] font-mono">
+                  ID: {project.id.slice(0, 8)}
+                </span>
+              </div>
+              <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+                {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
+              </h1>
+              <p className="text-[15px] text-[#bbc7c6] max-w-2xl leading-[1.4]">
+                {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
+              </p>
             </div>
-            <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
-              {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
-            </h1>
-            <p className="text-[15px] text-[#bbc7c6] max-w-2xl leading-[1.4]">
-              {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
-            </p>
+
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <Link
+                href={`/project/${id}/setup`}
+                className="text-[13px] bg-[#011d1c] hover:bg-[#012624] text-white border border-[#003734] px-5 py-2.5 rounded-[6px] transition-all"
+              >
+                Ubah Setup
+              </Link>
+              {project.github_repo_url ? (
+                <a
+                  href={project.github_repo_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
+                >
+                  GitHub Repo ↗
+                </a>
+              ) : (
+                <span className="text-[12px] text-[#bbc7c6] px-4 py-2 bg-[#011d1c] rounded-[6px] font-mono">
+                  Repo Sedang Dibuat
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <Link
-              href={`/project/${id}/setup`}
-              className="text-[13px] bg-[#011d1c] hover:bg-[#012624] text-white border border-[#003734] px-5 py-2.5 rounded-[6px] transition-all"
-            >
-              Ubah Setup
-            </Link>
-            {project.github_repo_url ? (
-              <a
-                href={project.github_repo_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
-              >
-                GitHub Repo ↗
-              </a>
-            ) : (
-              <span className="text-[12px] text-[#bbc7c6] px-4 py-2 bg-[#011d1c] rounded-[6px] font-mono">
-                Repo Sedang Dibuat
-              </span>
-            )}
+          {/* Customer Milestone Pipeline */}
+          <div className="pt-4 border-t border-[#012624] grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
+            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
+              <span className="text-[#cbfffc] font-bold">✓</span>
+              <div>
+                <div className="text-white font-medium text-[13px]">Pembayaran QRIS</div>
+                <div className="text-[11px] text-[#59d499]">Terverifikasi</div>
+              </div>
+            </div>
+            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
+              <span className="text-[#cbfffc] font-bold">{project.selected_idea ? '✓' : '•'}</span>
+              <div>
+                <div className="text-white font-medium text-[13px]">Ide & Anggota</div>
+                <div className="text-[11px] text-[#bbc7c6]">{project.selected_idea ? 'Ide AI Terkunci' : 'Lengkapi Setup'}</div>
+              </div>
+            </div>
+            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
+              <span className="text-[#cbfffc] font-bold">●</span>
+              <div>
+                <div className="text-white font-medium text-[13px]">Cicil Commit</div>
+                <div className="text-[11px] text-[#cbfffc] font-mono">
+                  {schedules.filter((s) => s.status === 'pushed').length}/{schedules.length} Selesai
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

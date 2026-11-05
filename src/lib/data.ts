@@ -261,10 +261,63 @@ export async function saveProjectMembers(
       .insert(memberRecords)
       .select('id, created_at, project_id, name, nim, kom, github_username, github_email, is_connected');
     if (error) throw new Error(error.message);
+
+    // Auto-generate initial commit schedule roadmap if none exists
+    const { data: existingSchedules } = await supabaseAdmin
+      .from('commit_schedules')
+      .select('id')
+      .eq('project_id', projectId);
+
+    if (!existingSchedules || existingSchedules.length === 0) {
+      const commitMessages = [
+        'feat: initialize project scaffolding and routing structure',
+        'feat: implement authentication flow and middleware guards',
+        'feat: build core business logic and database queries',
+        'refactor: optimize response payload and error handling',
+        'docs: finalize api documentation and demo seeders for uas',
+      ];
+      const newSchedules = memberRecords.map((m, idx) => ({
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        project_id: projectId,
+        member_id: m.id,
+        commit_message: commitMessages[idx % commitMessages.length],
+        scheduled_at: new Date(Date.now() + 86400000 * (idx + 1) * 3).toISOString(),
+        status: idx === 0 ? 'pushed' : 'scheduled',
+        commit_hash: idx === 0 ? Math.random().toString(16).substring(2, 9) : null,
+      }));
+      await supabaseAdmin.from('commit_schedules').insert(newSchedules);
+    }
+
     return data as ProjectMember[];
   }
 
   mockMembers.set(projectId, memberRecords);
+
+  // Auto-scaffold initial schedules in mock store if none exist
+  if (!mockSchedules.has(projectId) || mockSchedules.get(projectId)!.length === 0) {
+    const commitMessages = [
+      'feat: initialize project scaffolding and routing structure',
+      'feat: implement authentication flow and middleware guards',
+      'feat: build core business logic and database queries',
+      'refactor: optimize response payload and error handling',
+      'docs: finalize api documentation and demo seeders for uas',
+    ];
+    const newMockSchedules: CommitSchedule[] = memberRecords.map((m, idx) => ({
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      project_id: projectId,
+      member_id: m.id,
+      member_name: m.name,
+      github_username: m.github_username || `contributor-${idx + 1}`,
+      commit_message: commitMessages[idx % commitMessages.length],
+      scheduled_at: new Date(Date.now() + 86400000 * (idx + 1) * 3).toISOString(),
+      status: idx === 0 ? 'pushed' : 'scheduled',
+      commit_hash: idx === 0 ? Math.random().toString(16).substring(2, 9) : undefined,
+    }));
+    mockSchedules.set(projectId, newMockSchedules);
+  }
+
   return memberRecords;
 }
 

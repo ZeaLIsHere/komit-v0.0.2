@@ -15,9 +15,32 @@ export default function OrderPage() {
   const [memberCount, setMemberCount] = useState<number>(4);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
-  const [proofUrl, setProofUrl] = useState<string>('/dummy-qris-proof.jpg');
+  const [proofUrl, setProofUrl] = useState<string>('');
+  const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Handle image upload from file picker
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setProofPreview(result);
+        setProofUrl(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Quick fill for testing
+  const handleQuickDemoFill = () => {
+    setBuyerName('Fadhil Pratama');
+    setBuyerWhatsapp('081234567890');
+    setProofUrl('/dummy-qris-proof.jpg');
+    setProofPreview('/dummy-qris-proof.jpg');
+  };
 
   // Price Calculation: N x Rp 50.000 for project_joki
   const calculateTotal = () => {
@@ -293,15 +316,35 @@ export default function OrderPage() {
                     Rp {totalPrice.toLocaleString('id-ID')}
                   </span>
                 </p>
-                <div className="mt-2 flex flex-col gap-1.5">
-                  <span className="text-[12px] text-[#edfffe]">Link / URL Bukti Transfer</span>
-                  <input
-                    type="text"
-                    value={proofUrl}
-                    onChange={(e) => setProofUrl(e.target.value)}
-                    placeholder="URL gambar bukti bayar"
-                    className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2 text-[13px] text-white outline-none"
-                  />
+                <div className="mt-3 flex flex-col gap-2">
+                  <span className="text-[12px] text-[#edfffe]">Upload Bukti Transfer (Screenshot/Foto)</span>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <label className="cursor-pointer bg-[#012624] hover:bg-[#003734] border border-[#003734] hover:border-[#cbfffc] px-4 py-2 rounded-[6px] text-[13px] text-white flex items-center gap-2 transition-all">
+                      <span>📁 Pilih Gambar Bukti</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={handleQuickDemoFill}
+                      className="text-[12px] text-[#cbfffc] hover:underline"
+                    >
+                      ⚡ Isi Data Cepat untuk Testing
+                    </button>
+                  </div>
+
+                  {proofPreview && (
+                    <div className="mt-2 flex items-center gap-3 p-2 bg-[#012624] rounded-[6px] border border-[#003734]">
+                      <span className="text-[11px] text-[#59d499]">✓ Bukti bayar terlampir</span>
+                      <span className="text-[11px] text-[#bbc7c6] truncate max-w-xs">{proofUrl.slice(0, 32)}...</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
