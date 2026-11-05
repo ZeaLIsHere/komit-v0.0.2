@@ -2,27 +2,17 @@
 
 import React, { useEffect, useRef } from 'react';
 
-interface Particle3D {
-  // Rest position on sphere
-  ox: number;
-  oy: number;
-  oz: number;
-  // Current dynamic position
+interface FluidParticle {
   x: number;
   y: number;
   z: number;
-  // Velocity
   vx: number;
   vy: number;
   vz: number;
-  // Physical traits
   mass: number;
-  drag: number;
-  spring: number;
   char: string;
-  color: string;
   size: number;
-  curlOffset: number;
+  dropDelay: number; // Staggered cascade timing
 }
 
 export default function HeroConstellation() {
@@ -46,210 +36,231 @@ export default function HeroConstellation() {
 
     window.addEventListener('resize', handleResize);
 
-    // Mouse position & velocity tracking for physical momentum
+    // Mouse coordinate & momentum
     let mouseX = 0;
     let mouseY = 0;
-    let lastMouseX = 0;
-    let lastMouseY = 0;
-    let mouseVelX = 0;
-    let mouseVelY = 0;
+    let mouseSpeedX = 0;
+    let mouseSpeedY = 0;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const currentX = (e.clientX - rect.left - width / 2);
-      const currentY = (e.clientY - rect.top - height / 2);
-
-      mouseVelX = currentX - mouseX;
-      mouseVelY = currentY - mouseY;
-
-      mouseX = currentX;
-      mouseY = currentY;
+      const nx = (e.clientX - rect.left - width / 2);
+      const ny = (e.clientY - rect.top - height / 2);
+      mouseSpeedX = nx - mouseX;
+      mouseSpeedY = ny - mouseY;
+      mouseX = nx;
+      mouseY = ny;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches.length > 0) {
         const rect = canvas.getBoundingClientRect();
-        const currentX = (e.touches[0].clientX - rect.left - width / 2);
-        const currentY = (e.touches[0].clientY - rect.top - height / 2);
-
-        mouseVelX = currentX - mouseX;
-        mouseVelY = currentY - mouseY;
-
-        mouseX = currentX;
-        mouseY = currentY;
+        const nx = (e.touches[0].clientX - rect.left - width / 2);
+        const ny = (e.touches[0].clientY - rect.top - height / 2);
+        mouseSpeedX = nx - mouseX;
+        mouseSpeedY = ny - mouseY;
+        mouseX = nx;
+        mouseY = ny;
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove);
 
-    // Characters & Auros bioluminescent color spectrum
-    const glyphs = ['0', '1', '7', 'f', 'a', '8', '9', 'c', '3', 'b', 'e', '4', 'x', '•'];
-    const colors = [
-      '#00f5d4', // electric cyan
-      '#00b4a7', // deep aqua
-      '#cbfffc', // pale aqua
-      '#ffffff', // platinum
-      '#edfffe', // liquid mist
-      '#fde9ff', // lavender phosphor accent
-    ];
+    // Characters for data-fluid matrix look
+    const glyphs = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'x', '•'];
+    const particleCount = 1650;
+    const sphereRadius = Math.min(width, height) * 0.38;
+    const particles: FluidParticle[] = [];
 
-    const particleCount = 1450;
-    const baseRadius = Math.min(width, height) * 0.40;
-    const particles: Particle3D[] = [];
-
-    // Fibonacci sphere with layered depth volume
-    const phi = Math.PI * (3 - Math.sqrt(5));
-
+    // Initialize particles adhering to outer shell of sphere
     for (let i = 0; i < particleCount; i++) {
-      const y = 1 - (i / (particleCount - 1)) * 2;
-      const radiusAtY = Math.sqrt(1 - y * y);
-      const theta = phi * i;
+      const phi = Math.random() * Math.PI * 2;
+      const costheta = Math.random() * 2 - 1;
+      const theta = Math.acos(costheta);
+      const r = sphereRadius * (0.86 + Math.random() * 0.14);
 
-      // Layered thickness (not a hollow sphere shell, creates fluid density)
-      const depthFactor = 0.82 + Math.random() * 0.36;
-      const r = baseRadius * depthFactor;
-
-      const px = Math.cos(theta) * radiusAtY * r;
-      const py = y * r;
-      const pz = Math.sin(theta) * radiusAtY * r;
-
-      // Random mass variance: heavy particles lag behind, light particles swirl outwards
-      const mass = 0.8 + Math.random() * 1.8;
+      const px = r * Math.sin(theta) * Math.cos(phi);
+      const py = r * Math.sin(theta) * Math.sin(phi);
+      const pz = r * Math.cos(theta);
 
       particles.push({
-        ox: px,
-        oy: py,
-        oz: pz,
         x: px,
         y: py,
         z: pz,
-        vx: 0,
-        vy: 0,
-        vz: 0,
-        mass,
-        drag: 0.89 + Math.random() * 0.05,
-        spring: 0.045 + Math.random() * 0.025,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        vz: (Math.random() - 0.5) * 1.5,
+        mass: 0.8 + Math.random() * 1.6,
         char: glyphs[i % glyphs.length],
-        color: colors[i % colors.length],
-        size: Math.random() * 3.5 + 8,
-        curlOffset: Math.random() * Math.PI * 2,
+        size: Math.random() * 3 + 8,
+        dropDelay: Math.random() * 2.2, // Individual droplet timing variance
       });
     }
 
     let time = 0;
-    let sphereRotX = 0;
-    let sphereRotY = 0;
     const fov = 420;
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      time += 0.018;
+      time += 0.016;
 
-      // Decay mouse velocity
-      mouseVelX *= 0.92;
-      mouseVelY *= 0.92;
+      // Periodic Gravity Drop Cycle: 7-second continuous loop
+      // 0.0 - 4.5s: Swirl along shell perimeter
+      // 4.5 - 6.5s: Gravity cascade drop (air jatuh ke bawah)
+      // 6.5 - 7.0s: Recirculation & sweep-up back into vortex
+      const cycleLength = 7.0;
+      const cycleTime = time % cycleLength;
 
-      // Sphere rotation driven by idle drift + mouse drag
-      sphereRotY += 0.003 + mouseVelX * 0.0008;
-      sphereRotX += mouseVelY * 0.0008;
+      // Gravity intensity curve: peaks between 4.5s and 6.5s
+      let gravity = 0;
+      if (cycleTime > 4.2 && cycleTime < 6.4) {
+        const dropPhase = (cycleTime - 4.2) / 2.2;
+        // Bell-curve burst of gravity
+        gravity = Math.sin(dropPhase * Math.PI) * 9.5;
+      }
 
-      const cosY = Math.cos(sphereRotY);
-      const sinY = Math.sin(sphereRotY);
-      const cosX = Math.cos(sphereRotX);
-      const sinX = Math.sin(sphereRotX);
+      // Swirl strength weakens during gravity drop, strengthens during sweep-up
+      const swirlFactor = 1.0 - Math.min(0.7, gravity * 0.07);
+
+      mouseSpeedX *= 0.90;
+      mouseSpeedY *= 0.90;
 
       const cx = width / 2;
       const cy = height / 2;
-
-      const mouseSpeed = Math.sqrt(mouseVelX * mouseVelX + mouseVelY * mouseVelY);
       const projected = [];
 
       for (let i = 0; i < particleCount; i++) {
         const p = particles[i];
 
-        // 1. Calculate ideal rotated resting point
-        const rx1 = p.ox * cosY - p.oz * sinY;
-        const rz1 = p.oz * cosY + p.ox * sinY;
-        const ry2 = p.oy * cosX - rz1 * sinX;
-        const rz2 = rz1 * cosX + p.oy * sinX;
+        // 1. Vortex Swirl Motion: Tangential velocity around inclined Y-axis
+        // Clings to outer perimeter
+        const distFromCenter = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+        const dist2D = Math.sqrt(p.x * p.x + p.z * p.z) || 1;
 
-        // 2. Fluid turbulence & vortex shear:
-        // Distance from center causes rotational shear (twist like vortex/swirl in screenshot)
-        const distFromAxis = Math.sqrt(rx1 * rx1 + ry2 * ry2);
-        const swirlAngle = (distFromAxis / baseRadius) * 0.8 + time * 1.2;
+        // Tangent vectors for perimeter rotation
+        const tx = -p.z / dist2D;
+        const tz = p.x / dist2D;
 
-        const fluidCurlX = Math.sin(swirlAngle + p.curlOffset) * 18;
-        const fluidCurlY = Math.cos(swirlAngle * 1.4 + p.curlOffset) * 16;
-        const fluidCurlZ = Math.sin(p.ox * 0.015 + time) * 14;
+        const baseOrbitSpeed = 3.2 * swirlFactor;
+        p.vx += tx * baseOrbitSpeed * 0.05;
+        p.vz += tz * baseOrbitSpeed * 0.05;
 
-        // 3. Mouse repulsion/drag impulse:
-        // When mouse approaches or moves fast, fluid pushes away and distorts into a teardrop
-        const dx = rx1 - mouseX;
-        const dy = ry2 - mouseY;
-        const distToMouse = Math.sqrt(dx * dx + dy * dy);
-        let impulseX = 0;
-        let impulseY = 0;
-
-        if (distToMouse < 260) {
-          const force = (1 - distToMouse / 260) * (25 + mouseSpeed * 2.5);
-          impulseX = (dx / (distToMouse || 1)) * force;
-          impulseY = (dy / (distToMouse || 1)) * force;
+        // Centrifugal force pushing towards sphere radius
+        if (distFromCenter < sphereRadius * 0.92 && gravity === 0) {
+          const push = 0.45;
+          p.vx += (p.x / distFromCenter) * push;
+          p.vy += (p.y / distFromCenter) * push;
+          p.vz += (p.z / distFromCenter) * push;
         }
 
-        // Target position in 3D space
-        const targetX = rx1 + fluidCurlX + impulseX;
-        const targetY = ry2 + fluidCurlY + impulseY;
-        const targetZ = rz2 + fluidCurlZ;
+        // 2. Periodic Gravity Cascade (Water Falling Downwards)
+        if (gravity > 0) {
+          // Staggered drop based on delay & mass
+          const effectiveGravity = Math.max(0, gravity - p.dropDelay * 1.5) * (p.mass * 0.85);
+          p.vy += effectiveGravity * 0.18;
 
-        // 4. Spring-Mass-Damper Physics (Weight & Inertia):
-        // F = -k * (x - target), a = F / mass
-        const ax = (targetX - p.x) * (p.spring / p.mass);
-        const ay = (targetY - p.y) * (p.spring / p.mass);
-        const az = (targetZ - p.z) * (p.spring / p.mass);
+          // Droplets experience slight turbulent drag/spray as they fall
+          p.vx += (Math.sin(p.y * 0.04 + time * 3) * 0.8);
+          p.vz += (Math.cos(p.x * 0.04 + time * 3) * 0.8);
+        }
 
-        p.vx = (p.vx + ax) * p.drag;
-        p.vy = (p.vy + ay) * p.drag;
-        p.vz = (p.vz + az) * p.drag;
+        // 3. Mouse Interaction: Cursor stir & push
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const distMouse = Math.sqrt(dx * dx + dy * dy);
+        if (distMouse < 220) {
+          const force = (1 - distMouse / 220) * 4.5;
+          p.vx += (dx / (distMouse || 1)) * force + mouseSpeedX * 0.08;
+          p.vy += (dy / (distMouse || 1)) * force + mouseSpeedY * 0.08;
+        }
+
+        // 4. Update Position with Friction/Drag
+        const fluidFriction = 0.94;
+        p.vx *= fluidFriction;
+        p.vy *= fluidFriction;
+        p.vz *= fluidFriction;
 
         p.x += p.vx;
         p.y += p.vy;
         p.z += p.vz;
 
-        // 5. 3D Perspective Projection
-        const scale = fov / (fov + p.z);
+        // 5. Spherical Glass Boundary Container Constraint
+        // Particles cannot escape sphereRadius
+        const currentDist = Math.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
+        if (currentDist > sphereRadius) {
+          const nx = p.x / currentDist;
+          const ny = p.y / currentDist;
+          const nz = p.z / currentDist;
 
+          // Clamp to boundary
+          p.x = nx * sphereRadius;
+          p.y = ny * sphereRadius;
+          p.z = nz * sphereRadius;
+
+          // Reflect velocity with bounce damping and curve deflection
+          const dot = p.vx * nx + p.vy * ny + p.vz * nz;
+          if (dot > 0) {
+            p.vx = (p.vx - 1.5 * dot * nx) * 0.75;
+            p.vy = (p.vy - 1.5 * dot * ny) * 0.75;
+            p.vz = (p.vz - 1.5 * dot * nz) * 0.75;
+
+            // When droplets hit bottom of container during gravity fall,
+            // deflect them tangentially to sweep back up along sides
+            if (p.y > sphereRadius * 0.65) {
+              p.vx += (p.x > 0 ? 1 : -1) * 2.2;
+              p.vy -= 1.8; // Upward kick
+            }
+          }
+        }
+
+        // 6. 3D Camera Projection
+        const scale = fov / (fov + p.z);
         projected.push({
           px: cx + p.x * scale,
           py: cy + p.y * scale,
           pz: p.z,
           scale,
           char: p.char,
-          color: p.color,
           size: p.size * scale,
-          speed: Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz),
         });
       }
 
-      // Painter's algorithm: sort back-to-front
+      // Sort back-to-front (Painter's algorithm)
       projected.sort((a, b) => a.pz - b.pz);
 
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // 6. Draw dynamic particles
+      // 7. Depth Layering Color Mapping:
+      // Front (pz > 60): Putih Kehijauan (#ffffff, #edfffe)
+      // Mid (-60 <= pz <= 60): Hijau Web Auros (#00f5d4, #00b4a7, #cbfffc)
+      // Back (pz < -60): Hijau Gelap (#003734, #014d48, #002a28)
+      const threshold = sphereRadius * 0.28;
+
       for (let i = 0; i < projected.length; i++) {
         const p = projected[i];
 
-        // Alpha based on Z-depth + motion stretch glow
-        const normalizedZ = (p.pz + baseRadius) / (baseRadius * 2);
-        const baseAlpha = Math.min(1.0, Math.max(0.12, normalizedZ * 1.15));
-        const motionBoost = Math.min(0.3, p.speed * 0.04);
-        const alpha = Math.min(1.0, baseAlpha + motionBoost);
+        let color = '#00f5d4';
+        let alpha = 0.85;
+
+        if (p.pz > threshold) {
+          // LAYER DEPAN: Putih Kehijauan
+          color = p.pz > threshold * 1.8 ? '#ffffff' : '#edfffe';
+          alpha = 0.95;
+        } else if (p.pz < -threshold) {
+          // LAYER BELAKANG: Hijau Gelap
+          color = p.pz < -threshold * 1.8 ? '#002a28' : '#014d48';
+          alpha = 0.35;
+        } else {
+          // LAYER TENGAH: Hijau Web Auros
+          color = i % 2 === 0 ? '#00f5d4' : '#00b4a7';
+          alpha = 0.75;
+        }
 
         ctx.font = `${Math.max(6.5, Math.round(p.size))}px 'GeistMono', monospace, sans-serif`;
-        ctx.fillStyle = p.color;
+        ctx.fillStyle = color;
         ctx.globalAlpha = alpha;
 
         ctx.fillText(p.char, p.px, p.py);
@@ -271,7 +282,7 @@ export default function HeroConstellation() {
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
-      <canvas ref={canvasRef} className="w-full h-full block opacity-90" />
+      <canvas ref={canvasRef} className="w-full h-full block opacity-95" />
       <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/10 to-[#012624] pointer-events-none" />
     </div>
   );
