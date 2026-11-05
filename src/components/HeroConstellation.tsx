@@ -69,7 +69,7 @@ export default function HeroConstellation() {
 
     // Characters for data-fluid matrix look
     const glyphs = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'x', '•'];
-    const particleCount = 1650;
+    const particleCount = 1350;
     const sphereRadius = Math.min(width, height) * 0.38;
     const particles: FluidParticle[] = [];
 
@@ -93,8 +93,8 @@ export default function HeroConstellation() {
         vz: (Math.random() - 0.5) * 1.5,
         mass: 0.8 + Math.random() * 1.6,
         char: glyphs[i % glyphs.length],
-        size: Math.random() * 3 + 8,
-        dropDelay: Math.random() * 2.2, // Individual droplet timing variance
+        size: Math.random() * 5 + 12, // Larger particle size (12px - 17px)
+        dropDelay: Math.random() * 0.8,
       });
     }
 
@@ -106,19 +106,18 @@ export default function HeroConstellation() {
 
       time += 0.016;
 
-      // Periodic Gravity Drop Cycle: 7-second continuous loop
-      // 0.0 - 4.5s: Swirl along shell perimeter
-      // 4.5 - 6.5s: Gravity cascade drop (air jatuh ke bawah)
-      // 6.5 - 7.0s: Recirculation & sweep-up back into vortex
-      const cycleLength = 7.0;
+      // Periodic Gravity Drop: Rare & Brief (Siklus 12 detik, jatuh hanya ~1.2 detik)
+      // 0.0 - 9.8s: Stabil berputar di dinding luar bola (vortex liquid shell)
+      // 9.8 - 11.0s: Curahan gravitasi singkat ke bawah sebagai variasi
+      // 11.0 - 12.0s: Tersapu kembali naik ke putaran keliling
+      const cycleLength = 12.0;
       const cycleTime = time % cycleLength;
 
-      // Gravity intensity curve: peaks between 4.5s and 6.5s
       let gravity = 0;
-      if (cycleTime > 4.2 && cycleTime < 6.4) {
-        const dropPhase = (cycleTime - 4.2) / 2.2;
-        // Bell-curve burst of gravity
-        gravity = Math.sin(dropPhase * Math.PI) * 9.5;
+      if (cycleTime > 9.8 && cycleTime < 11.0) {
+        const dropPhase = (cycleTime - 9.8) / 1.2;
+        // Smooth sine wave burst
+        gravity = Math.sin(dropPhase * Math.PI) * 7.5;
       }
 
       // Swirl strength weakens during gravity drop, strengthens during sweep-up
@@ -259,7 +258,7 @@ export default function HeroConstellation() {
           alpha = 0.75;
         }
 
-        ctx.font = `${Math.max(6.5, Math.round(p.size))}px 'GeistMono', monospace, sans-serif`;
+        ctx.font = `${Math.max(9.5, Math.round(p.size))}px 'GeistMono', monospace, sans-serif`;
         ctx.fillStyle = color;
         ctx.globalAlpha = alpha;
 
