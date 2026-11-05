@@ -12,9 +12,6 @@ export default function Navbar() {
           <span className="text-[20px] font-medium tracking-tight text-white uppercase">
             Komit
           </span>
-          <span className="text-[10px] uppercase tracking-[0.15em] text-[#bbc7c6] border border-[#003734] bg-[#011d1c] px-2 py-0.5 rounded-[6px]">
-            V2
-          </span>
         </Link>
 
         {/* Ghost Navigation Links: 13px uppercase, 0.12em letter spacing */}
