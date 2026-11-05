@@ -184,22 +184,22 @@ export default function HeroConstellation() {
           }
         }
 
-        // 5. Gravitational Attraction towards Mouse Cursor
+        // 5. Intense Gravitational Attraction towards Mouse Cursor
         vec2 toMouse = vec2(uMouse.x - rotated.x, uMouse.y - rotated.y);
         float mouseDist = length(toMouse);
-        float pullRadius = 260.0;
+        float pullRadius = 360.0;
         if (mouseDist < pullRadius && mouseDist > 1.0) {
-          // Smooth non-linear gravitational falloff
+          // Intense gravitational vortex curve
           float pullFactor = (1.0 - mouseDist / pullRadius);
-          float gravPull = pullFactor * pullFactor * 32.0;
+          float gravPull = pow(pullFactor, 1.3) * 125.0;
 
-          // Subtle fluid stretch ripples along the attraction stream
-          float fluidStretch = sin(mouseDist * 0.05 - uTime * 3.5) * 4.0 * pullFactor;
+          // Strong fluid stretch ripples along the attraction funnel
+          float fluidStretch = sin(mouseDist * 0.04 - uTime * 4.5) * 12.0 * pullFactor;
 
           rotated.xy += normalize(toMouse) * (gravPull + fluidStretch);
 
-          // Subtle pull forward in Z space for 3D suction effect
-          rotated.z += gravPull * 0.35;
+          // Deep 3D suction pull forward towards camera
+          rotated.z += gravPull * 0.65;
         }
 
         // 6. Camera View Transform
