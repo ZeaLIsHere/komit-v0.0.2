@@ -230,12 +230,13 @@ export default function AdminPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#003734] pb-6">
           <div>
             <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
-              Admin & Tim Joki Komit
+              Admin &amp; Tim Joki Komit
             </h1>
           </div>
 
-          {/* Tab Navigation in Deep Surface */}
-          <div className="flex items-center gap-2 p-1.5 bg-[#011d1c] rounded-[6px] border border-[#003734]">
+          <div className="flex items-center gap-4">
+            {/* Tab Navigation in Deep Surface */}
+            <div className="flex items-center gap-2 p-1.5 bg-[#011d1c] rounded-[6px] border border-[#003734]">
             <button
               onClick={() => setActiveTab('payments')}
               className={`px-4 py-2 rounded-[4px] text-[12px] uppercase tracking-[0.08em] font-medium transition-all ${
@@ -265,6 +266,17 @@ export default function AdminPage() {
               }`}
             >
               Upload PPT
+            </button>
+          </div>
+
+            <button
+              onClick={async () => {
+                await fetch('/api/admin/logout', { method: 'POST' });
+                window.location.href = '/admin/login';
+              }}
+              className="text-[12px] uppercase tracking-[0.08em] text-[#bbc7c6] hover:text-white border border-[#003734] px-3 py-2 rounded-[6px] bg-[#011d1c] transition-colors"
+            >
+              Keluar
             </button>
           </div>
         </div>
