@@ -40,34 +40,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* STATISTIC COUNTER STRIP (Lavender Phosphor #fde9ff) */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 p-12 rounded-[16px] bg-[#003734] border border-[#003734]">
-          <div className="flex flex-col gap-2">
-            <span className="text-[56px] md:text-[72px] font-medium leading-[1.0] text-[#fde9ff] tracking-[-0.04em]">
-              100%
-            </span>
-            <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe]">
-              Akun GitHub Asli Anggota Kelompok
-            </span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-[56px] md:text-[72px] font-medium leading-[1.0] text-[#fde9ff] tracking-[-0.04em]">
-              Rp 50K
-            </span>
-            <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe]">
-              Formula Biaya Transparan Per Anggota
-            </span>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="text-[56px] md:text-[72px] font-medium leading-[1.0] text-[#fde9ff] tracking-[-0.04em]">
-              UAS A
-            </span>
-            <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe]">
-              Target Nilai dengan Gimmick AI
-            </span>
-          </div>
-        </section>
-
         {/* SECTION: CARA KERJA (FEATURE ROW CARDS) */}
         <section id="cara-kerja" className="flex flex-col gap-12">
           <div className="flex flex-col gap-2">
