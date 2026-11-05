@@ -2,12 +2,15 @@
 
 import React, { useEffect, useRef } from 'react';
 
-interface Point3D {
-  x: number;
-  y: number;
-  z: number;
+interface Particle {
+  baseX: number;
+  baseY: number;
+  baseZ: number;
+  char: string;
   color: string;
   size: number;
+  phase: number;
+  speed: number;
 }
 
 export default function HeroConstellation() {
@@ -21,7 +24,7 @@ export default function HeroConstellation() {
 
     let animId: number;
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 650);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 750);
 
     const handleResize = () => {
       if (!canvas.parentElement) return;
@@ -31,100 +34,165 @@ export default function HeroConstellation() {
 
     window.addEventListener('resize', handleResize);
 
-    // Fibonacci sphere algorithm: 140 bioluminescent points
-    const count = 140;
-    const radius = Math.min(width, height) * 0.42;
-    const colors = ['#00827c', '#cbfffc', '#ffffff', '#fde9ff', '#edfffe'];
+    // Mouse coordinates with smooth damping
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
 
-    const points: Point3D[] = [];
-    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
 
-    for (let i = 0; i < count; i++) {
-      const y = 1 - (i / (count - 1)) * 2;
+      // Normalized coordinates from -1 to 1
+      mouseX = (clientX / width) * 2 - 1;
+      mouseY = (clientY / height) * 2 - 1;
+
+      targetRotY = mouseX * 0.8;
+      targetRotX = -mouseY * 0.8;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches[0].clientX - rect.left;
+        const clientY = e.touches[0].clientY - rect.top;
+        mouseX = (clientX / width) * 2 - 1;
+        mouseY = (clientY / height) * 2 - 1;
+        targetRotY = mouseX * 0.8;
+        targetRotX = -mouseY * 0.8;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove);
+
+    // Particles Setup: 1,400 alphanumeric/binary characters
+    const glyphs = ['0', '1', '7', 'f', 'a', '8', '9', 'c', '3', 'b', 'e', '4', 'x', '•'];
+    const colors = [
+      '#00f5d4', // electric cyan
+      '#00b4a7', // deep aqua
+      '#cbfffc', // pale aqua
+      '#ffffff', // platinum
+      '#edfffe', // liquid mist
+      '#fde9ff', // lavender phosphor accent
+    ];
+
+    const particleCount = 1400;
+    const baseRadius = Math.min(width, height) * 0.42;
+    const particles: Particle[] = [];
+
+    // Fibonacci sphere algorithm with slight volume thickness
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden ratio angle
+
+    for (let i = 0; i < particleCount; i++) {
+      const y = 1 - (i / (particleCount - 1)) * 2;
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = phi * i;
 
-      const x = Math.cos(theta) * radiusAtY;
-      const z = Math.sin(theta) * radiusAtY;
+      // Add random depth variation for cloud-like fluid volume
+      const r = baseRadius * (0.88 + Math.random() * 0.24);
 
-      points.push({
-        x: x * radius,
-        y: y * radius,
-        z: z * radius,
+      const x = Math.cos(theta) * radiusAtY * r;
+      const z = Math.sin(theta) * radiusAtY * r;
+
+      particles.push({
+        baseX: x,
+        baseY: y * r,
+        baseZ: z,
+        char: glyphs[i % glyphs.length],
         color: colors[i % colors.length],
-        size: Math.random() * 1.5 + 1.2,
+        size: Math.random() * 3 + 8,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.6 + Math.random() * 0.8,
       });
     }
 
-    let angleX = 0.0018;
-    let angleY = 0.0035;
-    const fov = 380;
+    let time = 0;
+    const fov = 420;
 
     const render = () => {
-      // Clear canvas with transparency to allow natural background blending
+      // Clear canvas with full transparency
       ctx.clearRect(0, 0, width, height);
+
+      time += 0.015;
+
+      // Smooth camera interpolation towards mouse target
+      currentRotX += (targetRotX - currentRotX) * 0.05;
+      currentRotY += (targetRotY - currentRotY) * 0.05;
+
+      // Base idle rotation + mouse offset
+      const rotY = currentRotY + time * 0.25;
+      const rotX = currentRotX + Math.sin(time * 0.3) * 0.08;
+
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      const cosX = Math.cos(rotX);
+      const sinX = Math.sin(rotX);
 
       const cx = width / 2;
       const cy = height / 2;
 
-      // Project and sort points by Z
-      const projected = points.map((p) => {
-        // Rotate around Y
-        const cosY = Math.cos(angleY);
-        const sinY = Math.sin(angleY);
-        const x1 = p.x * cosY - p.z * sinY;
-        const z1 = p.z * cosY + p.x * sinY;
+      // Calculate fluid wave displacement and 3D projection
+      const projected = [];
 
-        // Rotate around X
-        const cosX = Math.cos(angleX);
-        const sinX = Math.sin(angleX);
-        const y2 = p.y * cosX - z1 * sinX;
-        const z2 = z1 * cosX + p.y * sinX;
+      for (let i = 0; i < particleCount; i++) {
+        const p = particles[i];
 
-        p.x = x1;
-        p.y = y2;
-        p.z = z2;
+        // Fluid displacement: sinusoidal surface waves like liquid ripples
+        const wave =
+          Math.sin(p.phase + time * 1.8 * p.speed) * 8 +
+          Math.cos(p.baseX * 0.01 + p.baseY * 0.01 + time * 1.4) * 12 +
+          Math.sin(p.baseZ * 0.015 + time) * 6;
+
+        const currentR = 1 + wave / baseRadius;
+        const wx = p.baseX * currentR;
+        const wy = p.baseY * currentR;
+        const wz = p.baseZ * currentR;
+
+        // 3D Rotation around Y then X
+        const x1 = wx * cosY - wz * sinY;
+        const z1 = wz * cosY + wx * sinY;
+
+        const y2 = wy * cosX - z1 * sinX;
+        const z2 = z1 * cosX + wy * sinX;
 
         const scale = fov / (fov + z2);
-        return {
+
+        projected.push({
           px: cx + x1 * scale,
           py: cy + y2 * scale,
           pz: z2,
           scale,
+          char: p.char,
           color: p.color,
           size: p.size * scale,
-        };
-      });
-
-      projected.sort((a, b) => a.pz - b.pz);
-
-      // Draw faint bioluminescent connecting filaments
-      for (let i = 0; i < projected.length; i++) {
-        for (let j = i + 1; j < projected.length; j++) {
-          const dx = projected[i].px - projected[j].px;
-          const dy = projected[i].py - projected[j].py;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 60) {
-            const alpha = (1 - dist / 60) * 0.16;
-            ctx.strokeStyle = `rgba(203, 255, 252, ${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.beginPath();
-            ctx.moveTo(projected[i].px, projected[i].py);
-            ctx.lineTo(projected[j].px, projected[j].py);
-            ctx.stroke();
-          }
-        }
+        });
       }
 
-      // Draw glowing sphere nodes
-      for (const p of projected) {
+      // Painter's algorithm: sort back-to-front
+      projected.sort((a, b) => a.pz - b.pz);
+
+      // Render characters and glow
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      for (let i = 0; i < projected.length; i++) {
+        const p = projected[i];
+
+        // Alpha based on depth: front particles are vivid, rear particles are faint
+        const normalizedZ = (p.pz + baseRadius) / (baseRadius * 2);
+        const alpha = Math.min(1.0, Math.max(0.12, normalizedZ * 1.1));
+
+        ctx.font = `${Math.max(7, Math.round(p.size))}px 'GeistMono', monospace, sans-serif`;
         ctx.fillStyle = p.color;
-        // Higher alpha in front, softer in back
-        ctx.globalAlpha = Math.max(0.15, (p.pz + radius) / (2 * radius));
-        ctx.beginPath();
-        ctx.arc(p.px, p.py, Math.max(1, p.size), 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = alpha;
+
+        // Draw character glyph
+        ctx.fillText(p.char, p.px, p.py);
       }
 
       ctx.globalAlpha = 1.0;
@@ -135,15 +203,17 @@ export default function HeroConstellation() {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animId);
     };
   }, []);
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      <canvas ref={canvasRef} className="w-full h-full block opacity-70" />
-      {/* Soft radial fade out to the canvas edges */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/40 to-[#012624]" />
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center">
+      <canvas ref={canvasRef} className="w-full h-full block opacity-85" />
+      {/* Ambient center illumination and soft edge vignette */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/20 to-[#012624] pointer-events-none" />
     </div>
   );
 }
