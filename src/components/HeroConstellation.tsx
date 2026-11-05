@@ -101,16 +101,12 @@ export default function HeroConstellation() {
       uRadius: { value: sphereRadius },
       uTexture: { value: glyphTexture },
       uGravity: { value: 0.0 },
-      uMouse: { value: new THREE.Vector2(0, 0) },
-      uMouseVel: { value: new THREE.Vector2(0, 0) },
     };
 
     const vertexShader = `
       uniform float uTime;
       uniform float uRadius;
       uniform float uGravity;
-      uniform vec2 uMouse;
-      uniform vec2 uMouseVel;
 
       attribute float aCharIndex;
       attribute float aMass;
@@ -184,25 +180,7 @@ export default function HeroConstellation() {
           }
         }
 
-        // 5. Intense Gravitational Attraction towards Mouse Cursor
-        vec2 toMouse = vec2(uMouse.x - rotated.x, uMouse.y - rotated.y);
-        float mouseDist = length(toMouse);
-        float pullRadius = 360.0;
-        if (mouseDist < pullRadius && mouseDist > 1.0) {
-          // Intense gravitational vortex curve
-          float pullFactor = (1.0 - mouseDist / pullRadius);
-          float gravPull = pow(pullFactor, 1.3) * 125.0;
-
-          // Strong fluid stretch ripples along the attraction funnel
-          float fluidStretch = sin(mouseDist * 0.04 - uTime * 4.5) * 12.0 * pullFactor;
-
-          rotated.xy += normalize(toMouse) * (gravPull + fluidStretch);
-
-          // Deep 3D suction pull forward towards camera
-          rotated.z += gravPull * 0.65;
-        }
-
-        // 6. Camera View Transform
+        // 5. Camera View Transform
         vec4 mvPosition = modelViewMatrix * vec4(rotated, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
@@ -269,31 +247,6 @@ export default function HeroConstellation() {
     const pointCloud = new THREE.Points(geometry, material);
     scene.add(pointCloud);
 
-    // 6. Interactive Mouse & Velocity Tracking
-    let targetMouseX = 0;
-    let targetMouseY = 0;
-    let curMouseX = 0;
-    let curMouseY = 0;
-    let prevX = 0;
-    let prevY = 0;
-
-    const onPointerMove = (e: MouseEvent | Touch) => {
-      const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / height) * 2 - 1);
-
-      targetMouseX = x * (sphereRadius * 1.15);
-      targetMouseY = y * (sphereRadius * 1.15);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => onPointerMove(e);
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) onPointerMove(e.touches[0]);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('touchmove', handleTouchMove);
-
     const handleWindowResize = () => {
       if (!container) return;
       width = container.clientWidth;
@@ -304,7 +257,7 @@ export default function HeroConstellation() {
     };
     window.addEventListener('resize', handleWindowResize);
 
-    // 7. Render Loop with 60+ FPS GPU Acceleration
+    // 6. Render Loop with Autonomous Fluid Simulation
     let animId: number;
     const clock = new THREE.Clock();
 
@@ -313,18 +266,6 @@ export default function HeroConstellation() {
 
       const elapsedTime = clock.getElapsedTime();
       uniforms.uTime.value = elapsedTime;
-
-      // Smooth mouse interpolation
-      curMouseX += (targetMouseX - curMouseX) * 0.08;
-      curMouseY += (targetMouseY - curMouseY) * 0.08;
-
-      const velX = curMouseX - prevX;
-      const velY = curMouseY - prevY;
-      prevX = curMouseX;
-      prevY = curMouseY;
-
-      uniforms.uMouse.value.set(curMouseX, curMouseY);
-      uniforms.uMouseVel.value.set(velX, velY);
 
       // Periodic Gravity Drop: Cycle every 12 seconds, brief ~1.2s cascade
       const cycleTime = elapsedTime % 12.0;
@@ -335,10 +276,6 @@ export default function HeroConstellation() {
       }
       uniforms.uGravity.value = grav;
 
-      // Gentle subtle tilt of sphere with cursor (stabilized)
-      pointCloud.rotation.y = curMouseX * 0.00035;
-      pointCloud.rotation.x = -curMouseY * 0.00035;
-
       renderer.render(scene, camera);
     };
 
@@ -346,8 +283,6 @@ export default function HeroConstellation() {
 
     return () => {
       window.removeEventListener('resize', handleWindowResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('touchmove', handleTouchMove);
       cancelAnimationFrame(animId);
 
       renderer.dispose();
