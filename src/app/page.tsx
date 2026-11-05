@@ -8,16 +8,17 @@ export default function HomePage() {
     <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
       <Navbar />
 
-      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-24 md:gap-32">
-        {/* HERO SECTION */}
-        <section className="flex flex-col items-center text-center gap-10 pt-4">
-          {/* Uppercase Section Label / Kicker: 12px uppercase tracking 0.15em */}
-          <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
-            AUROS PRODUCTIZED ECOSYSTEM • KOMIT V2
-          </span>
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-6 sm:px-12 py-10 flex flex-col gap-24 md:gap-32">
+        {/* HERO SECTION WITH BIOLUMINESCENT SPHERE BACKGROUND */}
+        <section className="relative min-h-[75vh] flex flex-col items-center justify-center text-center gap-8 py-16 overflow-hidden">
+          {/* Atmospheric Particle Sphere Background */}
+          <HeroConstellation />
 
-          <div className="max-w-4xl flex flex-col gap-6">
-            {/* Hero Headline: 61px-86px Matter weight 500 line-height 1.0 letter-spacing -0.04em */}
+          {/* Foreground Content Stack */}
+          <div className="relative z-10 max-w-4xl flex flex-col items-center gap-6">
+            <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe] bg-[#003734]/40 px-3 py-1 rounded-[6px] border border-[#003734]">
+              AUROS PRODUCTIZED ECOSYSTEM • KOMIT V2
+            </span>
             <h1 className="text-[44px] sm:text-[68px] md:text-[86px] leading-[1.0] font-medium tracking-[-0.04em] text-white">
               Proyek kelompok selesai. Commit natural di mata dosen.
             </h1>
@@ -26,8 +27,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Primary CTA Button: Aurora Gradient, 6px radius, uppercase */}
-          <div className="flex flex-wrap items-center justify-center gap-6">
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 pt-2">
             <Link
               href="/order"
               className="btn-aurora text-[14px] px-8 py-4 rounded-[6px] transition-all"
@@ -40,11 +40,6 @@ export default function HomePage() {
             >
               Lihat Demo Dashboard Kelompok
             </Link>
-          </div>
-
-          {/* 3D Bioluminescent Particle Sphere Visual */}
-          <div className="w-full mt-6">
-            <HeroConstellation />
           </div>
         </section>
 

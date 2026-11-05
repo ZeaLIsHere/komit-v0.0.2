@@ -20,8 +20,8 @@ export default function HeroConstellation() {
     if (!ctx) return;
 
     let animId: number;
-    let width = (canvas.width = canvas.parentElement?.clientWidth || 700);
-    let height = (canvas.height = canvas.parentElement?.clientHeight || 450);
+    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 650);
 
     const handleResize = () => {
       if (!canvas.parentElement) return;
@@ -31,16 +31,16 @@ export default function HeroConstellation() {
 
     window.addEventListener('resize', handleResize);
 
-    // Generate points on a sphere (Fibonacci sphere algorithm)
-    const count = 120;
-    const radius = Math.min(width, height) * 0.38;
+    // Fibonacci sphere algorithm: 140 bioluminescent points
+    const count = 140;
+    const radius = Math.min(width, height) * 0.42;
     const colors = ['#00827c', '#cbfffc', '#ffffff', '#fde9ff', '#edfffe'];
 
     const points: Point3D[] = [];
     const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
 
     for (let i = 0; i < count; i++) {
-      const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
+      const y = 1 - (i / (count - 1)) * 2;
       const radiusAtY = Math.sqrt(1 - y * y);
       const theta = phi * i;
 
@@ -52,17 +52,17 @@ export default function HeroConstellation() {
         y: y * radius,
         z: z * radius,
         color: colors[i % colors.length],
-        size: Math.random() * 1.5 + 1.5,
+        size: Math.random() * 1.5 + 1.2,
       });
     }
 
-    let angleX = 0.002;
-    let angleY = 0.004;
-    const fov = 350;
+    let angleX = 0.0018;
+    let angleY = 0.0035;
+    const fov = 380;
 
     const render = () => {
-      ctx.fillStyle = '#012624';
-      ctx.fillRect(0, 0, width, height);
+      // Clear canvas with transparency to allow natural background blending
+      ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
       const cy = height / 2;
@@ -98,15 +98,15 @@ export default function HeroConstellation() {
 
       projected.sort((a, b) => a.pz - b.pz);
 
-      // Draw faint bioluminescent connecting lines for near points
+      // Draw faint bioluminescent connecting filaments
       for (let i = 0; i < projected.length; i++) {
         for (let j = i + 1; j < projected.length; j++) {
           const dx = projected[i].px - projected[j].px;
           const dy = projected[i].py - projected[j].py;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 55) {
-            const alpha = (1 - dist / 55) * 0.15;
+          if (dist < 60) {
+            const alpha = (1 - dist / 60) * 0.16;
             ctx.strokeStyle = `rgba(203, 255, 252, ${alpha})`;
             ctx.lineWidth = 0.6;
             ctx.beginPath();
@@ -120,7 +120,8 @@ export default function HeroConstellation() {
       // Draw glowing sphere nodes
       for (const p of projected) {
         ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(0.2, (p.pz + radius) / (2 * radius));
+        // Higher alpha in front, softer in back
+        ctx.globalAlpha = Math.max(0.15, (p.pz + radius) / (2 * radius));
         ctx.beginPath();
         ctx.arc(p.px, p.py, Math.max(1, p.size), 0, Math.PI * 2);
         ctx.fill();
@@ -139,12 +140,10 @@ export default function HeroConstellation() {
   }, []);
 
   return (
-    <div className="relative w-full h-[360px] md:h-[480px] overflow-hidden rounded-[16px] bg-[#003734]/30 border border-[#003734]">
-      <canvas ref={canvasRef} className="w-full h-full block" />
-      <div className="pointer-events-none absolute inset-0 bg-radial-gradient from-transparent to-[#012624] opacity-40" />
-      <div className="absolute bottom-4 left-6 text-[11px] font-mono uppercase tracking-[0.12em] text-[#bbc7c6]">
-        Bioluminescent Commit Sphere • Autonomous Synchronizer
-      </div>
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <canvas ref={canvasRef} className="w-full h-full block opacity-70" />
+      {/* Soft radial fade out to the canvas edges */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/40 to-[#012624]" />
     </div>
   );
 }
