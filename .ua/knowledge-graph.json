@@ -1,0 +1,418 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "Komit-V2",
+    "languages": ["TypeScript", "TSX", "CSS", "SQL", "Markdown"],
+    "frameworks": ["Next.js 15", "React 19", "Tailwind CSS v4", "Supabase"],
+    "description": "Productized Service & SaaS platform for university IT group projects with scheduled GitHub auto-commits via authentic student accounts.",
+    "analyzedAt": "2025-03-01T00:00:00.000Z",
+    "gitCommitHash": "initial-foundation"
+  },
+  "nodes": [
+    {
+      "id": "document:PRD.md",
+      "type": "document",
+      "name": "PRD.md",
+      "filePath": "PRD.md",
+      "summary": "Product Requirements Document: Joki proyek kuliah, pricing formula, 3 core database tables, user flows.",
+      "tags": ["requirements", "business-logic", "mvp-scope"]
+    },
+    {
+      "id": "document:DESIGN.md",
+      "type": "document",
+      "name": "DESIGN.md",
+      "filePath": "DESIGN.md",
+      "summary": "Dala design tokens: void black canvas, Electric Iris pill CTA, Saffron Spark accents, 6px base unit.",
+      "tags": ["design-system", "tokens", "styling-spec"]
+    },
+    {
+      "id": "document:AGENTS.md",
+      "type": "document",
+      "name": "AGENTS.md",
+      "filePath": "AGENTS.md",
+      "summary": "Engineering & design rules, execution chain, and lazy senior coding discipline.",
+      "tags": ["rules", "architecture", "discipline"]
+    },
+    {
+      "id": "table:supabase/schema.sql:projects",
+      "type": "table",
+      "name": "projects",
+      "filePath": "supabase/schema.sql",
+      "summary": "Projects table storing order data, pricing, AI ideas, repo URL, README and PPT status.",
+      "tags": ["database", "schema", "postgres"]
+    },
+    {
+      "id": "table:supabase/schema.sql:project_members",
+      "type": "table",
+      "name": "project_members",
+      "filePath": "supabase/schema.sql",
+      "summary": "Project members table with student details and server-only GitHub OAuth access tokens.",
+      "tags": ["database", "oauth", "security"]
+    },
+    {
+      "id": "table:supabase/schema.sql:commit_schedules",
+      "type": "table",
+      "name": "commit_schedules",
+      "filePath": "supabase/schema.sql",
+      "summary": "Commit schedule queue for weekly automated git pushes on behalf of group members.",
+      "tags": ["database", "git-scheduler", "commits"]
+    },
+    {
+      "id": "file:src/lib/types.ts",
+      "type": "file",
+      "name": "types.ts",
+      "filePath": "src/lib/types.ts",
+      "summary": "Core domain TypeScript models: Project, ProjectMember, CommitSchedule, IdeaItem.",
+      "tags": ["typescript", "models", "domain"]
+    },
+    {
+      "id": "file:src/lib/supabase.ts",
+      "type": "file",
+      "name": "supabase.ts",
+      "filePath": "src/lib/supabase.ts",
+      "summary": "Supabase client and service role admin client configuration with configuration guards.",
+      "tags": ["supabase", "client", "auth"]
+    },
+    {
+      "id": "file:src/lib/data.ts",
+      "type": "file",
+      "name": "data.ts",
+      "filePath": "src/lib/data.ts",
+      "summary": "Unified data access layer bridging Supabase PostgreSQL and local in-memory mock storage.",
+      "tags": ["data-access", "storage", "mock-fallback"]
+    },
+    {
+      "id": "endpoint:src/app/api/projects/route.ts:projects",
+      "type": "endpoint",
+      "name": "/api/projects",
+      "filePath": "src/app/api/projects/route.ts",
+      "summary": "API route for listing projects and submitting new orders with price calculation.",
+      "tags": ["api", "order-creation", "pricing"]
+    },
+    {
+      "id": "endpoint:src/app/api/ai/ideas/route.ts:ai-ideas",
+      "type": "endpoint",
+      "name": "/api/ai/ideas",
+      "filePath": "src/app/api/ai/ideas/route.ts",
+      "summary": "Generates 3 project recommendations with unique lecturer-targeted gimmicks for UAS.",
+      "tags": ["api", "ai-llm", "gimmicks"]
+    },
+    {
+      "id": "endpoint:src/app/api/ai/readme/route.ts:ai-readme",
+      "type": "endpoint",
+      "name": "/api/ai/readme",
+      "filePath": "src/app/api/ai/readme/route.ts",
+      "summary": "Generates formatted README presentation materials and Q&A prep for lecturer exams.",
+      "tags": ["api", "ai-llm", "presentation-readme"]
+    },
+    {
+      "id": "endpoint:src/app/api/auth/github/route.ts:github-oauth-init",
+      "type": "endpoint",
+      "name": "/api/auth/github",
+      "filePath": "src/app/api/auth/github/route.ts",
+      "summary": "Initiates GitHub OAuth authorization flow with member state and repo/workflow scopes.",
+      "tags": ["api", "oauth", "github"]
+    },
+    {
+      "id": "endpoint:src/app/api/auth/github/callback/route.ts:github-oauth-callback",
+      "type": "endpoint",
+      "name": "/api/auth/github/callback",
+      "filePath": "src/app/api/auth/github/callback/route.ts",
+      "summary": "Exchanges GitHub OAuth code, retrieves user identity, and secures token in database.",
+      "tags": ["api", "oauth", "security"]
+    },
+    {
+      "id": "endpoint:src/app/api/admin/commit/push/route.ts:commit-push",
+      "type": "endpoint",
+      "name": "/api/admin/commit/push",
+      "filePath": "src/app/api/admin/commit/push/route.ts",
+      "summary": "Pushes commits directly to GitHub repository using student member's OAuth token.",
+      "tags": ["api", "github-api", "auto-commit"]
+    },
+    {
+      "id": "file:src/app/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "src/app/page.tsx",
+      "summary": "Landing page in Persuade mode: constellation canvas visualizer, value proposition, pricing.",
+      "tags": ["page", "persuade", "landing-hero"]
+    },
+    {
+      "id": "file:src/app/order/page.tsx",
+      "type": "file",
+      "name": "order/page.tsx",
+      "filePath": "src/app/order/page.tsx",
+      "summary": "Operate mode order page: service and package selection, member count slider, QRIS checkout.",
+      "tags": ["page", "operate", "order-flow"]
+    },
+    {
+      "id": "file:src/app/project/[id]/setup/page.tsx",
+      "type": "file",
+      "name": "setup/page.tsx",
+      "filePath": "src/app/project/[id]/setup/page.tsx",
+      "summary": "Project setup: payment gate, AI ideation & gimmick selection, member form, invite link.",
+      "tags": ["page", "operate", "setup-ideation"]
+    },
+    {
+      "id": "file:src/app/project/[id]/page.tsx",
+      "type": "file",
+      "name": "project/page.tsx",
+      "filePath": "src/app/project/[id]/page.tsx",
+      "summary": "Client dashboard: commit schedule timeline, member OAuth status, README and PPT add-on.",
+      "tags": ["page", "operate", "client-dashboard"]
+    },
+    {
+      "id": "file:src/app/join/[id]/page.tsx",
+      "type": "file",
+      "name": "join/page.tsx",
+      "filePath": "src/app/join/[id]/page.tsx",
+      "summary": "Contributor onboarding page: group member selection and GitHub OAuth connection.",
+      "tags": ["page", "operate", "contributor-join"]
+    },
+    {
+      "id": "file:src/app/admin/page.tsx",
+      "type": "file",
+      "name": "admin/page.tsx",
+      "filePath": "src/app/admin/page.tsx",
+      "summary": "Operator panel: QRIS verification, commit scheduler & live push trigger, PPT upload.",
+      "tags": ["page", "operate", "admin-panel"]
+    },
+    {
+      "id": "file:src/components/HeroConstellation.tsx",
+      "type": "file",
+      "name": "HeroConstellation.tsx",
+      "filePath": "src/components/HeroConstellation.tsx",
+      "summary": "Interactive constellation particle canvas visualization of collaborative git commits.",
+      "tags": ["component", "canvas", "interactive"]
+    },
+    {
+      "id": "file:src/components/Navbar.tsx",
+      "type": "file",
+      "name": "Navbar.tsx",
+      "filePath": "src/components/Navbar.tsx",
+      "summary": "Site-wide navigation bar featuring logo lockup, ghost links, and Electric Iris CTA pill.",
+      "tags": ["component", "navigation", "brand"]
+    },
+    {
+      "id": "file:src/components/Footer.tsx",
+      "type": "file",
+      "name": "Footer.tsx",
+      "filePath": "src/components/Footer.tsx",
+      "summary": "Minimalist footer adhering to void canvas rules and hairline subtle dividers.",
+      "tags": ["component", "footer"]
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:PRD.md",
+      "target": "table:supabase/schema.sql:projects",
+      "type": "defines_schema",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/lib/data.ts",
+      "target": "table:supabase/schema.sql:projects",
+      "type": "reads_from",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/lib/data.ts",
+      "target": "file:src/lib/supabase.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/lib/data.ts",
+      "target": "file:src/lib/types.ts",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "endpoint:src/app/api/projects/route.ts:projects",
+      "target": "file:src/lib/data.ts",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/order/page.tsx",
+      "target": "endpoint:src/app/api/projects/route.ts:projects",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/project/[id]/setup/page.tsx",
+      "target": "endpoint:src/app/api/ai/ideas/route.ts:ai-ideas",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/project/[id]/page.tsx",
+      "target": "endpoint:src/app/api/ai/readme/route.ts:ai-readme",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/join/[id]/page.tsx",
+      "target": "endpoint:src/app/api/auth/github/route.ts:github-oauth-init",
+      "type": "routes",
+      "weight": 0.7
+    },
+    {
+      "source": "endpoint:src/app/api/auth/github/callback/route.ts:github-oauth-callback",
+      "target": "file:src/lib/data.ts",
+      "type": "writes_to",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/admin/page.tsx",
+      "target": "endpoint:src/app/api/admin/commit/push/route.ts:commit-push",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/app/page.tsx",
+      "target": "file:src/components/HeroConstellation.tsx",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/page.tsx",
+      "target": "file:src/components/Navbar.tsx",
+      "type": "contains",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/app/page.tsx",
+      "target": "file:src/components/Footer.tsx",
+      "type": "contains",
+      "weight": 1.0
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:spec-and-docs",
+      "name": "Specifications & Rules",
+      "description": "Foundational business rules, design tokens, and engineering constraints.",
+      "nodeIds": ["document:PRD.md", "document:DESIGN.md", "document:AGENTS.md"]
+    },
+    {
+      "id": "layer:database-schema",
+      "name": "Database Schema",
+      "description": "Supabase PostgreSQL tables for projects, group members, and commit schedules.",
+      "nodeIds": [
+        "table:supabase/schema.sql:projects",
+        "table:supabase/schema.sql:project_members",
+        "table:supabase/schema.sql:commit_schedules"
+      ]
+    },
+    {
+      "id": "layer:core-services",
+      "name": "Core Data Services",
+      "description": "TypeScript models, Supabase client initialization, and unified data access layer.",
+      "nodeIds": ["file:src/lib/types.ts", "file:src/lib/supabase.ts", "file:src/lib/data.ts"]
+    },
+    {
+      "id": "layer:api-endpoints",
+      "name": "API Endpoints",
+      "description": "Server routes for project CRUD, AI ideation/readme, GitHub OAuth, and commit push.",
+      "nodeIds": [
+        "endpoint:src/app/api/projects/route.ts:projects",
+        "endpoint:src/app/api/ai/ideas/route.ts:ai-ideas",
+        "endpoint:src/app/api/ai/readme/route.ts:ai-readme",
+        "endpoint:src/app/api/auth/github/route.ts:github-oauth-init",
+        "endpoint:src/app/api/auth/github/callback/route.ts:github-oauth-callback",
+        "endpoint:src/app/api/admin/commit/push/route.ts:commit-push"
+      ]
+    },
+    {
+      "id": "layer:ui-components",
+      "name": "UI Components",
+      "description": "Reusable interface elements, navigation lockup, and constellation canvas visualizer.",
+      "nodeIds": [
+        "file:src/components/HeroConstellation.tsx",
+        "file:src/components/Navbar.tsx",
+        "file:src/components/Footer.tsx"
+      ]
+    },
+    {
+      "id": "layer:pages-and-views",
+      "name": "Pages & User Flows",
+      "description": "Persuade landing page and Operate surfaces: order, setup, dashboard, join, admin.",
+      "nodeIds": [
+        "file:src/app/page.tsx",
+        "file:src/app/order/page.tsx",
+        "file:src/app/project/[id]/setup/page.tsx",
+        "file:src/app/project/[id]/page.tsx",
+        "file:src/app/join/[id]/page.tsx",
+        "file:src/app/admin/page.tsx"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Dokumen Spesifikasi & Rantai Aturan",
+      "description": "Pelajari aturan engineering di AGENTS.md, kebutuhan bisnis di PRD.md, dan sistem visual Dala di DESIGN.md.",
+      "nodeIds": ["document:AGENTS.md", "document:PRD.md", "document:DESIGN.md"]
+    },
+    {
+      "order": 2,
+      "title": "Skema Inti Database (Supabase)",
+      "description": "3 tabel utama: projects (data order & ide), project_members (token OAuth terisolasi), dan commit_schedules (antrean push).",
+      "nodeIds": [
+        "table:supabase/schema.sql:projects",
+        "table:supabase/schema.sql:project_members",
+        "table:supabase/schema.sql:commit_schedules"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Data Layer & Layanan Terpadu",
+      "description": "src/lib/data.ts menjembatani Supabase PostgreSQL dengan in-memory fallback agar aplikasi tahan uji di lingkungan dev.",
+      "nodeIds": ["file:src/lib/data.ts", "file:src/lib/types.ts"]
+    },
+    {
+      "order": 4,
+      "title": "Alur Pemesanan & QRIS (/order)",
+      "description": "Kalkulasi dinamis formula harga N x Rp 50.000, paket layanan, dan upload bukti transfer QRIS.",
+      "nodeIds": ["file:src/app/order/page.tsx", "endpoint:src/app/api/projects/route.ts:projects"]
+    },
+    {
+      "order": 5,
+      "title": "Setup Proyek, Ide AI & Gimmick Dosen",
+      "description": "Generator 3 ide AI dengan gimmick pemikat dosen dan formulir data mahasiswa anggota kelompok.",
+      "nodeIds": [
+        "file:src/app/project/[id]/setup/page.tsx",
+        "endpoint:src/app/api/ai/ideas/route.ts:ai-ideas"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Koneksi GitHub OAuth Anggota (/join/[id])",
+      "description": "Anggota kelompok menghubungkan akun GitHub asli mereka secara aman untuk persiapan cicil commit.",
+      "nodeIds": [
+        "file:src/app/join/[id]/page.tsx",
+        "endpoint:src/app/api/auth/github/route.ts:github-oauth-init",
+        "endpoint:src/app/api/auth/github/callback/route.ts:github-oauth-callback"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Client Dashboard & Bahan UAS",
+      "description": "Pemantauan progress commit mingguan per anggota, generate README gratis, atau pesan slide PPT jadi.",
+      "nodeIds": [
+        "file:src/app/project/[id]/page.tsx",
+        "endpoint:src/app/api/ai/readme/route.ts:ai-readme"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Admin & Tim Joki Panel (/admin)",
+      "description": "Verifikasi bukti QRIS, atur jadwal commit, eksekusi push via GitHub Contents API, dan unggah file PPT.",
+      "nodeIds": [
+        "file:src/app/admin/page.tsx",
+        "endpoint:src/app/api/admin/commit/push/route.ts:commit-push"
+      ]
+    }
+  ]
+}
