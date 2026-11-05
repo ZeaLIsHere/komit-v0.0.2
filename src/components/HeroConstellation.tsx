@@ -184,13 +184,22 @@ export default function HeroConstellation() {
           }
         }
 
-        // 5. Liquid Ripple from Mouse Interaction
-        vec2 screenDist = vec2(rotated.x - uMouse.x, rotated.y - uMouse.y);
-        float mouseDist = length(screenDist);
-        if (mouseDist < 190.0) {
-          float rippleForce = (1.0 - mouseDist / 190.0);
-          float fluidWave = sin(mouseDist * 0.08 - uTime * 6.0) * 18.0 * rippleForce;
-          rotated.xy += normalize(screenDist) * (rippleForce * 40.0 + fluidWave);
+        // 5. Gravitational Attraction towards Mouse Cursor
+        vec2 toMouse = vec2(uMouse.x - rotated.x, uMouse.y - rotated.y);
+        float mouseDist = length(toMouse);
+        float pullRadius = 260.0;
+        if (mouseDist < pullRadius && mouseDist > 1.0) {
+          // Smooth non-linear gravitational falloff
+          float pullFactor = (1.0 - mouseDist / pullRadius);
+          float gravPull = pullFactor * pullFactor * 32.0;
+
+          // Subtle fluid stretch ripples along the attraction stream
+          float fluidStretch = sin(mouseDist * 0.05 - uTime * 3.5) * 4.0 * pullFactor;
+
+          rotated.xy += normalize(toMouse) * (gravPull + fluidStretch);
+
+          // Subtle pull forward in Z space for 3D suction effect
+          rotated.z += gravPull * 0.35;
         }
 
         // 6. Camera View Transform
@@ -326,9 +335,9 @@ export default function HeroConstellation() {
       }
       uniforms.uGravity.value = grav;
 
-      // Subtle tilt of sphere with cursor
-      pointCloud.rotation.y = curMouseX * 0.0012;
-      pointCloud.rotation.x = -curMouseY * 0.0012;
+      // Gentle subtle tilt of sphere with cursor (stabilized)
+      pointCloud.rotation.y = curMouseX * 0.00035;
+      pointCloud.rotation.x = -curMouseY * 0.00035;
 
       renderer.render(scene, camera);
     };
