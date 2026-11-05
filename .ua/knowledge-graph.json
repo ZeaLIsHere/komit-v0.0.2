@@ -178,6 +178,22 @@
       "tags": ["page", "operate", "admin-panel"]
     },
     {
+      "id": "file:src/components/CommitHeatmap.tsx",
+      "type": "file",
+      "name": "CommitHeatmap.tsx",
+      "filePath": "src/components/CommitHeatmap.tsx",
+      "summary": "14-week GitHub contribution heatmap matrix with member filtering and blame naturalness metrics.",
+      "tags": ["component", "github-heatmap", "metrics"]
+    },
+    {
+      "id": "endpoint:src/app/api/cron/push-commits/route.ts:cron-push-commits",
+      "type": "endpoint",
+      "name": "/api/cron/push-commits",
+      "filePath": "src/app/api/cron/push-commits/route.ts",
+      "summary": "Automated cron worker endpoint for batch pushing due commits to GitHub.",
+      "tags": ["api", "cron-worker", "auto-commit"]
+    },
+    {
       "id": "file:src/components/HeroConstellation.tsx",
       "type": "file",
       "name": "HeroConstellation.tsx",

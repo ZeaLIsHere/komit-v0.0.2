@@ -24,6 +24,28 @@ export default function AdminPage() {
     new Date(Date.now() + 86400000 * 3).toISOString().slice(0, 16)
   );
   const [isPushingCommit, setIsPushingCommit] = useState<string | null>(null);
+  const [isRunningCron, setIsRunningCron] = useState<boolean>(false);
+
+  // Trigger batch cron auto-push
+  const handleRunCronAutoPush = async () => {
+    setIsRunningCron(true);
+    try {
+      const res = await fetch('/api/cron/push-commits?force=true', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Auto-Push selesai! ${data.totalPushed} commit berhasil didorong ke antrean.`);
+        if (selectedProjectId) {
+          const sRes = await fetch(`/api/projects/${selectedProjectId}/schedules`);
+          const sData = await sRes.json();
+          setProjectSchedules(sData.schedules || []);
+        }
+      }
+    } catch {
+      alert('Gagal menjalankan auto-push');
+    } finally {
+      setIsRunningCron(false);
+    }
+  };
 
   // Upload PPT state
   const [pptFileUrlInput, setPptFileUrlInput] = useState<{ [projectId: string]: string }>({});
@@ -454,10 +476,17 @@ export default function AdminPage() {
 
                 {/* Schedules Table */}
                 <div className="border border-[#003734] rounded-[16px] overflow-hidden bg-[#003734]">
-                  <div className="p-4 bg-[#011d1c] border-b border-[#012624] flex items-center justify-between">
+                  <div className="p-4 bg-[#011d1c] border-b border-[#012624] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <span className="text-[14px] font-medium text-white">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})
                     </span>
+                    <button
+                      onClick={handleRunCronAutoPush}
+                      disabled={isRunningCron}
+                      className="btn-aurora text-[11px] px-3.5 py-1.5 rounded-[4px] self-start sm:self-auto"
+                    >
+                      {isRunningCron ? 'Mengeksekusi...' : '⚡ Jalankan Auto-Push Sekarang'}
+                    </button>
                   </div>
 
                   <div className="overflow-x-auto">

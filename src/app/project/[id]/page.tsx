@@ -4,6 +4,7 @@ import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import CommitHeatmap from '@/components/CommitHeatmap';
 import { Project, ProjectMember, CommitSchedule } from '@/lib/types';
 
 export default function ProjectDashboardPage({
@@ -286,6 +287,11 @@ export default function ProjectDashboardPage({
               </div>
             ))}
           </div>
+        </section>
+
+        {/* GitHub Contribution Heatmap Grid */}
+        <section>
+          <CommitHeatmap schedules={schedules} members={members} />
         </section>
 
         {/* Commit Schedule & History (Cicil Commit) */}
