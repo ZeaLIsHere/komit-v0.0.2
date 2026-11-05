@@ -162,6 +162,14 @@
       "tags": ["page", "operate", "client-dashboard"]
     },
     {
+      "id": "file:src/app/project/[id]/present/page.tsx",
+      "type": "file",
+      "name": "present/page.tsx",
+      "filePath": "src/app/project/[id]/present/page.tsx",
+      "summary": "Interactive fullscreen slide presentation deck for university exam defense with Q&A cheat sheet and PDF print handout.",
+      "tags": ["page", "presentation", "uas-ready", "slide-deck"]
+    },
+    {
       "id": "file:src/app/join/[id]/page.tsx",
       "type": "file",
       "name": "join/page.tsx",

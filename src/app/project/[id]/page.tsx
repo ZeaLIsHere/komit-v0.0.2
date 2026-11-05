@@ -174,6 +174,12 @@ export default function ProjectDashboardPage({
 
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <Link
+                href={`/project/${id}/present`}
+                className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
+              >
+                Mode Presentasi UAS 🖥️
+              </Link>
+              <Link
                 href={`/project/${id}/setup`}
                 className="text-[13px] bg-[#011d1c] hover:bg-[#012624] text-white border border-[#003734] px-5 py-2.5 rounded-[6px] transition-all"
               >
@@ -184,7 +190,7 @@ export default function ProjectDashboardPage({
                   href={project.github_repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
+                  className="bg-[#003734] hover:bg-[#004d49] text-white border border-[#004d49] text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
                 >
                   GitHub Repo ↗
                 </a>
