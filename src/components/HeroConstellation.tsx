@@ -247,13 +247,13 @@ export default function HeroConstellation() {
         let alpha = 0.85;
 
         if (p.pz > threshold) {
-          // LAYER DEPAN: Putih Kehijauan
-          color = p.pz > threshold * 1.8 ? '#ffffff' : '#edfffe';
-          alpha = 0.95;
+          // LAYER DEPAN: Hijau Gelap
+          color = p.pz > threshold * 1.8 ? '#002a28' : '#014d48';
+          alpha = 0.85;
         } else if (p.pz < -threshold) {
-          // LAYER BELAKANG: Hijau Gelap
-          color = p.pz < -threshold * 1.8 ? '#002a28' : '#014d48';
-          alpha = 0.35;
+          // LAYER BELAKANG: Putih Kehijauan (Luminous Glow di belakang)
+          color = p.pz < -threshold * 1.8 ? '#ffffff' : '#edfffe';
+          alpha = 0.95;
         } else {
           // LAYER TENGAH: Hijau Web Auros
           color = i % 2 === 0 ? '#00f5d4' : '#00b4a7';
