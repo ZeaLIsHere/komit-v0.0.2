@@ -73,14 +73,9 @@ export default function HomePage() {
                 key={item.step}
                 className="p-8 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-6"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-[13px] font-mono text-[#edfffe] uppercase tracking-[0.12em]">
-                    Fase {item.step}
-                  </span>
-                  <div className="w-8 h-8 rounded-[6px] bg-[#03514b]/60 flex items-center justify-center text-white text-[13px]">
-                    ↗
-                  </div>
-                </div>
+                <span className="text-[14px] font-mono text-[#bbc7c6]">
+                  {item.step}
+                </span>
 
                 <div className="flex flex-col gap-2">
                   <h3 className="text-[20px] font-medium leading-[1.2] text-white">
