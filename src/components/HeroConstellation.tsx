@@ -69,7 +69,7 @@ export default function HeroConstellation() {
 
     // Characters for data-fluid matrix look
     const glyphs = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'x', '•'];
-    const particleCount = 1350;
+    const particleCount = 6750; // ~5x denser
     const sphereRadius = Math.min(width, height) * 0.38;
     const particles: FluidParticle[] = [];
 
@@ -93,7 +93,7 @@ export default function HeroConstellation() {
         vz: (Math.random() - 0.5) * 1.5,
         mass: 0.8 + Math.random() * 1.6,
         char: glyphs[i % glyphs.length],
-        size: Math.random() * 5 + 12, // Larger particle size (12px - 17px)
+        size: Math.random() * 2 + 5, // Smaller micro-glyph size (5px - 7px)
         dropDelay: Math.random() * 0.8,
       });
     }
@@ -231,6 +231,8 @@ export default function HeroConstellation() {
 
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      // Set font once outside loop for maximum 60fps throughput
+      ctx.font = '6px "GeistMono", monospace, sans-serif';
 
       // 7. Depth Layering Color Mapping:
       // Front (pz > 60): Putih Kehijauan (#ffffff, #edfffe)
@@ -258,7 +260,6 @@ export default function HeroConstellation() {
           alpha = 0.75;
         }
 
-        ctx.font = `${Math.max(9.5, Math.round(p.size))}px 'GeistMono', monospace, sans-serif`;
         ctx.fillStyle = color;
         ctx.globalAlpha = alpha;
 
