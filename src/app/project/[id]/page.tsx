@@ -145,6 +145,99 @@ export default function ProjectDashboardPage({
     );
   }
 
+  // Show waiting payment screen before admin approves
+  if (project.payment_status === 'pending') {
+    return (
+      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+        <Navbar />
+        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-10">
+          <div className="flex flex-col gap-6">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-[#bbc7c6] font-mono">
+              ID Pesanan: {project.id.slice(0, 8)}...
+            </span>
+            <h1 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+              Pesanan diterima. Menunggu verifikasi.
+            </h1>
+            <p className="text-[16px] text-[#bbc7c6] leading-[1.4]">
+              Tim Komit sedang memverifikasi bukti transfer QRIS kamu. Proses verifikasi biasanya selesai dalam{' '}
+              <strong className="text-white">1–3 jam</strong> pada hari kerja.
+            </p>
+          </div>
+
+          <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-5">
+            <div className="grid grid-cols-2 gap-4 text-[14px]">
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Pemesan</div>
+                <div className="text-white font-medium">{project.buyer_name}</div>
+              </div>
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">WhatsApp</div>
+                <div className="text-white font-mono">{project.buyer_whatsapp}</div>
+              </div>
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Layanan</div>
+                <div className="text-white capitalize">{project.service_type.replace('_', ' ')} — {project.package_type}</div>
+              </div>
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Total Tagihan</div>
+                <div className="text-[#fde9ff] font-mono font-medium">Rp {project.total_price.toLocaleString('id-ID')}</div>
+              </div>
+            </div>
+
+            <div className="border-t border-[#012624] pt-5 flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+              <span className="text-[14px] text-[#bbc7c6]">
+                Status pembayaran: <strong className="text-yellow-300 font-mono">Menunggu Verifikasi</strong>
+              </span>
+            </div>
+          </div>
+
+          <p className="text-[13px] text-[#bbc7c6]">
+            Simpan link halaman ini untuk memantau status pesanan. Setelah diverifikasi, halaman ini otomatis terbuka untuk setup proyek.
+          </p>
+
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => window.location.reload()}
+              className="btn-aurora text-[14px] px-6 py-3 rounded-[6px] self-start"
+            >
+              Refresh Status
+            </button>
+            <Link href="/" className="text-[13px] uppercase tracking-[0.12em] text-[#bbc7c6] hover:text-white self-start mt-2">
+              ← Kembali ke Beranda
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Payment rejected screen
+  if (project.payment_status === 'rejected') {
+    return (
+      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+        <Navbar />
+        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-8">
+          <h1 className="text-[36px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+            Pembayaran ditolak.
+          </h1>
+          <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
+            Bukti transfer tidak valid atau nominal tidak sesuai. Hubungi tim Komit via WhatsApp untuk klarifikasi.
+          </p>
+          <div className="p-5 rounded-[16px] bg-[#003734]">
+            <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">ID Pesanan</div>
+            <div className="text-white font-mono text-[14px]">{project.id}</div>
+          </div>
+          <Link href="/order" className="btn-aurora text-[14px] px-6 py-3 rounded-[6px] self-start">
+            Pesan Ulang ↗
+          </Link>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const allConnected = members.length > 0 && members.every((m) => m.is_connected);
 
   return (
@@ -152,6 +245,26 @@ export default function ProjectDashboardPage({
       <Navbar />
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+        {/* Setup Banner — shown when payment approved but setup not done */}
+        {project.status === 'setup' && (
+          <div className="p-6 rounded-[16px] bg-[#003734] border border-[#cbfffc]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.12em] text-[#cbfffc] font-medium mb-1">
+                Pembayaran Terverifikasi
+              </div>
+              <p className="text-[15px] text-white">
+                Lanjutkan setup proyek: pilih ide AI, isi data anggota, dan bagikan link undangan GitHub.
+              </p>
+            </div>
+            <Link
+              href={`/project/${id}/setup`}
+              className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] shrink-0"
+            >
+              Lanjut Setup Proyek ↗
+            </Link>
+          </div>
+        )}
+
         {/* Top Header / Project Overview */}
         <div className="p-8 sm:p-10 rounded-[16px] bg-[#003734] flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">

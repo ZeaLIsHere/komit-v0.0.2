@@ -93,7 +93,7 @@ export default function OrderPage() {
         throw new Error(data.error || 'Gagal membuat pesanan');
       }
 
-      router.push(`/project/${data.project.id}/setup`);
+      router.push(`/project/${data.project.id}`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
       setErrorMsg(msg);
