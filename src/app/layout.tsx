@@ -20,9 +20,11 @@ export const metadata: Metadata = {
     "Layanan pengerjaan proyek kuliah IT, cicil commit terjadwal atas nama akun GitHub anggota kelompok hingga UAS, makalah, dan PPT presentasi.",
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon.svg?v=2", type: "image/svg+xml" },
+      { url: "/favicon.ico?v=2", sizes: "32x32" },
     ],
+    shortcut: "/icon.svg?v=2",
+    apple: "/icon.svg?v=2",
   },
 };
 

@@ -160,9 +160,8 @@ export default function HomePage() {
               {/* Service 02: Makalah & Laporan */}
               <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
                 <div className="flex flex-col gap-6">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="border-b border-white/10 pb-4">
                     <span className="text-[13px] font-mono text-white/50">02</span>
-                    <span className="text-[12px] font-mono text-white/40">Dokumen Ilmiah</span>
                   </div>
 
                   <div className="flex flex-col gap-2.5">
@@ -204,9 +203,8 @@ export default function HomePage() {
               {/* Service 03: Slide Presentasi (PPT) */}
               <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
                 <div className="flex flex-col gap-6">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="border-b border-white/10 pb-4">
                     <span className="text-[13px] font-mono text-white/50">03</span>
-                    <span className="text-[12px] font-mono text-white/40">Presentasi Sidang</span>
                   </div>
 
                   <div className="flex flex-col gap-2.5">
@@ -248,9 +246,8 @@ export default function HomePage() {
               {/* Service 04: Tugas Ringan & Praktikum */}
               <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
                 <div className="flex flex-col gap-6">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="border-b border-white/10 pb-4">
                     <span className="text-[13px] font-mono text-white/50">04</span>
-                    <span className="text-[12px] font-mono text-white/40">Modul Lab</span>
                   </div>
 
                   <div className="flex flex-col gap-2.5">
@@ -306,22 +303,6 @@ export default function HomePage() {
             <p className="text-[16px] md:text-[17px] text-white/80 leading-[1.65]">
               Hanya <strong className="text-white font-medium">Rp 50.000 per anggota</strong>—setara sekali nongkrong untuk memastikan kode aplikasi selesai terstandar, riwayat commit aktif atas nama akun GitHub masing-masing, dan materi presentasi UAS siap diuji dosen.
             </p>
-
-            {/* High-Contrast Reassurance Points */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-2 text-[13px] text-white/85">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
-                <span>Commit natural via OAuth resmi</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
-                <span>Garansi bimbingan &amp; revisi</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
-                <span>Tanpa biaya tersembunyi</span>
-              </div>
-            </div>
           </div>
 
           {/* Right Column: Price Anchor & High-Converting CTA */}
@@ -338,7 +319,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="flex flex-col items-start lg:items-end gap-2.5 w-full sm:w-auto">
+            <div className="w-full sm:w-auto">
               <Link
                 href="/order"
                 className="btn-white-pill text-[15px] font-medium px-9 py-4 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto text-center"
@@ -346,9 +327,6 @@ export default function HomePage() {
                 <span>Amankan Proyek Sekarang</span>
                 <span>↗</span>
               </Link>
-              <span className="text-[11px] text-white/50 font-mono self-center lg:self-end">
-                ⚡ Verifikasi cepat 1–3 jam • Kuota 1–8 orang
-              </span>
             </div>
           </div>
         </section>
