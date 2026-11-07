@@ -100,13 +100,11 @@ export default function HeroConstellation() {
       uTime: { value: 0 },
       uRadius: { value: sphereRadius },
       uTexture: { value: glyphTexture },
-      uGravity: { value: 0.0 },
     };
 
     const vertexShader = `
       uniform float uTime;
       uniform float uRadius;
-      uniform float uGravity;
 
       attribute float aCharIndex;
       attribute float aMass;
@@ -137,10 +135,10 @@ export default function HeroConstellation() {
         vCharIndex = aCharIndex;
         vec3 pos = position;
 
-        // 1. Viscous Liquid Swirl (Vortex with radial shear like stirring water)
+        // 1. Viscous Liquid Swirl (Continuous seamless vortex)
         float distCenter = length(pos);
         float radialShear = (distCenter / uRadius);
-        float orbitSpeed = (0.24 + (1.0 / aMass) * 0.16 + radialShear * 0.15) * (1.0 - uGravity * 0.65);
+        float orbitSpeed = 0.20 + (1.0 / aMass) * 0.14 + radialShear * 0.12;
         float angle = uTime * orbitSpeed;
         float cosA = cos(angle);
         float sinA = sin(angle);
@@ -154,33 +152,15 @@ export default function HeroConstellation() {
         vec3 fluidCurl = computeFluidCurl(rotated, uTime, aPhase, aMass);
         rotated += fluidCurl;
 
-        // 3. Periodic Gravity Waterfall Cascade (Liquid droplets tearing and splashing)
-        if (uGravity > 0.001) {
-          float dropForce = uGravity * aMass * 38.0;
-          rotated.y -= dropForce;
-          
-          // Fluid spray turbulence as it falls
-          float spray = sin(rotated.y * 0.035 + uTime * 4.5 + aPhase) * 16.0;
-          rotated.x += spray * uGravity;
-          rotated.z += cos(rotated.y * 0.035 + uTime * 3.5) * 14.0 * uGravity;
-        }
-
-        // 4. Elastic Liquid Surface Tension Boundary (Soft bounce instead of hard scissor cut)
+        // 3. Elastic Liquid Surface Tension Boundary (Soft bounce)
         float d = length(rotated);
         if (d > uRadius) {
           vec3 norm = normalize(rotated);
-          // Soft elastic spring pull back towards fluid core
           float overflow = d - uRadius;
           rotated -= norm * (overflow * 0.75);
-
-          // Liquid splash deflecting off bottom of container
-          if (rotated.y < -uRadius * 0.6) {
-            rotated.y += 24.0 * uGravity;
-            rotated.x += (norm.x > 0.0 ? 1.0 : -1.0) * 18.0 * uGravity;
-          }
         }
 
-        // 5. Camera View Transform
+        // 4. Camera View Transform
         vec4 mvPosition = modelViewMatrix * vec4(rotated, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
@@ -188,25 +168,25 @@ export default function HeroConstellation() {
         float sizeScale = (1.0 + sin(aPhase + uTime * 2.0) * 0.18);
         gl_PointSize = (aSize * sizeScale) * (340.0 / -mvPosition.z);
 
-        // 7. Depth Layering Color Logic (Inverted as requested):
-        // Layer Depan (Z > threshold): Hijau Gelap
-        // Layer Belakang (Z < -threshold): Putih Kehijauan Terang (Luminous Glow)
-        // Layer Tengah: Hijau Web Auros
+        // 7. Depth Layering Color Logic (Dimension dusk violet & monochromatic):
+        // Layer Depan (Z > threshold): Dark Graphite
+        // Layer Belakang (Z < -threshold): Luminous White/Violet Glow
+        // Layer Tengah: Dusk Violet (#6b62f2) and Silver
         float zDepth = rotated.z;
         float threshold = uRadius * 0.28;
 
         if (zDepth > threshold) {
-          // DEPAN: Hijau Gelap
-          vColor = vec3(0.004, 0.21, 0.18);
-          vAlpha = 0.82;
+          // DEPAN: Dark Graphite / Charcoal
+          vColor = vec3(0.12, 0.12, 0.14);
+          vAlpha = 0.85;
         } else if (zDepth < -threshold) {
-          // BELAKANG: Putih Kehijauan Luminous Glow
-          vColor = vec3(0.93, 1.0, 0.99);
-          vAlpha = 0.95;
+          // BELAKANG: Luminous White/Violet Glow
+          vColor = vec3(0.96, 0.95, 1.0);
+          vAlpha = 0.98;
         } else {
-          // TENGAH: Hijau Web Auros (Cyan / Aqua)
-          vColor = mod(aCharIndex, 2.0) == 0.0 ? vec3(0.0, 0.96, 0.83) : vec3(0.0, 0.71, 0.65);
-          vAlpha = 0.75;
+          // TENGAH: Dusk Violet (#6b62f2) and Silver (#d4d4d4)
+          vColor = mod(aCharIndex, 2.0) == 0.0 ? vec3(0.42, 0.38, 0.95) : vec3(0.83, 0.83, 0.85);
+          vAlpha = 0.80;
         }
       }
     `;
@@ -257,7 +237,7 @@ export default function HeroConstellation() {
     };
     window.addEventListener('resize', handleWindowResize);
 
-    // 6. Render Loop with Autonomous Fluid Simulation
+    // 6. Render Loop with Continuous Looping Orbit
     let animId: number;
     const clock = new THREE.Clock();
 
@@ -266,15 +246,6 @@ export default function HeroConstellation() {
 
       const elapsedTime = clock.getElapsedTime();
       uniforms.uTime.value = elapsedTime;
-
-      // Periodic Gravity Drop: Cycle every 12 seconds, brief ~1.2s cascade
-      const cycleTime = elapsedTime % 12.0;
-      let grav = 0.0;
-      if (cycleTime > 9.8 && cycleTime < 11.0) {
-        const dropPhase = (cycleTime - 9.8) / 1.2;
-        grav = Math.sin(dropPhase * Math.PI);
-      }
-      uniforms.uGravity.value = grav;
 
       renderer.render(scene, camera);
     };
@@ -299,9 +270,6 @@ export default function HeroConstellation() {
     <div
       ref={containerRef}
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center"
-    >
-      {/* Center atmospheric glow and radial fade */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/20 to-[#012624] pointer-events-none" />
-    </div>
+    />
   );
 }

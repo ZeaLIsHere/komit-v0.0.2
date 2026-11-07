@@ -54,7 +54,7 @@ export default function Navbar() {
           <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#00827c] to-[#cbfffc] flex items-center justify-center shadow-[0_0_12px_rgba(203,255,252,0.3)]">
             <div className="w-2.5 h-2.5 rounded-full bg-[#012624]" />
           </div>
-          <span className="text-[20px] font-medium tracking-tight text-white uppercase">
+          <span className="text-[17px] font-medium tracking-tight text-white font-sans">
             Komit
           </span>
         </Link>
@@ -64,14 +64,23 @@ export default function Navbar() {
           <Link href="/#layanan" className="hover:text-white transition-colors">
             Layanan
           </Link>
-          <Link href="/#cara-kerja" className="hover:text-white transition-colors">
+          <Link
+            href="/#cara-kerja"
+            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+          >
             Cara Kerja
           </Link>
-          <Link href="/#harga" className="hover:text-white transition-colors">
+          <Link
+            href="/#harga"
+            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+          >
             Biaya
           </Link>
-          <Link href="/project/demo-proyek-uas" className="hover:text-white transition-colors">
-            Demo Dashboard
+          <Link
+            href="/project/demo-proyek-uas"
+            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+          >
+            Preview
           </Link>
 
           {user?.role === 'customer' && (
