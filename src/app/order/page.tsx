@@ -398,14 +398,12 @@ export default function OrderPage() {
                           Akun GitHub
                         </label>
                         <div className="relative flex items-center">
-                          <span className="absolute left-3 text-white/50 font-mono text-[13px]">@</span>
                           <input
                             type="text"
-                            placeholder="username"
                             value={m.github_username}
                             onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                             onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                            className={`w-full bg-white/[0.04] border rounded-[10px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                            className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                               githubStatus[idx] === 'invalid'
                                 ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                                 : githubStatus[idx] === 'valid'

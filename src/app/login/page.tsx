@@ -76,18 +76,14 @@ function LoginForm() {
             <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
               Username GitHub
             </label>
-            <div className="relative flex items-center">
-              <span className="absolute left-3.5 text-white/50 font-mono text-[14px]">@</span>
-              <input
-                type="text"
-                required
-                autoFocus
-                value={githubUsername}
-                onChange={(e) => setGithubUsername(e.target.value)}
-                placeholder="username"
-                className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] pl-8 pr-4 py-3 text-[14px] font-mono text-white outline-none transition-colors"
-              />
-            </div>
+            <input
+              type="text"
+              required
+              autoFocus
+              value={githubUsername}
+              onChange={(e) => setGithubUsername(e.target.value)}
+              className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] font-mono text-white outline-none transition-colors"
+            />
             <p className="text-[12px] text-white/60 leading-relaxed">
               Profil dan nama akun akan langsung diverifikasi ke GitHub API.
             </p>

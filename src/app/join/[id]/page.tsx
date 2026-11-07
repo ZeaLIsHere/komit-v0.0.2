@@ -171,17 +171,15 @@ export default function JoinProjectPage({
                 Username GitHub Anda
               </label>
               <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-white/50 font-mono text-[14px]">@</span>
                 <input
                   type="text"
-                  placeholder="username"
                   value={githubHandle}
                   onChange={(e) => {
                     setGithubHandle(e.target.value);
                     setGithubStatus('idle');
                   }}
                   onBlur={(e) => checkGitHubAccount(e.target.value)}
-                  className={`w-full bg-white/[0.04] border rounded-[10px] pl-8 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                  className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                     githubStatus === 'invalid'
                       ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                       : githubStatus === 'valid'
