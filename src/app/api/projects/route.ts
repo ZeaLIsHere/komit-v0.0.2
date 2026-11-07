@@ -23,6 +23,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!body.payment_proof_url) {
+      return NextResponse.json(
+        { error: 'Tolong berikan bukti pembayaran terlebih dahulu sebelum melanjutkan' },
+        { status: 400 }
+      );
+    }
+
     const memberCount = Math.max(1, Math.min(8, Number(body.member_count) || 1));
     const totalPrice = memberCount * 50000;
 

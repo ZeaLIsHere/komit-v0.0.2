@@ -17,6 +17,7 @@ export default function JoinProjectPage({
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
   const [githubHandle, setGithubHandle] = useState<string>('');
+  const [githubStatus, setGithubStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -50,6 +51,26 @@ export default function JoinProjectPage({
 
     loadData();
   }, [id]);
+
+  const checkGitHubAccount = async (username: string) => {
+    const clean = username.trim().replace(/^@/, '');
+    if (!clean) {
+      setGithubStatus('idle');
+      return;
+    }
+    setGithubStatus('checking');
+    try {
+      const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.exists) {
+        setGithubStatus('valid');
+      } else {
+        setGithubStatus('invalid');
+      }
+    } catch {
+      setGithubStatus('invalid');
+    }
+  };
 
   const handleConnect = () => {
     if (!selectedMemberId) {
@@ -155,10 +176,42 @@ export default function JoinProjectPage({
                   type="text"
                   placeholder="ZeaLIsHere"
                   value={githubHandle}
-                  onChange={(e) => setGithubHandle(e.target.value)}
-                  className="w-full bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] pl-8 pr-4 py-2.5 text-[14px] font-mono text-white outline-none"
+                  onChange={(e) => {
+                    setGithubHandle(e.target.value);
+                    setGithubStatus('idle');
+                  }}
+                  onBlur={(e) => checkGitHubAccount(e.target.value)}
+                  className={`w-full bg-[#011d1c] border rounded-[6px] pl-8 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                    githubStatus === 'invalid'
+                      ? 'border-red-500 focus:border-red-500'
+                      : githubStatus === 'valid'
+                      ? 'border-[#59d499] focus:border-[#59d499]'
+                      : 'border-[#003734] focus:border-[#cbfffc]'
+                  }`}
                 />
+
+                <div className="absolute right-3.5 flex items-center pointer-events-none">
+                  {githubStatus === 'checking' && (
+                    <div className="w-4 h-4 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {githubStatus === 'valid' && (
+                    <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {githubStatus === 'invalid' && (
+                    <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
               </div>
+
+              {githubStatus === 'invalid' && (
+                <span className="text-[11px] text-red-400 font-mono mt-0.5">
+                  tidak dapat menemukan akun
+                </span>
+              )}
             </div>
 
             <button

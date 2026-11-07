@@ -19,6 +19,7 @@ export default function ProjectSetupPage({
   const [memberCount, setMemberCount] = useState<number>(4);
   const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -46,6 +47,26 @@ export default function ProjectSetupPage({
       }
       return prev.slice(0, valid);
     });
+  };
+
+  const checkGitHubAccount = async (index: number, username: string) => {
+    const clean = username.trim().replace(/^@/, '');
+    if (!clean) {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+      return;
+    }
+    setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
+    try {
+      const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.exists) {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'valid' }));
+      } else {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+      }
+    } catch {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+    }
   };
 
   // Quick fill template members
@@ -176,6 +197,9 @@ export default function ProjectSetupPage({
     const updated = [...members];
     updated[index] = { ...updated[index], [field]: val };
     setMembers(updated);
+    if (field === 'github_username') {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+    }
   };
 
   const handleSaveMembers = async (e: React.FormEvent) => {
@@ -485,9 +509,40 @@ export default function ProjectSetupPage({
                       placeholder="username"
                       value={m.github_username}
                       onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                      className="w-full bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] pl-7 pr-3.5 py-2.5 text-[14px] font-mono text-white outline-none"
+                      onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
+                      className={`w-full bg-[#011d1c] border rounded-[6px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                        githubStatus[idx] === 'invalid'
+                          ? 'border-red-500 focus:border-red-500'
+                          : githubStatus[idx] === 'valid'
+                          ? 'border-[#59d499] focus:border-[#59d499]'
+                          : 'border-[#003734] focus:border-[#cbfffc]'
+                      }`}
                     />
+
+                    {/* Status Icon on Right Side */}
+                    <div className="absolute right-3 flex items-center pointer-events-none">
+                      {githubStatus[idx] === 'checking' && (
+                        <div className="w-3.5 h-3.5 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                      )}
+                      {githubStatus[idx] === 'valid' && (
+                        <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                      {githubStatus[idx] === 'invalid' && (
+                        <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Error Text below field */}
+                  {githubStatus[idx] === 'invalid' && (
+                    <span className="text-[11px] text-red-400 font-mono mt-0.5">
+                      tidak dapat menemukan akun
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
