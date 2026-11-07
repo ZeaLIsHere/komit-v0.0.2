@@ -21,12 +21,24 @@ export async function GET(req: Request) {
     }
   }
 
-  // Handle mock OAuth flow (for testing without live GitHub credentials)
+  // Handle mock/fallback OAuth flow (when live GitHub OAuth credentials not configured)
   if (isMock && memberId) {
+    let finalUsername = searchParams.get('username') || '';
+    if (!finalUsername && projectId) {
+      const existingMembers = await getProjectMembers(projectId);
+      const target = existingMembers.find((m) => m.id === memberId);
+      if (target?.github_username) {
+        finalUsername = target.github_username;
+      }
+    }
+    if (!finalUsername) {
+      finalUsername = `user-${memberId.slice(0, 6)}`;
+    }
+
     await updateProjectMember(memberId, {
       is_connected: true,
-      github_username: `member-${memberId.slice(0, 5)}`,
-      github_email: `member-${memberId.slice(0, 5)}@student.ac.id`,
+      github_username: finalUsername,
+      github_email: `${finalUsername.toLowerCase()}@users.noreply.github.com`,
     });
 
     if (projectId) {

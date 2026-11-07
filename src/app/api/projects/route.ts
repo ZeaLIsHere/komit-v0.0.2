@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createProject, getAllProjects } from '@/lib/data';
+import { createProject, getAllProjects, saveProjectMembers } from '@/lib/data';
+import { getSessionFromRequest } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -22,10 +23,23 @@ export async function POST(req: Request) {
       );
     }
 
+    if (!body.payment_proof_url) {
+      return NextResponse.json(
+        { error: 'Tolong berikan bukti pembayaran terlebih dahulu sebelum melanjutkan' },
+        { status: 400 }
+      );
+    }
+
     const memberCount = Math.max(1, Math.min(8, Number(body.member_count) || 1));
     const totalPrice = memberCount * 50000;
 
+    const session = getSessionFromRequest(req);
+    const customerId = session?.userId || body.customer_id || null;
+    const buyerEmail = session?.email || body.buyer_email || null;
+
     const newProject = await createProject({
+      customer_id: customerId,
+      buyer_email: buyerEmail,
       buyer_name: body.buyer_name,
       buyer_whatsapp: body.buyer_whatsapp,
       service_type: body.service_type || 'project_joki',
@@ -36,6 +50,14 @@ export async function POST(req: Request) {
       payment_status: 'pending',
       status: 'waiting_payment',
     });
+
+    if (Array.isArray(body.members) && body.members.length > 0) {
+      try {
+        await saveProjectMembers(newProject.id, body.members.slice(0, memberCount));
+      } catch (e) {
+        console.error('Failed to save initial members:', e);
+      }
+    }
 
     return NextResponse.json({ project: newProject }, { status: 201 });
   } catch (error: unknown) {

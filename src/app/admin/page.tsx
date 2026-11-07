@@ -140,6 +140,23 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateProjectStatus = async (newStatus: Project['status']) => {
+    if (!selectedProjectId) return;
+    try {
+      const res = await fetch(`/api/projects/${selectedProjectId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        alert(`Status proyek diubah menjadi: ${newStatus}`);
+        loadAllProjects();
+      }
+    } catch {
+      alert('Gagal mengubah status proyek');
+    }
+  };
+
   const handleAddSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCommitMemberId || !newCommitMessage.trim() || !newCommitDate) {
@@ -431,6 +448,34 @@ export default function AdminPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Quick Status Control */}
+                {selectedProjectId && (
+                  <div className="p-4 rounded-[12px] bg-[#011d1c] border border-[#003734] flex flex-wrap items-center justify-between gap-3 text-[13px]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#bbc7c6]">Status Pengerjaan:</span>
+                      <span className="font-mono text-white capitalize bg-[#003734] px-2.5 py-1 rounded-[4px]">
+                        {projects.find((p) => p.id === selectedProjectId)?.status || 'waiting_payment'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] text-[#bbc7c6]">Ubah Tahap:</span>
+                      <button
+                        onClick={() => handleUpdateProjectStatus('in_progress')}
+                        className="bg-[#003734] hover:bg-[#004d49] text-white px-3 py-1.5 rounded-[4px] text-[12px] transition-colors"
+                      >
+                        ⚡ Tandai In-Progress
+                      </button>
+                      <button
+                        onClick={() => handleUpdateProjectStatus('completed')}
+                        className="btn-aurora text-[12px] px-3 py-1.5 rounded-[4px]"
+                      >
+                        ✓ Tandai Selesai (UAS Ready)
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Form Add Commit Schedule */}
                 <form

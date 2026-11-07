@@ -16,8 +16,10 @@ export default function ProjectSetupPage({
   const router = useRouter();
 
   const [project, setProject] = useState<Project | null>(null);
-  const [members, setMembers] = useState<Array<{ name: string; nim: string; kom: string; github_username: string }>>([]);
+  const [memberCount, setMemberCount] = useState<number>(4);
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -31,19 +33,56 @@ export default function ProjectSetupPage({
   const [isSavingMembers, setIsSavingMembers] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
-  // Quick fill demo members
+  // Dynamic resize when count changes (1-8)
+  const handleMemberCountChange = (newCount: number) => {
+    const valid = Math.max(1, Math.min(8, newCount));
+    setMemberCount(valid);
+    setMembers((prev) => {
+      if (valid > prev.length) {
+        const added = Array.from({ length: valid - prev.length }, () => ({
+          name: '',
+          github_username: '',
+        }));
+        return [...prev, ...added];
+      }
+      return prev.slice(0, valid);
+    });
+  };
+
+  const checkGitHubAccount = async (index: number, username: string) => {
+    const clean = username.trim().replace(/^@/, '');
+    if (!clean) {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+      return;
+    }
+    setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
+    try {
+      const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.exists) {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'valid' }));
+      } else {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+      }
+    } catch {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+    }
+  };
+
+  // Quick fill template members
   const handleQuickFillMembers = () => {
+    const count = memberCount;
+    const buyer = project?.buyer_name || 'Ketua Kelompok';
     const dummyList = [
-      { name: 'Fadhil Pratama', nim: '221401010', kom: 'A', github_username: 'fadhilpratama' },
-      { name: 'Sarah Amanda', nim: '221401011', kom: 'A', github_username: 'sarahamanda' },
-      { name: 'Reza Fauzan', nim: '221401012', kom: 'A', github_username: 'rezafauzan' },
-      { name: 'Nabila Putri', nim: '221401013', kom: 'A', github_username: 'nabilaputri' },
-      { name: 'Ilham Hidayat', nim: '221401014', kom: 'B', github_username: 'ilhamhidayat' },
-      { name: 'Aisyah Zahra', nim: '221401015', kom: 'B', github_username: 'aisyahzahra' },
-      { name: 'Kevin Santoso', nim: '221401016', kom: 'C', github_username: 'kevinsantoso' },
-      { name: 'Tiara Maharani', nim: '221401017', kom: 'C', github_username: 'tiaramaharani' },
+      { name: buyer, github_username: '' },
+      { name: 'Anggota 2', github_username: '' },
+      { name: 'Anggota 3', github_username: '' },
+      { name: 'Anggota 4', github_username: '' },
+      { name: 'Anggota 5', github_username: '' },
+      { name: 'Anggota 6', github_username: '' },
+      { name: 'Anggota 7', github_username: '' },
+      { name: 'Anggota 8', github_username: '' },
     ];
-    const count = project?.member_count || 4;
     setMembers(dummyList.slice(0, count));
   };
 
@@ -54,6 +93,9 @@ export default function ProjectSetupPage({
         if (!res.ok) throw new Error('Proyek tidak ditemukan');
         const data = await res.json();
         setProject(data.project);
+
+        const count = data.project.member_count || 4;
+        setMemberCount(count);
 
         if (data.project.selected_idea) {
           setSelectedIdea(data.project.selected_idea);
@@ -70,18 +112,14 @@ export default function ProjectSetupPage({
             setMembers(
               mData.members.map((m: ProjectMember) => ({
                 name: m.name,
-                nim: m.nim,
-                kom: m.kom,
                 github_username: m.github_username || '',
               }))
             );
+            setMemberCount(mData.members.length);
           } else {
-            const count = data.project.member_count || 1;
             setMembers(
-              Array.from({ length: count }, () => ({
-                name: '',
-                nim: '',
-                kom: 'A',
+              Array.from({ length: count }, (_, i) => ({
+                name: i === 0 && data.project.buyer_name ? data.project.buyer_name : '',
                 github_username: '',
               }))
             );
@@ -155,23 +193,33 @@ export default function ProjectSetupPage({
     }
   };
 
-  const handleMemberChange = (index: number, field: string, val: string) => {
+  const handleMemberChange = (index: number, field: 'name' | 'github_username', val: string) => {
     const updated = [...members];
     updated[index] = { ...updated[index], [field]: val };
     setMembers(updated);
+    if (field === 'github_username') {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+    }
   };
 
   const handleSaveMembers = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingMembers(true);
     try {
-      const res = await fetch(`/api/projects/${id}/members`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ members }),
-      });
-      if (!res.ok) throw new Error('Gagal menyimpan data anggota');
-      const data = await res.json();
+      const [mRes] = await Promise.all([
+        fetch(`/api/projects/${id}/members`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ members }),
+        }),
+        fetch(`/api/projects/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ member_count: memberCount }),
+        }),
+      ]);
+      if (!mRes.ok) throw new Error('Gagal menyimpan data anggota');
+      const data = await mRes.json();
       setDbMembers(data.members);
       alert('Data anggota kelompok berhasil disimpan!');
     } catch (err: unknown) {
@@ -369,10 +417,10 @@ export default function ProjectSetupPage({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
-                Data Anggota Kelompok ({project.member_count} Orang)
+                Data Anggota Kelompok ({memberCount} Orang)
               </h2>
-              <p className="text-[14px] text-[#c2c2c2]">
-                Data ini dicantumkan dalam README laporan resmi dan dikaitkan dengan akun GitHub masing-masing anggota.
+              <p className="text-[14px] text-[#bbc7c6]">
+                Ubah jumlah anggota jika diperlukan. Form otomatis menyesuaikan (hanya nama &amp; akun GitHub).
               </p>
             </div>
             <button
@@ -380,58 +428,121 @@ export default function ProjectSetupPage({
               onClick={handleQuickFillMembers}
               className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0"
             >
-              ⚡ Isi Data Contoh
+              ⚡ Isi Template Nama
             </button>
+          </div>
+
+          {/* Member Count Dynamic Slider */}
+          <div className="p-5 rounded-[12px] bg-[#011d1c] border border-[#003734] flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] uppercase tracking-[0.08em] text-[#edfffe]">
+                Atur Jumlah Anggota:
+              </span>
+              <span className="font-mono text-white text-[15px] font-medium text-[#cbfffc]">
+                {memberCount} Orang
+              </span>
+            </div>
+
+            <div className="relative flex flex-col gap-3 py-1">
+              <input
+                type="range"
+                min="1"
+                max="8"
+                step="1"
+                value={memberCount}
+                onChange={(e) => handleMemberCountChange(Number(e.target.value))}
+                className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
+              />
+
+              <div className="relative w-full h-5 text-[11px] font-mono text-[#bbc7c6]">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                  const percent = ((num - 1) / 7) * 100;
+                  const isActive = memberCount === num;
+                  return (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handleMemberCountChange(num)}
+                      style={{ left: `${percent}%` }}
+                      className={`absolute -translate-x-1/2 transition-all ${
+                        isActive
+                          ? 'text-[#cbfffc] font-bold text-[12px]'
+                          : 'text-[#bbc7c6] hover:text-white'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSaveMembers} className="flex flex-col gap-4">
             {members.map((m, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center"
+                className="p-4 rounded-[12px] bg-[#012624] border border-[#003734] grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
               >
-                <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#686868]">Nama Anggota {idx + 1}</span>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                    {idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                  </span>
                   <input
                     type="text"
                     required
-                    placeholder="Nama Lengkap"
+                    placeholder={idx === 0 ? 'Nama Lengkap Ketua' : `Nama Anggota ${idx + 1}`}
                     value={m.name}
                     onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] text-white outline-none"
+                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2.5 text-[14px] text-white outline-none"
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#686868]">NIM</span>
-                  <input
-                    type="text"
-                    required
-                    placeholder="211401001"
-                    value={m.nim}
-                    onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] font-mono text-white outline-none"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#686868]">Kelas / KOM</span>
-                  <input
-                    type="text"
-                    required
-                    placeholder="A / B / C"
-                    value={m.kom}
-                    onChange={(e) => handleMemberChange(idx, 'kom', e.target.value)}
-                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] text-white outline-none"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#686868]">Username GitHub</span>
-                  <input
-                    type="text"
-                    placeholder="cth: budi_dev"
-                    value={m.github_username}
-                    onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] font-mono text-white outline-none"
-                  />
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                    Akun GitHub
+                  </span>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-[#bbc7c6] font-mono text-[13px]">@</span>
+                    <input
+                      type="text"
+                      placeholder="username"
+                      value={m.github_username}
+                      onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
+                      onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
+                      className={`w-full bg-[#011d1c] border rounded-[6px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                        githubStatus[idx] === 'invalid'
+                          ? 'border-red-500 focus:border-red-500'
+                          : githubStatus[idx] === 'valid'
+                          ? 'border-[#59d499] focus:border-[#59d499]'
+                          : 'border-[#003734] focus:border-[#cbfffc]'
+                      }`}
+                    />
+
+                    {/* Status Icon on Right Side */}
+                    <div className="absolute right-3 flex items-center pointer-events-none">
+                      {githubStatus[idx] === 'checking' && (
+                        <div className="w-3.5 h-3.5 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                      )}
+                      {githubStatus[idx] === 'valid' && (
+                        <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                      {githubStatus[idx] === 'invalid' && (
+                        <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Error Text below field */}
+                  {githubStatus[idx] === 'invalid' && (
+                    <span className="text-[11px] text-red-400 font-mono mt-0.5">
+                      tidak dapat menemukan akun
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

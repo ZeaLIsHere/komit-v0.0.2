@@ -13,12 +13,116 @@ export default function OrderPage() {
   const [serviceType, setServiceType] = useState<ServiceType>('project_joki');
   const [packageType, setPackageType] = useState<PackageType>('full');
   const [memberCount, setMemberCount] = useState<number>(4);
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+  ]);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' }>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Auto-fill from active customer session
+  React.useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setCurrentUser(data.user);
+            const initialName = data.user.name || '';
+            if (initialName) setBuyerName(initialName);
+            if (data.user.whatsapp) setBuyerWhatsapp(data.user.whatsapp);
+            setMembers((prev) => {
+              const copy = [...prev];
+              if (copy.length > 0) {
+                const gh = copy[0].github_username || data.user.githubUsername || '';
+                copy[0] = {
+                  name: copy[0].name || initialName,
+                  github_username: gh,
+                };
+                if (gh) {
+                  checkGitHubAccount(0, gh);
+                }
+              }
+              return copy;
+            });
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    loadUser();
+  }, []);
+
+  // Validate GitHub username existence
+  const checkGitHubAccount = async (index: number, username: string) => {
+    const clean = username.trim().replace(/^@/, '');
+    if (!clean) {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+      return;
+    }
+    setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
+    try {
+      const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.exists) {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'valid' }));
+      } else {
+        setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+      }
+    } catch {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+    }
+  };
+
+  // Dynamic member resize based on count (1-8)
+  const handleMemberCountChange = (newCount: number) => {
+    const validCount = Math.max(1, Math.min(8, newCount));
+    setMemberCount(validCount);
+    setMembers((prev) => {
+      if (validCount > prev.length) {
+        const added = Array.from({ length: validCount - prev.length }, () => ({
+          name: '',
+          github_username: '',
+        }));
+        return [...prev, ...added];
+      }
+      return prev.slice(0, validCount);
+    });
+  };
+
+  const handleMemberChange = (index: number, field: 'name' | 'github_username', value: string) => {
+    setMembers((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+    if (index === 0 && field === 'name') {
+      setBuyerName(value);
+    }
+    if (field === 'github_username') {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+    }
+  };
+
+  const handleBuyerNameChange = (val: string) => {
+    setBuyerName(val);
+    setMembers((prev) => {
+      if (prev.length === 0) return [{ name: val, github_username: '' }];
+      const copy = [...prev];
+      copy[0] = { ...copy[0], name: val };
+      return copy;
+    });
+  };
 
   // Handle image upload from file picker with 5MB validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,10 +143,8 @@ export default function OrderPage() {
     }
   };
 
-  // Quick fill for testing
+  // Quick attach test proof for local dev
   const handleQuickDemoFill = () => {
-    setBuyerName('Fadhil Pratama');
-    setBuyerWhatsapp('081234567890');
     setProofUrl('/dummy-qris-proof.jpg');
     setProofPreview('/dummy-qris-proof.jpg');
   };
@@ -70,6 +172,12 @@ export default function OrderPage() {
       return;
     }
 
+    if (!proofUrl || !proofUrl.trim()) {
+      alert('Tolong berikan bukti pembayaran terlebih dahulu sebelum melanjutkan!');
+      setErrorMsg('Bukti pembayaran QRIS wajib dilampirkan sebelum mengirim pesanan.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
 
@@ -85,6 +193,7 @@ export default function OrderPage() {
           member_count: memberCount,
           total_price: totalPrice,
           payment_proof_url: proofUrl,
+          members: serviceType === 'project_joki' ? members : undefined,
         }),
       });
 
@@ -225,8 +334,8 @@ export default function OrderPage() {
                   max="8"
                   step="1"
                   value={memberCount}
-                  onChange={(e) => setMemberCount(Number(e.target.value))}
-                  className="w-full accent-white cursor-pointer relative z-10"
+                  onChange={(e) => handleMemberCountChange(Number(e.target.value))}
+                  className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
                 />
 
                 {/* Synchronized Exact Position Ticks (1 to 8) */}
@@ -238,7 +347,7 @@ export default function OrderPage() {
                       <button
                         key={num}
                         type="button"
-                        onClick={() => setMemberCount(num)}
+                        onClick={() => handleMemberCountChange(num)}
                         style={{ left: `${percent}%` }}
                         className={`absolute -translate-x-1/2 transition-all ${
                           isActive
@@ -250,6 +359,88 @@ export default function OrderPage() {
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
+              <div className="flex flex-col gap-3 pt-4 border-t border-[#012624]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[13px] uppercase tracking-[0.08em] text-[#edfffe] font-medium">
+                    Form Anggota Kelompok ({memberCount} Orang)
+                  </span>
+                  <span className="text-[11px] text-[#bbc7c6]">
+                    Hanya nama &amp; akun GitHub
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-3 mt-1">
+                  {members.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-[8px] bg-[#011d1c] border border-[#003734] grid grid-cols-1 sm:grid-cols-2 gap-3"
+                    >
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                          {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                          value={m.name}
+                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                          className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2.5 text-[14px] text-white outline-none"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                          Akun GitHub
+                        </label>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-[#bbc7c6] font-mono text-[13px]">@</span>
+                          <input
+                            type="text"
+                            placeholder="username"
+                            value={m.github_username}
+                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
+                            onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
+                            className={`w-full bg-[#012624] border rounded-[6px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                              githubStatus[idx] === 'invalid'
+                                ? 'border-red-500 focus:border-red-500'
+                                : githubStatus[idx] === 'valid'
+                                ? 'border-[#59d499] focus:border-[#59d499]'
+                                : 'border-[#003734] focus:border-[#cbfffc]'
+                            }`}
+                          />
+
+                          {/* Status Icon on Right Side */}
+                          <div className="absolute right-3 flex items-center pointer-events-none">
+                            {githubStatus[idx] === 'checking' && (
+                              <div className="w-3.5 h-3.5 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                            )}
+                            {githubStatus[idx] === 'valid' && (
+                              <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                            {githubStatus[idx] === 'invalid' && (
+                              <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Error Text below field */}
+                        {githubStatus[idx] === 'invalid' && (
+                          <span className="text-[11px] text-red-400 font-mono mt-0.5">
+                            tidak dapat menemukan akun
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -268,8 +459,8 @@ export default function OrderPage() {
                   required
                   placeholder="Contoh: Budi Santoso"
                   value={buyerName}
-                  onChange={(e) => setBuyerName(e.target.value)}
-                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
+                  onChange={(e) => handleBuyerNameChange(e.target.value)}
+                  className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -340,7 +531,7 @@ export default function OrderPage() {
                       onClick={handleQuickDemoFill}
                       className="text-[12px] text-white/80 hover:text-white underline"
                     >
-                      ⚡ Isi Data Cepat untuk Testing
+                      ⚡ Lampirkan Gambar Contoh
                     </button>
                   </div>
 

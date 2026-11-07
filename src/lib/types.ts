@@ -1,3 +1,16 @@
+export type UserRole = 'customer' | 'admin';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  whatsapp?: string;
+  github_username?: string;
+  role: UserRole;
+  password?: string;
+  created_at: string;
+}
+
 export type ServiceType = 'project_joki' | 'makalah' | 'ppt' | 'tugas_ringan';
 export type PackageType = 'full' | 'code_only' | 'idea_only';
 export type PaymentStatus = 'pending' | 'paid' | 'rejected';
@@ -17,6 +30,8 @@ export interface Project {
   created_at: string;
   buyer_name: string;
   buyer_whatsapp: string;
+  buyer_email?: string | null;
+  customer_id?: string | null;
   service_type: ServiceType;
   package_type: PackageType;
   member_count: number;

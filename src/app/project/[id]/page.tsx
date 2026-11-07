@@ -265,6 +265,26 @@ export default function ProjectDashboardPage({
           </div>
         )}
 
+        {/* Completed Banner — shown when admin marks project completed */}
+        {project.status === 'completed' && (
+          <div className="p-6 rounded-[16px] bg-[#003734] border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.12em] text-[#59d499] font-medium mb-1">
+                ✓ Proyek Selesai &amp; Siap Sidang UAS
+              </div>
+              <p className="text-[15px] text-white">
+                Seluruh pengerjaan kode dan cicil commit telah tuntas. Unduh README atau buka Slide Presentasi untuk demo dosen.
+              </p>
+            </div>
+            <Link
+              href={`/project/${id}/present`}
+              className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] shrink-0"
+            >
+              Buka Slide Presentasi 🖥️
+            </Link>
+          </div>
+        )}
+
         {/* Top Header / Project Overview */}
         <div className="p-8 sm:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
