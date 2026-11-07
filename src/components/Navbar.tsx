@@ -79,12 +79,6 @@ export default function Navbar() {
           >
             Biaya
           </Link>
-          <Link
-            href="/project/demo-proyek-uas"
-            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
-          >
-            Preview
-          </Link>
 
           {user?.role === 'customer' && (
             <Link
