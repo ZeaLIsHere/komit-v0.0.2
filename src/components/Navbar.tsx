@@ -60,7 +60,7 @@ export default function Navbar() {
         </Link>
 
         {/* Ghost Navigation Links */}
-        <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-[14px] text-white/80 font-normal">
+        <nav className="hidden lg:flex items-center gap-7 lg:gap-8 text-[14px] text-white/80 font-normal">
           <Link
             href="/#layanan"
             className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
@@ -89,7 +89,7 @@ export default function Navbar() {
           {user?.role === 'customer' && (
             <Link
               href="/my-projects"
-              className="px-3 py-1.5 rounded-full bg-white/[0.08] text-white font-medium hover:bg-white/[0.15] transition-all"
+              className="px-3 py-1.5 rounded-full text-white font-medium hover:bg-white/[0.08] transition-all"
             >
               Proyek Saya
             </Link>
@@ -98,7 +98,7 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="px-3 py-1.5 rounded-full bg-white/[0.08] text-white font-medium hover:bg-white/[0.15] transition-all"
+              className="px-3 py-1.5 rounded-full text-white font-medium hover:bg-white/[0.08] transition-all"
             >
               Admin
             </Link>
@@ -109,18 +109,18 @@ export default function Navbar() {
         <div className="flex items-center gap-3 shrink-0">
           {!loading && user ? (
             <div className="flex items-center gap-2.5">
-              <span className="hidden sm:inline-block text-[12px] text-white/70 font-mono">
+              <span className="hidden sm:inline-block text-[12px] text-white/75 font-mono px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
                 {user.role === 'admin'
                   ? '🛡️ Admin'
                   : user.githubUsername
-                  ? `🐙 @${user.githubUsername}`
-                  : `🎓 ${user.name.split(' ')[0]}`}
+                  ? `@${user.githubUsername}`
+                  : user.name.split(' ')[0]}
               </span>
 
               {user.role === 'customer' && (
                 <Link
                   href="/my-projects"
-                  className="hidden md:inline-block text-[12px] text-white/80 hover:text-white border border-white/15 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                  className="hidden md:inline-flex text-[13px] text-white/80 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
                 >
                   Proyek Saya
                 </Link>
@@ -128,32 +128,32 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-[12px] text-white/70 hover:text-white border border-white/15 px-3 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] transition-all"
+                className="text-[13px] text-white/70 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
               >
                 Keluar
               </button>
 
               <Link
                 href="/order"
-                className="btn-white-pill text-[13px] px-5 py-2 rounded-full inline-flex items-center justify-center leading-none"
+                className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
               >
-                Pesan Proyek
+                Pesan Proyek ↗
               </Link>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="text-[13px] text-white/80 hover:text-white px-3 py-1.5 rounded-full transition-colors"
+                className="text-[14px] text-white/80 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
               >
                 Masuk
               </Link>
 
               <Link
                 href="/login?redirect=/order"
-                className="btn-white-pill text-[13px] px-5 py-2 rounded-full inline-flex items-center justify-center leading-none"
+                className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
               >
-                Pesan Proyek
+                Pesan Proyek ↗
               </Link>
             </div>
           )}
