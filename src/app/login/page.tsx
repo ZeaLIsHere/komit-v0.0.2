@@ -109,7 +109,7 @@ export default function LoginPage() {
   return (
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-10 flex flex-col">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-[13px] text-white/70 hover:text-white transition-colors self-start mb-6"

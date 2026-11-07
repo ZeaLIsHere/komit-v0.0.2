@@ -60,28 +60,28 @@ export default function Navbar() {
         </Link>
 
         {/* Ghost Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 lg:gap-8 text-[14px] text-white/80 font-normal">
+        <nav className="hidden lg:flex items-center gap-10 lg:gap-14 text-[14px] text-white/75 font-normal">
           <Link
             href="/#layanan"
-            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
           >
             Layanan
           </Link>
           <Link
             href="/#cara-kerja"
-            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
           >
             Cara Kerja
           </Link>
           <Link
             href="/#harga"
-            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
           >
             Biaya
           </Link>
           <Link
             href="/project/demo-proyek-uas"
-            className="px-3 py-1.5 rounded-full hover:bg-white/[0.08] hover:text-white transition-all"
+            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
           >
             Preview
           </Link>
@@ -89,7 +89,7 @@ export default function Navbar() {
           {user?.role === 'customer' && (
             <Link
               href="/my-projects"
-              className="px-3 py-1.5 rounded-full text-white font-medium hover:bg-white/[0.08] transition-all"
+              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
             >
               Proyek Saya
             </Link>
@@ -98,7 +98,7 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="px-3 py-1.5 rounded-full text-white font-medium hover:bg-white/[0.08] transition-all"
+              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
             >
               Admin
             </Link>
@@ -120,7 +120,7 @@ export default function Navbar() {
               {user.role === 'customer' && (
                 <Link
                   href="/my-projects"
-                  className="hidden md:inline-flex text-[13px] text-white/80 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
+                  className="hidden md:inline-flex text-[13px] text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
                 >
                   Proyek Saya
                 </Link>
@@ -128,7 +128,7 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-[13px] text-white/70 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
+                className="text-[13px] text-white/70 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
               >
                 Keluar
               </button>

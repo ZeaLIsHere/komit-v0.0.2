@@ -103,46 +103,34 @@ export default function HomePage() {
         </section>
 
         {/* SECTION: KATALOG LAYANAN (BENTO 1+3: FULL-WIDTH FLAGSHIP + 3 EQUAL SUB-SERVICES) */}
-        <section id="layanan" className="flex flex-col gap-8">
+        <section id="layanan" className="flex flex-col gap-12 md:gap-16">
           {/* Section Header */}
-          <div className="border-b border-white/10 pb-6">
-            <h2 className="text-[32px] md:text-[40px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
+          <div className="border-b border-white/10 pb-8">
+            <h2 className="text-[32px] md:text-[44px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
               Dirancang untuk kebutuhan akademik mahasiswa informatika.
             </h2>
           </div>
 
-          <div className="flex flex-col gap-6">
-            {/* 1. Flagship Hero Card (Full Width) */}
-            <div className="p-8 md:p-12 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="flex flex-col gap-10 md:gap-12">
+            {/* 1. Flagship Hero Card (Full Width & Spacious) */}
+            <div className="p-10 md:p-14 lg:p-16 rounded-[32px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
                 {/* Left (7 cols): Title, Description, Packages & CTA */}
-                <div className="lg:col-span-7 flex flex-col gap-6">
-                  <div className="flex flex-col gap-3">
-                    <h3 className="text-[28px] md:text-[34px] font-medium text-white leading-[1.15] tracking-[-0.02em]">
+                <div className="lg:col-span-7 flex flex-col gap-8">
+                  <div className="flex flex-col gap-4">
+                    <h3 className="text-[30px] sm:text-[36px] md:text-[42px] font-medium text-white leading-[1.1] tracking-[-0.025em]">
                       Joki Proyek Kuliah Berkelompok
                     </h3>
-                    <p className="text-[15px] md:text-[16px] text-white/80 leading-[1.6]">
+                    <p className="text-[16px] md:text-[18px] text-white/80 leading-[1.65]">
                       Pengerjaan kode aplikasi fullstack terstandar industri, cicil commit mingguan otomatis atas nama akun asli masing-masing anggota kelompok via GitHub OAuth, dan bahan presentasi UAS siap pakai.
                     </p>
                   </div>
 
-                  {/* Package Badges & Action */}
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <div className="flex flex-wrap items-center gap-2 text-[12px]">
-                      <span className="px-3 py-1.5 rounded-full bg-white/[0.08] border border-white/15 text-white">
-                        Paket Full
-                      </span>
-                      <span className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
-                        Koding Saja
-                      </span>
-                      <span className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
-                        Ide &amp; Blueprint
-                      </span>
-                    </div>
-
+                  {/* Action */}
+                  <div className="pt-2">
                     <Link
                       href="/order"
-                      className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0 ml-auto sm:ml-0"
+                      className="btn-white-pill text-[14px] px-8 py-3.5 rounded-full inline-flex items-center gap-2"
                     >
                       Pesan Proyek ↗
                     </Link>
@@ -150,101 +138,218 @@ export default function HomePage() {
                 </div>
 
                 {/* Right (5 cols): Clear Key Deliverables with Divider */}
-                <div className="lg:col-span-5 flex flex-col gap-4 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-10 text-[14px] text-white/85">
-                  <div className="flex items-start gap-3">
-                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">01</span>
-                    <span>Commit GitHub otomatis terjadwal atas akun asli tiap anggota</span>
+                <div className="lg:col-span-5 flex flex-col gap-6 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12 text-[15px] md:text-[16px] text-white/85">
+                  <div className="flex items-start gap-4">
+                    <span className="text-white/50 font-mono text-[15px] shrink-0 mt-0.5">01</span>
+                    <span className="leading-[1.5]">Commit GitHub otomatis terjadwal atas akun asli tiap anggota</span>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">02</span>
-                    <span>Rekomendasi ide sesuai topik bidang yang kamu sukai</span>
+                  <div className="flex items-start gap-4">
+                    <span className="text-white/50 font-mono text-[15px] shrink-0 mt-0.5">02</span>
+                    <span className="leading-[1.5]">Rekomendasi ide sesuai topik bidang yang kamu sukai</span>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">03</span>
-                    <span>Mode presentasi interaktif &amp; generate README anti-tanya dosen</span>
+                  <div className="flex items-start gap-4">
+                    <span className="text-white/50 font-mono text-[15px] shrink-0 mt-0.5">03</span>
+                    <span className="leading-[1.5]">Mode presentasi interaktif &amp; generate README anti-tanya dosen</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. Three Supporting Services (Clean 3-Column Grid) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
-                <h4 className="text-[19px] font-medium text-white">
-                  Makalah &amp; Laporan Akademik
-                </h4>
-                <p className="text-[14px] text-white/75 leading-[1.6]">
-                  Penyusunan laporan standar kampus, perancangan diagram UML (Use Case, Activity, Sequence), relasi ERD database, dan referensi jurnal terindeks.
-                </p>
+            {/* 2. Three Supporting Services (Structured & Refined 3-Column Grid) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+              {/* Service 02: Makalah & Laporan */}
+              <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span className="text-[13px] font-mono text-white/50">02</span>
+                    <span className="text-[12px] font-mono text-white/40">Dokumen Ilmiah</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2.5">
+                    <h4 className="text-[20px] md:text-[22px] font-medium text-white leading-[1.25]">
+                      Makalah &amp; Laporan Akademik
+                    </h4>
+                    <p className="text-[14px] text-white/75 leading-[1.6]">
+                      Penyusunan laporan standar kampus, perancangan diagram UML, relasi ERD database, dan referensi jurnal terindeks.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2 border-t border-white/10 text-[13px] text-white/80">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Diagram UML (Use Case, Activity, Sequence)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Relasi ERD &amp; Kamus Data terstruktur</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Format Word (.docx) &amp; PDF siap cetak</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <Link
+                    href="/order"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-white/80 hover:text-white transition-colors"
+                  >
+                    <span>Pilih Layanan</span>
+                    <span className="group-hover:translate-x-0.5 transition-transform">↗</span>
+                  </Link>
+                </div>
               </div>
 
-              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
-                <h4 className="text-[19px] font-medium text-white">
-                  Slide Presentasi (PPT)
-                </h4>
-                <p className="text-[14px] text-white/75 leading-[1.6]">
-                  Slide PowerPoint (.pptx) estetis dan ringkas untuk presentasi demo aplikasi di hadapan dosen penguji tanpa rasa cemas.
-                </p>
+              {/* Service 03: Slide Presentasi (PPT) */}
+              <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span className="text-[13px] font-mono text-white/50">03</span>
+                    <span className="text-[12px] font-mono text-white/40">Presentasi Sidang</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2.5">
+                    <h4 className="text-[20px] md:text-[22px] font-medium text-white leading-[1.25]">
+                      Slide Presentasi (PPT)
+                    </h4>
+                    <p className="text-[14px] text-white/75 leading-[1.6]">
+                      Slide presentasi ringkas, estetis, dan terstruktur untuk demonstrasi sistem di hadapan dosen penguji tanpa rasa cemas.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2 border-t border-white/10 text-[13px] text-white/80">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Tipografi modern &amp; layout slide estetis</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Alur masalah, arsitektur sistem &amp; demo</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>File PowerPoint (.pptx) &amp; Slide PDF</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <Link
+                    href="/order"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-white/80 hover:text-white transition-colors"
+                  >
+                    <span>Pilih Layanan</span>
+                    <span className="group-hover:translate-x-0.5 transition-transform">↗</span>
+                  </Link>
+                </div>
               </div>
 
-              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
-                <h4 className="text-[19px] font-medium text-white">
-                  Tugas Ringan &amp; Praktikum
-                </h4>
-                <p className="text-[14px] text-white/75 leading-[1.6]">
-                  Penyelesaian tugas mingguan algoritma pemrograman, struktur data, pembuatan query database SQL, dan modul praktikum lab.
-                </p>
+              {/* Service 04: Tugas Ringan & Praktikum */}
+              <div className="p-8 md:p-9 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8 hover:bg-white/[0.06] hover:border-white/20 transition-all group">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <span className="text-[13px] font-mono text-white/50">04</span>
+                    <span className="text-[12px] font-mono text-white/40">Modul Lab</span>
+                  </div>
+
+                  <div className="flex flex-col gap-2.5">
+                    <h4 className="text-[20px] md:text-[22px] font-medium text-white leading-[1.25]">
+                      Tugas Ringan &amp; Praktikum
+                    </h4>
+                    <p className="text-[14px] text-white/75 leading-[1.6]">
+                      Penyelesaian tugas modul mingguan algoritma pemrograman, query database SQL, struktur data, dan praktikum komputer.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-2 border-t border-white/10 text-[13px] text-white/80">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Source code bersih dengan komentar kode</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Algoritma, struktur data, &amp; query SQL</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full bg-white/60 shrink-0" />
+                      <span>Penjelasan logika &amp; garansi nilai modul</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <Link
+                    href="/order"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-white/80 hover:text-white transition-colors"
+                  >
+                    <span>Pilih Layanan</span>
+                    <span className="group-hover:translate-x-0.5 transition-transform">↗</span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION: BIAYA TRANSPARAN (HIGH CONTRAST VALUE ANCHOR) */}
+        {/* SECTION: BIAYA TRANSPARAN (HIGH-CONVERSION VALUE ANCHOR) */}
         <section
           id="harga"
-          className="p-8 sm:p-12 md:p-14 rounded-[32px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-10"
+          className="p-10 sm:p-14 md:p-16 rounded-[36px] bg-white/[0.04] backdrop-blur-2xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.2)] flex flex-col lg:flex-row lg:items-center justify-between gap-10 md:gap-14"
         >
-          <div className="flex flex-col gap-4 max-w-2xl">
-            <h2 className="text-[32px] sm:text-[42px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
-              Mulai dari Rp 50.000 per anggota.
+          {/* Left Column: Value Proposition & Relief Copy */}
+          <div className="flex flex-col gap-5 max-w-2xl">
+            <h2 className="text-[32px] sm:text-[42px] md:text-[46px] font-medium leading-[1.08] text-white tracking-[-0.03em]">
+              Satu proyek tuntas, nilai aman untuk seluruh kelompok.
             </h2>
 
-            <p className="text-[15px] text-white/80 leading-[1.6]">
-              Biaya dibagi rata sejumlah anggota kelompok. Jika kelompok Anda beranggotakan 4 orang, total tagihan adalah Rp 200.000. Tiap anggota kelompok mendapatkan kontribusi commit di repository GitHub.
+            <p className="text-[16px] md:text-[17px] text-white/80 leading-[1.65]">
+              Hanya <strong className="text-white font-medium">Rp 50.000 per anggota</strong>—setara sekali nongkrong untuk memastikan kode aplikasi selesai terstandar, riwayat commit aktif atas nama akun GitHub masing-masing, dan materi presentasi UAS siap diuji dosen.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-[12px] text-white/70">
-              <span className="px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
-                ✓ Tanpa Biaya Tersembunyi
-              </span>
-              <span className="px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
-                ✓ Kontribusi GitHub Terbagi Rata
-              </span>
-              <span className="px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
-                ✓ Garansi Sebelum Demo UAS
-              </span>
+            {/* High-Contrast Reassurance Points */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-2 text-[13px] text-white/85">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                <span>Commit natural via OAuth resmi</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                <span>Garansi bimbingan &amp; revisi</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                <span>Tanpa biaya tersembunyi</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-10">
+          {/* Right Column: Price Anchor & High-Converting CTA */}
+          <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-12">
             <div className="flex flex-col lg:text-right">
-              <span className="text-[12px] text-white/60 font-mono uppercase tracking-wider">
-                Mulai Dari
+              <span className="text-[12px] text-white/60 font-mono uppercase tracking-[0.12em]">
+                Investasi Mulai Dari
               </span>
-              <div className="text-[36px] sm:text-[44px] font-medium text-white font-mono leading-none tracking-tight tabular-nums">
+              <div className="text-[40px] sm:text-[52px] font-medium text-white font-mono leading-none tracking-tight tabular-nums mt-1">
                 Rp 50.000
               </div>
-              <span className="text-[13px] text-white/60 mt-1">
-                / orang / proyek
+              <span className="text-[13px] text-white/60 mt-1.5">
+                / anggota / proyek
               </span>
             </div>
 
-            <Link
-              href="/order"
-              className="btn-white-pill text-[14px] px-8 py-3.5 rounded-full"
-            >
-              Order Sekarang ↗
-            </Link>
+            <div className="flex flex-col items-start lg:items-end gap-2.5 w-full sm:w-auto">
+              <Link
+                href="/order"
+                className="btn-white-pill text-[15px] font-medium px-9 py-4 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto text-center"
+              >
+                <span>Amankan Proyek Sekarang</span>
+                <span>↗</span>
+              </Link>
+              <span className="text-[11px] text-white/50 font-mono self-center lg:self-end">
+                ⚡ Verifikasi cepat 1–3 jam • Kuota 1–8 orang
+              </span>
+            </div>
           </div>
         </section>
       </main>
