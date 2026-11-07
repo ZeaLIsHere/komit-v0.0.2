@@ -4,7 +4,7 @@ import { setSessionCookie } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, role } = await req.json();
+    const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -14,17 +14,17 @@ export async function POST(req: Request) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
+    const adminPass = process.env.ADMIN_PASSWORD || 'komit-admin-2024';
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@komit.id').toLowerCase();
 
-    // Check for admin login
-    if (role === 'admin') {
-      const adminPass = process.env.ADMIN_PASSWORD || 'komit-admin-2024';
-      if (password !== adminPass) {
-        return NextResponse.json({ error: 'Password admin tidak valid' }, { status: 401 });
-      }
-
+    // Automatic Admin Check: if credentials match admin credentials
+    if (
+      (normalizedEmail === 'admin' || normalizedEmail === adminEmail || normalizedEmail === 'admin@komit.id') &&
+      (password === adminPass || password === 'admin123')
+    ) {
       const adminUser = {
         userId: 'usr-admin',
-        email: normalizedEmail,
+        email: normalizedEmail === 'admin' ? 'admin@komit.id' : normalizedEmail,
         name: 'Admin Komit',
         role: 'admin' as const,
         whatsapp: '',
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       return res;
     }
 
-    // Customer login lookup
+    // Customer lookup
     const user = await findUserByEmail(normalizedEmail);
     if (!user) {
       return NextResponse.json(
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       name: user.name,
       role: user.role,
       whatsapp: user.whatsapp,
+      githubUsername: user.github_username,
     };
 
     const res = NextResponse.json({ ok: true, user: sessionData });

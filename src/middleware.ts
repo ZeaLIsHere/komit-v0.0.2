@@ -28,7 +28,6 @@ export function middleware(req: NextRequest) {
     const isAdmin = (session && session.role === 'admin') || adminLegacy === 'authenticated';
     if (!isAdmin) {
       const loginUrl = new URL('/login', req.url);
-      loginUrl.searchParams.set('role', 'admin');
       loginUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(loginUrl);
     }
