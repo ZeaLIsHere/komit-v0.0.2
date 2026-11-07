@@ -8,9 +8,9 @@ export default function HomePage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-10 flex flex-col gap-28 md:gap-36">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pb-20 flex flex-col gap-28 md:gap-36">
         {/* HERO SECTION WITH DUSK VIOLET ATMOSPHERIC BACKGROUND */}
-        <section className="relative min-h-[75vh] flex flex-col items-center justify-center text-center gap-8 py-16 overflow-hidden">
+        <section className="relative min-h-[calc(100vh-120px)] flex flex-col items-center justify-center text-center gap-8 pt-20 pb-16 md:pt-28 md:pb-20 overflow-hidden">
           {/* 3D Constellation Sphere Background */}
           <HeroConstellation />
 
@@ -40,61 +40,60 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION: CARA KERJA (DE-CONTAINERIZED CONNECTED TIMELINE) */}
-        <section id="cara-kerja" className="flex flex-col gap-12">
-          {/* Section Header with Contextual Metadata */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
-            <div className="flex flex-col gap-2">
-              <span className="text-[12px] font-mono uppercase tracking-[0.15em] text-white/60">
-                Alur Eksekusi
-              </span>
-              <h2 className="text-[32px] md:text-[40px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
-                Pengerjaan bertahap dari pemesanan hingga sidang akhir.
-              </h2>
-            </div>
-            <span className="text-[13px] text-white/50 font-mono shrink-0">
-              04 Tahapan Terstruktur
-            </span>
+        {/* SECTION: CARA KERJA (VERTICAL EDITORIAL TIMELINE) */}
+        <section id="cara-kerja" className="flex flex-col gap-8">
+          {/* Section Header */}
+          <div className="border-b border-white/10 pb-6">
+            <h2 className="text-[32px] md:text-[42px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
+              Pengerjaan bertahap hingga nilai A
+            </h2>
           </div>
 
-          {/* Open Horizontal Pipeline */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
+          {/* Vertical Editorial Step Rows */}
+          <div className="flex flex-col divide-y divide-white/10 border-b border-white/10">
             {[
               {
                 step: '01',
                 title: 'Order & Bayar QRIS',
-                desc: 'Pilih paket, atur kuota anggota kelompok (1–8 orang), dan selesaikan bayar via QRIS statis terjangkau.',
+                desc: 'Pilih paket > Set - Up > dan Bayar lewat QRIS yang tersedia',
               },
               {
                 step: '02',
                 title: 'Ide AI & Gimmick Dosen',
-                desc: 'Ketik topik mata kuliah, AI menyajikan 3 ide berdaya saing dengan fitur unik pemikat nilai saat demo.',
+                desc: 'Ketik topik mata kuliah, AI menyajikan 3 rekomendasi ide berdaya saing dengan fitur unik pemikat nilai saat demo pengujian.',
               },
               {
                 step: '03',
                 title: 'Connect GitHub Anggota',
-                desc: 'Tautan dibagikan ke kelompok. Tiap anggota menghubungkan akun GitHub resmi via OAuth aman.',
+                desc: 'Tautan dibagikan ke grup kelompok. Tiap anggota menghubungkan akun GitHub resmi via OAuth aman agar kontribusi tercatat.',
               },
               {
                 step: '04',
                 title: 'Cicil Commit & README',
-                desc: 'Kode di-push terjadwal mingguan. Saat UAS tiba, gunakan mode presentasi interaktif atau README.',
+                desc: 'Kode di-push terjadwal mingguan. Saat UAS tiba, gunakan mode presentasi interaktif atau generate README anti-tanya dosen.',
               },
             ].map((item) => (
-              <div key={item.step} className="flex flex-col gap-4 group">
-                {/* Step Marker with Connected Hairline Divider */}
-                <div className="flex items-center gap-3">
-                  <span className="text-[28px] font-medium font-mono text-white/90 tabular-nums">
+              <div
+                key={item.step}
+                className="py-8 md:py-10 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-center group hover:bg-white/[0.02] transition-colors -mx-4 px-4 rounded-[16px]"
+              >
+                {/* Step Number */}
+                <div className="md:col-span-2">
+                  <span className="text-[32px] md:text-[40px] font-medium font-mono text-white/40 group-hover:text-white transition-colors tabular-nums">
                     {item.step}
                   </span>
-                  <div className="h-[1px] flex-1 bg-white/15 group-hover:bg-white/35 transition-colors" />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <h3 className="text-[17px] font-medium text-white leading-[1.3]">
+                {/* Step Title */}
+                <div className="md:col-span-4">
+                  <h3 className="text-[20px] md:text-[22px] font-medium text-white leading-[1.3]">
                     {item.title}
                   </h3>
-                  <p className="text-[14px] text-white/75 leading-[1.6]">
+                </div>
+
+                {/* Step Description */}
+                <div className="md:col-span-6">
+                  <p className="text-[15px] text-white/75 leading-[1.6]">
                     {item.desc}
                   </p>
                 </div>
@@ -106,10 +105,7 @@ export default function HomePage() {
         {/* SECTION: KATALOG LAYANAN (ASYMMETRIC BENTO: FLAGSHIP VS SECONDARY) */}
         <section id="layanan" className="flex flex-col gap-12">
           {/* Section Header */}
-          <div className="flex flex-col gap-2 border-b border-white/10 pb-6">
-            <span className="text-[12px] font-mono uppercase tracking-[0.15em] text-white/60">
-              Spesialisasi Akademik
-            </span>
+          <div className="border-b border-white/10 pb-6">
             <h2 className="text-[32px] md:text-[40px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
               Dirancang untuk kebutuhan akademik mahasiswa informatika.
             </h2>
@@ -120,15 +116,6 @@ export default function HomePage() {
             {/* Left Column (7 cols): Flagship Core Service */}
             <div className="lg:col-span-7 p-8 md:p-10 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8">
               <div className="flex flex-col gap-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-[#161616] bg-white px-3 py-1 rounded-full font-mono">
-                    Layanan Utama • Flagship
-                  </span>
-                  <span className="text-[12px] text-white/60 font-mono">
-                    Multi-Kontributor
-                  </span>
-                </div>
-
                 <div className="flex flex-col gap-3">
                   <h3 className="text-[26px] md:text-[32px] font-medium text-white leading-[1.15] tracking-[-0.02em]">
                     Joki Proyek Kuliah Berkelompok
@@ -146,7 +133,7 @@ export default function HomePage() {
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
-                    <span>Rekomendasi 3 ide AI dengan gimmick pemikat dosen penguji</span>
+                    <span>Rekomendasi ide sesuai /topik bidang yang kamu sukai</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
@@ -181,57 +168,33 @@ export default function HomePage() {
             {/* Right Column (5 cols): 3 Secondary Complementary Services */}
             <div className="lg:col-span-5 flex flex-col gap-4">
               {/* Secondary Service 1 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[18px] font-medium text-white">
-                      Makalah &amp; Laporan Akademik
-                    </h4>
-                    <span className="text-[11px] font-mono text-white/50">Dokumen</span>
-                  </div>
-                  <p className="text-[13px] text-white/75 leading-[1.5]">
-                    Penyusunan laporan standar kampus, perancangan diagram UML (Use Case, Activity, Sequence), relasi ERD database, dan referensi jurnal terindeks.
-                  </p>
-                </div>
-                <span className="text-[12px] text-white/50">
-                  Revisi sampai disetujui dosen pembimbing
-                </span>
+              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
+                <h4 className="text-[18px] font-medium text-white">
+                  Makalah &amp; Laporan Akademik
+                </h4>
+                <p className="text-[13px] text-white/75 leading-[1.5]">
+                  Penyusunan laporan standar kampus, perancangan diagram UML (Use Case, Activity, Sequence), relasi ERD database, dan referensi jurnal terindeks.
+                </p>
               </div>
 
               {/* Secondary Service 2 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[18px] font-medium text-white">
-                      Slide Presentasi (PPT)
-                    </h4>
-                    <span className="text-[11px] font-mono text-white/50">Add-on</span>
-                  </div>
-                  <p className="text-[13px] text-white/75 leading-[1.5]">
-                    Slide PowerPoint (.pptx) estetis dan ringkas untuk presentasi demo aplikasi di hadapan dosen penguji tanpa rasa cemas.
-                  </p>
-                </div>
-                <span className="text-[12px] text-white/50">
-                  Tersedia langsung di dashboard proyek
-                </span>
+              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
+                <h4 className="text-[18px] font-medium text-white">
+                  Slide Presentasi (PPT)
+                </h4>
+                <p className="text-[13px] text-white/75 leading-[1.5]">
+                  Slide PowerPoint (.pptx) estetis dan ringkas untuk presentasi demo aplikasi di hadapan dosen penguji tanpa rasa cemas.
+                </p>
               </div>
 
               {/* Secondary Service 3 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-[18px] font-medium text-white">
-                      Tugas Ringan &amp; Praktikum
-                    </h4>
-                    <span className="text-[11px] font-mono text-white/50">Modul</span>
-                  </div>
-                  <p className="text-[13px] text-white/75 leading-[1.5]">
-                    Penyelesaian tugas mingguan algoritma pemrograman, struktur data, pembuatan query database SQL, dan modul praktikum lab.
-                  </p>
-                </div>
-                <span className="text-[12px] text-white/50">
-                  Garansi penjelasan logika kode
-                </span>
+              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
+                <h4 className="text-[18px] font-medium text-white">
+                  Tugas Ringan &amp; Praktikum
+                </h4>
+                <p className="text-[13px] text-white/75 leading-[1.5]">
+                  Penyelesaian tugas mingguan algoritma pemrograman, struktur data, pembuatan query database SQL, dan modul praktikum lab.
+                </p>
               </div>
             </div>
           </div>
@@ -243,13 +206,6 @@ export default function HomePage() {
           className="p-8 sm:p-12 md:p-14 rounded-[32px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-10"
         >
           <div className="flex flex-col gap-4 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-[12px] font-mono uppercase tracking-[0.15em] text-white/70">
-                Formula Pembagian Adil
-              </span>
-            </div>
-
             <h2 className="text-[32px] sm:text-[42px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
               Mulai dari Rp 50.000 per anggota.
             </h2>
