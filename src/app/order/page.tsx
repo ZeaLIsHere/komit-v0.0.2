@@ -276,16 +276,9 @@ export default function OrderPage() {
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <h2 className="text-[18px] font-medium text-white">
-                {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
-              </h2>
-              {currentUser && (
-                <span className="text-[12px] font-mono text-[#cbfffc] bg-[#011d1c] px-2.5 py-1 rounded-[4px] border border-[#003734] self-start sm:self-auto">
-                  ✓ Akun Terhubung: {currentUser.name} ({currentUser.email})
-                </span>
-              )}
-            </div>
+            <h2 className="text-[18px] font-medium text-white">
+              {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[12px] text-[#bbc7c6]">Nama Lengkap</span>
