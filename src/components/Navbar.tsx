@@ -2,20 +2,20 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#012624]/95 backdrop-blur-lg border-b border-[#003734]/80">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-12 py-7 min-h-[96px] flex items-center justify-between gap-6">
-        {/* Logo Lockup with generous breathing room */}
-        <Link href="/" className="flex items-center gap-3.5 group shrink-0">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#00827c] to-[#cbfffc] flex items-center justify-center shadow-[0_0_12px_rgba(203,255,252,0.3)]">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#012624]" />
+    <header className="sticky top-5 z-50 w-full max-w-[1160px] mx-auto px-4 sm:px-6">
+      <div className="h-[60px] bg-[#161616]/85 backdrop-blur-md border border-[#e5e5e5]/10 rounded-full px-5 flex items-center justify-between gap-4 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+        {/* Logo Lockup */}
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-[#161616]" />
           </div>
-          <span className="text-[20px] font-medium tracking-tight text-white uppercase">
+          <span className="text-[17px] font-medium tracking-tight text-white font-sans">
             Komit
           </span>
         </Link>
 
-        {/* Ghost Navigation Links: 13px uppercase, 0.12em letter spacing */}
-        <nav className="hidden lg:flex items-center gap-8 text-[13px] uppercase tracking-[0.12em] text-[#bbc7c6]">
+        {/* Ghost Navigation Links */}
+        <nav className="hidden md:flex items-center gap-6 text-[14px] text-white/85 font-normal">
           <Link href="/#layanan" className="hover:text-white transition-colors">
             Layanan
           </Link>
@@ -26,20 +26,20 @@ export default function Navbar() {
             Biaya
           </Link>
           <Link href="/project/demo-proyek-uas" className="hover:text-white transition-colors">
-            Demo Dashboard
+            Preview
           </Link>
           <Link href="/admin" className="hover:text-white transition-colors">
-            Joki Panel
+            Admin
           </Link>
         </nav>
 
-        {/* Primary Action Button: Signature Aurora Gradient, 6px radius, proportional height */}
-        <div className="flex items-center gap-4 shrink-0">
+        {/* White Pill CTA */}
+        <div className="flex items-center gap-3 shrink-0">
           <Link
             href="/order"
-            className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] inline-flex items-center justify-center leading-none"
+            className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
           >
-            Pesan Proyek ↗
+            Pesan Proyek
           </Link>
         </div>
       </div>

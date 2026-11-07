@@ -2,60 +2,74 @@
 
 @theme {
   /* Colors */
-  --color-liquid-abyss: #012624;
-  --color-liquid-deep: #011d1c;
-  --color-liquid-kelp: #003734;
-  --color-liquid-mist: #edfffe;
-  --color-platinum: #ffffff;
-  --color-silver-mist: #bbc7c6;
-  --color-ash: #f2f2f2;
-  --color-slate-deep: #707777;
-  --color-lavender-phosphor: #fde9ff;
+  --color-void-canvas: #0a0a0a;
+  --color-graphite: #161616;
+  --color-frosted-glass: #d4d4d4;
+  --color-ink-black: #000000;
+  --color-snow-white: #ffffff;
+  --color-bone: #ededed;
+  --color-ash: #c2c2c2;
+  --color-slate: #686868;
+  --color-smoke: #b2b2b2;
+  --color-hairline: #e5e5e5;
+  --color-dusk-violet: #6b62f2;
 
   /* Typography */
-  --font-matter: var(--font-inter), 'Matter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-dm-sans: var(--font-dm-sans), 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-geist: var(--font-geist), 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */
-  --text-caption: 10px;
-  --leading-caption: 1.4;
-  --tracking-caption: 1.5px;
+  --text-caption: 13px;
+  --leading-caption: 1.5;
+  --tracking-caption: 0.33px;
   --text-body: 16px;
-  --leading-body: 1.4;
+  --leading-body: 1.5;
   --tracking-body: 0px;
-  --text-subheading: 24px;
-  --leading-subheading: 1.3;
-  --tracking-subheading: -0.48px;
+  --text-subheading: 18px;
+  --leading-subheading: 1.5;
+  --tracking-subheading: 0px;
+  --text-heading-sm: 24px;
+  --leading-heading-sm: 1.33;
+  --tracking-heading-sm: 0px;
   --text-heading: 36px;
-  --leading-heading: 1;
+  --leading-heading: 1.11;
   --tracking-heading: 0px;
-  --text-heading-lg: 61px;
+  --text-heading-lg: 48px;
   --leading-heading-lg: 1;
-  --tracking-heading-lg: -2.44px;
-  --text-display: 96px;
+  --tracking-heading-lg: 0px;
+  --text-display: 72px;
   --leading-display: 1;
-  --tracking-display: -3.84px;
+  --tracking-display: -2.52px;
 
-  /* Spacing (Base unit 4px) */
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
   --spacing-12: 12px;
+  --spacing-14: 14px;
   --spacing-16: 16px;
   --spacing-20: 20px;
+  --spacing-22: 22px;
   --spacing-24: 24px;
   --spacing-28: 28px;
   --spacing-32: 32px;
-  --spacing-36: 36px;
   --spacing-40: 40px;
+  --spacing-44: 44px;
   --spacing-48: 48px;
-  --spacing-64: 64px;
-  --spacing-80: 80px;
-  --spacing-120: 120px;
-  --spacing-140: 140px;
-  --spacing-160: 160px;
-  --spacing-164: 164px;
+  --spacing-56: 56px;
 
-  /* Border Radius (Auros strict vocabulary: 6px and 16px) */
-  --radius-sm: 6px;
-  --radius-md: 6px;
-  --radius-2xl: 16px;
+  /* Border Radius */
+  --radius-md: 4px;
+  --radius-lg: 10px;
+  --radius-2xl: 19px;
+  --radius-3xl: 24px;
+  --radius-3xl-2: 40px;
+  --radius-full: 64px;
+  --radius-full-2: 9999px;
+
+  /* Shadows */
+  --shadow-subtle: rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
 :root {
@@ -63,48 +77,79 @@
 }
 
 body {
-  background-color: #012624;
-  color: #bbc7c6;
-  font-family: var(--font-matter);
+  background-color: #0a0a0a;
+  color: #ededed;
+  font-family: var(--font-dm-sans);
   font-size: 16px;
-  line-height: 1.4;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: #00827c;
+  background-color: rgba(107, 98, 242, 0.35);
   color: #ffffff;
 }
 
-/* Auros Signature Aurora Gradient for Primary Action Buttons */
-.btn-aurora {
-  background: linear-gradient(90deg, #cbfffc 0%, #edfffe 26.25%, #fffdfa 47.57%, #fad1ff 88.96%);
-  color: #012624;
+/* Dimension Signature White Pill CTA Button */
+.btn-white-pill {
+  background-color: #ffffff;
+  color: #161616;
+  font-family: var(--font-dm-sans);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 6px;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.btn-aurora:hover {
-  opacity: 0.92;
+.btn-white-pill:hover {
+  background-color: #ededed;
   transform: translateY(-1px);
 }
 
-/* Subtle dark teal scrollbar */
+/* Dimension Hairline Ghost Button / Pill */
+.btn-hairline-ghost {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(229, 229, 229, 0.15);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.btn-hairline-ghost:hover {
+  border-color: rgba(229, 229, 229, 0.35);
+  color: #ffffff;
+}
+
+/* Frosted Glass Card */
+.frosted-card {
+  background-color: rgba(22, 22, 22, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(229, 229, 229, 0.08);
+  border-radius: 24px;
+}
+
+/* Subtle dark scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #011d1c;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #003734;
-  border-radius: 6px;
+  background: #1f1f1f;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #004d49;
+  background: #2b2b2b;
 }

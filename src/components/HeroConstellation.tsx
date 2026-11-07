@@ -188,25 +188,25 @@ export default function HeroConstellation() {
         float sizeScale = (1.0 + sin(aPhase + uTime * 2.0) * 0.18);
         gl_PointSize = (aSize * sizeScale) * (340.0 / -mvPosition.z);
 
-        // 7. Depth Layering Color Logic (Inverted as requested):
-        // Layer Depan (Z > threshold): Hijau Gelap
-        // Layer Belakang (Z < -threshold): Putih Kehijauan Terang (Luminous Glow)
-        // Layer Tengah: Hijau Web Auros
+        // 7. Depth Layering Color Logic (Dimension dusk violet & monochromatic):
+        // Layer Depan (Z > threshold): Dark Graphite
+        // Layer Belakang (Z < -threshold): Luminous White/Violet Glow
+        // Layer Tengah: Dusk Violet (#6b62f2) and Silver
         float zDepth = rotated.z;
         float threshold = uRadius * 0.28;
 
         if (zDepth > threshold) {
-          // DEPAN: Hijau Gelap
-          vColor = vec3(0.004, 0.21, 0.18);
-          vAlpha = 0.82;
+          // DEPAN: Dark Graphite / Charcoal
+          vColor = vec3(0.12, 0.12, 0.14);
+          vAlpha = 0.85;
         } else if (zDepth < -threshold) {
-          // BELAKANG: Putih Kehijauan Luminous Glow
-          vColor = vec3(0.93, 1.0, 0.99);
-          vAlpha = 0.95;
+          // BELAKANG: Luminous White/Violet Glow
+          vColor = vec3(0.96, 0.95, 1.0);
+          vAlpha = 0.98;
         } else {
-          // TENGAH: Hijau Web Auros (Cyan / Aqua)
-          vColor = mod(aCharIndex, 2.0) == 0.0 ? vec3(0.0, 0.96, 0.83) : vec3(0.0, 0.71, 0.65);
-          vAlpha = 0.75;
+          // TENGAH: Dusk Violet (#6b62f2) and Silver (#d4d4d4)
+          vColor = mod(aCharIndex, 2.0) == 0.0 ? vec3(0.42, 0.38, 0.95) : vec3(0.83, 0.83, 0.85);
+          vAlpha = 0.80;
         }
       }
     `;
@@ -301,7 +301,7 @@ export default function HeroConstellation() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center"
     >
       {/* Center atmospheric glow and radial fade */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#012624]/20 to-[#012624] pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0a0a0a]/20 to-[#0a0a0a] pointer-events-none" />
     </div>
   );
 }

@@ -22,8 +22,8 @@
       "type": "document",
       "name": "DESIGN.md",
       "filePath": "DESIGN.md",
-      "summary": "Auros design system: Liquid Abyss #012624 canvas, Liquid Kelp #003734 raised cards, Aurora gradient CTA, Matter 500 typography, 3D bioluminescent particle sphere data orb.",
-      "tags": ["design-system", "tokens", "auros-style", "styling-spec"]
+      "summary": "Dimension design system: Void Canvas #0a0a0a, Graphite #161616 frosted cards, White Pill CTA, DM Sans & Geist typography, Dusk Violet #6b62f2 glow.",
+      "tags": ["design-system", "tokens", "dimension-style", "styling-spec"]
     },
     {
       "id": "document:AGENTS.md",

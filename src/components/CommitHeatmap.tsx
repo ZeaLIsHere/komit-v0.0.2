@@ -59,19 +59,19 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
     });
   }
 
-  // Level color palette matching Auros bioluminescent scale
+  // Level color palette matching Dimension scale (Monochromatic + Dusk Violet + Pure White)
   const getCellColor = (level: number) => {
     switch (level) {
       case 1:
-        return 'bg-[#003734] border-[#004d49]';
+        return 'bg-[#222224] border-[#2d2d30]';
       case 2:
-        return 'bg-[#00827c] border-[#00a39c]';
+        return 'bg-[#3e3a59] border-[#4e4970]';
       case 3:
-        return 'bg-[#00b4a7] border-[#00f5d4]';
+        return 'bg-[#6b62f2] border-[#867ef5]';
       case 4:
-        return 'bg-[#cbfffc] border-white shadow-[0_0_8px_rgba(203,255,252,0.4)]';
+        return 'bg-white border-white shadow-[0_0_6px_rgba(255,255,255,0.4)]';
       default:
-        return 'bg-[#011d1c] border-[#002a28]';
+        return 'bg-[#0a0a0a] border-[#181818]';
     }
   };
 
@@ -79,25 +79,25 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
   const pushedSchedulesCount = filteredSchedules.filter((s) => s.status === 'pushed').length;
 
   return (
-    <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+    <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="text-[20px] font-medium text-white tracking-tight">
             Grafik Kontribusi GitHub Anggota
           </h3>
-          <p className="text-[13px] text-[#bbc7c6] mt-0.5">
+          <p className="text-[13px] text-[#c2c2c2] mt-0.5">
             Grafik commit terdistribusi merata sesuai standar penilaian orisinalitas dosen UAS.
           </p>
         </div>
 
         {/* Member filter switcher */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#011d1c] rounded-[6px]">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#0a0a0a] border border-[#e5e5e5]/10 rounded-full">
           <button
             onClick={() => setSelectedMemberId('all')}
-            className={`px-3 py-1 text-[11px] uppercase tracking-[0.08em] rounded-[4px] transition-all ${
+            className={`px-3 py-1 text-[11px] uppercase tracking-wider rounded-full transition-all ${
               selectedMemberId === 'all'
-                ? 'bg-[#cbfffc] text-[#012624] font-medium'
-                : 'text-[#bbc7c6] hover:text-white'
+                ? 'bg-white text-[#161616] font-medium'
+                : 'text-[#c2c2c2] hover:text-white'
             }`}
           >
             Semua
@@ -106,10 +106,10 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
             <button
               key={m.id}
               onClick={() => setSelectedMemberId(m.id)}
-              className={`px-3 py-1 text-[11px] rounded-[4px] transition-all truncate max-w-[110px] ${
+              className={`px-3 py-1 text-[11px] rounded-full transition-all truncate max-w-[110px] ${
                 selectedMemberId === m.id
-                  ? 'bg-[#cbfffc] text-[#012624] font-medium'
-                  : 'text-[#bbc7c6] hover:text-white'
+                  ? 'bg-white text-[#161616] font-medium'
+                  : 'text-[#c2c2c2] hover:text-white'
               }`}
             >
               {m.name.split(' ')[0]}
@@ -122,7 +122,7 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
       <div className="overflow-x-auto pb-2">
         <div className="flex gap-2 min-w-[620px]">
           {/* Day of week labels */}
-          <div className="flex flex-col justify-between py-1 text-[10px] font-mono text-[#707777] pr-1 select-none">
+          <div className="flex flex-col justify-between py-1 text-[10px] font-mono text-[#686868] pr-1 select-none">
             <span>Sen</span>
             <span>Rab</span>
             <span>Jum</span>
@@ -134,7 +134,7 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
               <div
                 key={idx}
                 title={`${cell.dateStr}: ${cell.count} commit`}
-                className={`w-3.5 h-3.5 rounded-[2px] border transition-all hover:scale-125 ${getCellColor(
+                className={`w-3.5 h-3.5 rounded-[3px] border transition-all hover:scale-125 ${getCellColor(
                   cell.level
                 )}`}
               />
@@ -144,27 +144,27 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
       </div>
 
       {/* Heatmap Metrics & Legend */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#012624] pt-4 text-[12px] text-[#bbc7c6]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#e5e5e5]/10 pt-4 text-[12px] text-[#c2c2c2]">
         <div className="flex items-center gap-6 font-mono">
           <div>
             Total Kontribusi: <span className="text-white font-medium">{totalCommitsCount}</span>
           </div>
           <div>
-            Sprint Push Selesai: <span className="text-[#cbfffc] font-medium">{pushedSchedulesCount}</span>
+            Sprint Push Selesai: <span className="text-white font-medium">{pushedSchedulesCount}</span>
           </div>
-          <div className="text-[#59d499]">
+          <div className="text-white">
             ✓ Status Blame Natural
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[#707777]">
+        <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[#686868]">
           <span>Kurang</span>
-          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#011d1c] border border-[#002a28]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#003734] border border-[#004d49]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#00827c] border border-[#00a39c]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#00b4a7] border border-[#00f5d4]" />
-          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#cbfffc]" />
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#0a0a0a] border border-[#181818]" />
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#222224] border border-[#2d2d30]" />
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#3e3a59] border border-[#4e4970]" />
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-[#6b62f2] border border-[#867ef5]" />
+          <div className="w-2.5 h-2.5 rounded-[2px] bg-white" />
           <span>Banyak</span>
         </div>
       </div>

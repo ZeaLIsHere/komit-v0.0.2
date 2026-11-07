@@ -148,62 +148,62 @@ export default function ProjectDashboardPage({
   // Show waiting payment screen before admin approves
   if (project.payment_status === 'pending') {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
-        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-10">
-          <div className="flex flex-col gap-6">
-            <span className="text-[11px] uppercase tracking-[0.12em] text-[#bbc7c6] font-mono">
+        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
+            <span className="text-[12px] uppercase tracking-wider text-[#686868] font-mono">
               ID Pesanan: {project.id.slice(0, 8)}...
             </span>
-            <h1 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+            <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
               Pesanan diterima. Menunggu verifikasi.
             </h1>
-            <p className="text-[16px] text-[#bbc7c6] leading-[1.4]">
+            <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
               Tim Komit sedang memverifikasi bukti transfer QRIS kamu. Proses verifikasi biasanya selesai dalam{' '}
               <strong className="text-white">1–3 jam</strong> pada hari kerja.
             </p>
           </div>
 
-          <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-5">
+          <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-4 text-[14px]">
               <div>
-                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Pemesan</div>
+                <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Pemesan</div>
                 <div className="text-white font-medium">{project.buyer_name}</div>
               </div>
               <div>
-                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">WhatsApp</div>
+                <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">WhatsApp</div>
                 <div className="text-white font-mono">{project.buyer_whatsapp}</div>
               </div>
               <div>
-                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Layanan</div>
+                <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Layanan</div>
                 <div className="text-white capitalize">{project.service_type.replace('_', ' ')} — {project.package_type}</div>
               </div>
               <div>
-                <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">Total Tagihan</div>
-                <div className="text-[#fde9ff] font-mono font-medium">Rp {project.total_price.toLocaleString('id-ID')}</div>
+                <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Total Tagihan</div>
+                <div className="text-white font-mono font-medium">Rp {project.total_price.toLocaleString('id-ID')}</div>
               </div>
             </div>
 
-            <div className="border-t border-[#012624] pt-5 flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
-              <span className="text-[14px] text-[#bbc7c6]">
-                Status pembayaran: <strong className="text-yellow-300 font-mono">Menunggu Verifikasi</strong>
+            <div className="border-t border-[#e5e5e5]/10 pt-4 flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse shrink-0" />
+              <span className="text-[14px] text-[#c2c2c2]">
+                Status pembayaran: <strong className="text-white font-medium">Menunggu Verifikasi</strong>
               </span>
             </div>
           </div>
 
-          <p className="text-[13px] text-[#bbc7c6]">
+          <p className="text-[13px] text-[#686868]">
             Simpan link halaman ini untuk memantau status pesanan. Setelah diverifikasi, halaman ini otomatis terbuka untuk setup proyek.
           </p>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <button
               onClick={() => window.location.reload()}
-              className="btn-aurora text-[14px] px-6 py-3 rounded-[6px] self-start"
+              className="btn-white-pill text-[14px] px-6 py-3 rounded-full self-start"
             >
               Refresh Status
             </button>
-            <Link href="/" className="text-[13px] uppercase tracking-[0.12em] text-[#bbc7c6] hover:text-white self-start mt-2">
+            <Link href="/" className="text-[13px] text-[#c2c2c2] hover:text-white self-start mt-1">
               ← Kembali ke Beranda
             </Link>
           </div>
@@ -216,20 +216,20 @@ export default function ProjectDashboardPage({
   // Payment rejected screen
   if (project.payment_status === 'rejected') {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
-        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-8">
-          <h1 className="text-[36px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+        <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-6">
+          <h1 className="text-[36px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Pembayaran ditolak.
           </h1>
-          <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
+          <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
             Bukti transfer tidak valid atau nominal tidak sesuai. Hubungi tim Komit via WhatsApp untuk klarifikasi.
           </p>
-          <div className="p-5 rounded-[16px] bg-[#003734]">
-            <div className="text-[11px] uppercase tracking-[0.08em] text-[#bbc7c6] mb-1">ID Pesanan</div>
+          <div className="p-5 rounded-[16px] bg-[#161616] border border-[#e5e5e5]/10">
+            <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">ID Pesanan</div>
             <div className="text-white font-mono text-[14px]">{project.id}</div>
           </div>
-          <Link href="/order" className="btn-aurora text-[14px] px-6 py-3 rounded-[6px] self-start">
+          <Link href="/order" className="btn-white-pill text-[14px] px-6 py-3 rounded-full self-start">
             Pesan Ulang ↗
           </Link>
         </main>
@@ -241,24 +241,24 @@ export default function ProjectDashboardPage({
   const allConnected = members.length > 0 && members.every((m) => m.is_connected);
 
   return (
-    <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
-        {/* Setup Banner — shown when payment approved but setup not done */}
+        {/* Setup Banner */}
         {project.status === 'setup' && (
-          <div className="p-6 rounded-[16px] bg-[#003734] border border-[#cbfffc]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-[0.12em] text-[#cbfffc] font-medium mb-1">
+              <div className="text-[11px] uppercase tracking-wider text-white font-medium mb-1">
                 Pembayaran Terverifikasi
               </div>
-              <p className="text-[15px] text-white">
+              <p className="text-[15px] text-[#ededed]">
                 Lanjutkan setup proyek: pilih ide AI, isi data anggota, dan bagikan link undangan GitHub.
               </p>
             </div>
             <Link
               href={`/project/${id}/setup`}
-              className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] shrink-0"
+              className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
               Lanjut Setup Proyek ↗
             </Link>
@@ -266,21 +266,21 @@ export default function ProjectDashboardPage({
         )}
 
         {/* Top Header / Project Overview */}
-        <div className="p-8 sm:p-10 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+        <div className="p-8 sm:p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#012624] bg-[#cbfffc] px-2 py-0.5 rounded-[4px]">
+                <span className="text-[11px] font-medium uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full">
                   {project.package_type.toUpperCase()} • {project.service_type}
                 </span>
-                <span className="text-[12px] text-[#bbc7c6] font-mono">
+                <span className="text-[12px] text-[#686868] font-mono">
                   ID: {project.id.slice(0, 8)}
                 </span>
               </div>
-              <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+              <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
                 {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
               </h1>
-              <p className="text-[15px] text-[#bbc7c6] max-w-2xl leading-[1.4]">
+              <p className="text-[15px] text-[#c2c2c2] max-w-2xl leading-[1.5]">
                 {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
               </p>
             </div>
@@ -288,13 +288,13 @@ export default function ProjectDashboardPage({
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <Link
                 href={`/project/${id}/present`}
-                className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
+                className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full transition-all"
               >
                 Mode Presentasi UAS 🖥️
               </Link>
               <Link
                 href={`/project/${id}/setup`}
-                className="text-[13px] bg-[#011d1c] hover:bg-[#012624] text-white border border-[#003734] px-5 py-2.5 rounded-[6px] transition-all"
+                className="btn-hairline-ghost text-[13px] px-5 py-2.5 rounded-full transition-all"
               >
                 Ubah Setup
               </Link>
@@ -303,12 +303,12 @@ export default function ProjectDashboardPage({
                   href={project.github_repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#003734] hover:bg-[#004d49] text-white border border-[#004d49] text-[13px] px-5 py-2.5 rounded-[6px] transition-all"
+                  className="bg-[#1f1f1f] hover:bg-[#282828] text-white border border-[#e5e5e5]/15 text-[13px] px-5 py-2.5 rounded-full transition-all"
                 >
                   GitHub Repo ↗
                 </a>
               ) : (
-                <span className="text-[12px] text-[#bbc7c6] px-4 py-2 bg-[#011d1c] rounded-[6px] font-mono">
+                <span className="text-[12px] text-[#686868] px-4 py-2 bg-[#0a0a0a] rounded-full font-mono border border-[#e5e5e5]/10">
                   Repo Sedang Dibuat
                 </span>
               )}
@@ -316,26 +316,26 @@ export default function ProjectDashboardPage({
           </div>
 
           {/* Customer Milestone Pipeline */}
-          <div className="pt-4 border-t border-[#012624] grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
-            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
-              <span className="text-[#cbfffc] font-bold">✓</span>
+          <div className="pt-4 border-t border-[#e5e5e5]/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
+            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+              <span className="text-white font-bold">✓</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Pembayaran QRIS</div>
-                <div className="text-[11px] text-[#59d499]">Terverifikasi</div>
+                <div className="text-[11px] text-[#c2c2c2]">Terverifikasi</div>
               </div>
             </div>
-            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
-              <span className="text-[#cbfffc] font-bold">{project.selected_idea ? '✓' : '•'}</span>
+            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+              <span className="text-white font-bold">{project.selected_idea ? '✓' : '•'}</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Ide & Anggota</div>
-                <div className="text-[11px] text-[#bbc7c6]">{project.selected_idea ? 'Ide AI Terkunci' : 'Lengkapi Setup'}</div>
+                <div className="text-[11px] text-[#c2c2c2]">{project.selected_idea ? 'Ide AI Terkunci' : 'Lengkapi Setup'}</div>
               </div>
             </div>
-            <div className="p-3 rounded-[6px] bg-[#011d1c] flex items-center gap-2.5">
-              <span className="text-[#cbfffc] font-bold">●</span>
+            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+              <span className="text-white font-bold">●</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Cicil Commit</div>
-                <div className="text-[11px] text-[#cbfffc] font-mono">
+                <div className="text-[11px] text-white font-mono">
                   {schedules.filter((s) => s.status === 'pushed').length}/{schedules.length} Selesai
                 </div>
               </div>
@@ -345,16 +345,16 @@ export default function ProjectDashboardPage({
 
         {/* Gimmick Banner */}
         {project.selected_idea?.gimmick && (
-          <div className="p-6 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <span className="text-[13px] text-[#cbfffc] font-medium block mb-1">
+              <span className="text-[13px] text-white font-medium block mb-1">
                 Gimmick Pemikat Nilai Dosen
               </span>
-              <p className="text-[15px] text-white font-normal">
+              <p className="text-[15px] text-[#c2c2c2] font-normal">
                 {project.selected_idea.gimmick}
               </p>
             </div>
-            <span className="text-[12px] text-[#fde9ff] font-mono shrink-0 uppercase tracking-wider">
+            <span className="text-[12px] text-white font-mono shrink-0 uppercase tracking-wider bg-[#0a0a0a] px-3 py-1 rounded-full border border-[#e5e5e5]/10">
               Target Nilai A
             </span>
           </div>
@@ -369,7 +369,7 @@ export default function ProjectDashboardPage({
             {!allConnected && (
               <Link
                 href={`/join/${id}`}
-                className="text-[13px] uppercase tracking-[0.08em] text-[#cbfffc] hover:underline font-medium"
+                className="text-[13px] text-white hover:underline font-medium"
               >
                 Undang / Connect Anggota Lain ↗
               </Link>
@@ -380,24 +380,24 @@ export default function ProjectDashboardPage({
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-6 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-4"
+                className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-4"
               >
                 <div>
                   <div className="text-[16px] font-medium text-white">{m.name}</div>
-                  <div className="text-[12px] text-[#bbc7c6] font-mono mt-1">
+                  <div className="text-[12px] text-[#686868] font-mono mt-1">
                     NIM: {m.nim} • KOM {m.kom}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-[#012624] pt-3">
-                  <span className="text-[12px] font-mono text-[#bbc7c6]">
+                <div className="flex items-center justify-between border-t border-[#e5e5e5]/10 pt-3">
+                  <span className="text-[12px] font-mono text-[#c2c2c2]">
                     @{m.github_username || 'unconnected'}
                   </span>
                   <span
-                    className={`text-[10px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-[4px] ${
+                    className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full ${
                       m.is_connected
-                        ? 'bg-[#cbfffc] text-[#012624] font-medium'
-                        : 'bg-[#011d1c] text-[#bbc7c6]'
+                        ? 'bg-white text-[#161616] font-medium'
+                        : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
                     }`}
                   >
                     {m.is_connected ? 'Connected' : 'Pending'}
@@ -420,33 +420,33 @@ export default function ProjectDashboardPage({
               <h2 className="text-[20px] font-medium text-white tracking-tight">
                 Antrean & Riwayat Cicil Commit GitHub
               </h2>
-              <p className="text-[14px] text-[#bbc7c6]">
+              <p className="text-[14px] text-[#c2c2c2]">
                 Commit didorong secara natural atas nama masing-masing anggota kelompok hingga batas UAS.
               </p>
             </div>
-            <span className="text-[14px] text-[#fde9ff] font-mono">
+            <span className="text-[14px] text-white font-mono">
               {schedules.filter((s) => s.status === 'pushed').length} / {schedules.length} Selesai
             </span>
           </div>
 
-          <div className="border border-[#003734] rounded-[16px] overflow-hidden bg-[#003734]">
+          <div className="border border-[#e5e5e5]/10 rounded-[24px] overflow-hidden bg-[#161616]/75 backdrop-blur-md">
             {schedules.length === 0 ? (
-              <div className="p-8 text-center text-[#bbc7c6] text-[14px] font-mono">
+              <div className="p-8 text-center text-[#686868] text-[14px] font-mono">
                 Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
               </div>
             ) : (
-              <div className="divide-y divide-[#012624]">
+              <div className="divide-y divide-[#e5e5e5]/10">
                 {schedules.map((s) => (
                   <div
                     key={s.id}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[14px] hover:bg-[#012624]/60 transition-colors"
+                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[14px] hover:bg-white/[0.02] transition-colors"
                   >
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-mono text-[#edfffe] bg-[#012624] px-2 py-0.5 rounded-[4px]">
+                        <span className="text-[12px] font-mono text-white bg-[#0a0a0a] border border-[#e5e5e5]/10 px-2 py-0.5 rounded-[6px]">
                           @{s.github_username || 'member'}
                         </span>
-                        <span className="text-[12px] text-[#bbc7c6] font-mono">
+                        <span className="text-[12px] text-[#686868] font-mono">
                           {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'short',
@@ -459,15 +459,15 @@ export default function ProjectDashboardPage({
 
                     <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
                       {s.commit_hash && (
-                        <span className="text-[11px] font-mono text-[#fde9ff] bg-[#011d1c] px-2 py-0.5 rounded-[4px]">
+                        <span className="text-[11px] font-mono text-[#ededed] bg-[#0a0a0a] border border-[#e5e5e5]/10 px-2 py-0.5 rounded-[6px]">
                           #{s.commit_hash}
                         </span>
                       )}
                       <span
-                        className={`text-[11px] uppercase tracking-[0.08em] px-2.5 py-0.5 rounded-[4px] ${
+                        className={`text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
                           s.status === 'pushed'
-                            ? 'bg-[#cbfffc] text-[#012624] font-medium'
-                            : 'bg-[#011d1c] text-[#bbc7c6]'
+                            ? 'bg-white text-[#161616] font-medium'
+                            : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
                         }`}
                       >
                         {s.status === 'pushed' ? 'Pushed' : 'Scheduled'}
@@ -488,15 +488,15 @@ export default function ProjectDashboardPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}
-            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-[#cbfffc] font-medium">
+                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Termasuk di Paket (Gratis)
                 </span>
                 <h3 className="text-[22px] font-medium text-white leading-tight">
                   Generate Bahan Presentasi (README)
                 </h3>
-                <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
+                <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
                   Menyusun pembagian tugas per anggota, penjelasan arsitektur kode, dan bocoran argumen jawaban saat dosen menguji.
                 </p>
               </div>
@@ -506,15 +506,15 @@ export default function ProjectDashboardPage({
                   type="button"
                   onClick={handleGenerateReadme}
                   disabled={isGeneratingReadme}
-                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px]"
+                  className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full"
                 >
-                  {isGeneratingReadme ? 'Menyusun...' : 'Generate README ↗'}
+                  {isGeneratingReadme ? 'Menyusun...' : 'Generate README'}
                 </button>
                 {readmeContent && (
                   <button
                     type="button"
                     onClick={copyReadmeToClipboard}
-                    className="border border-[#003734] bg-[#011d1c] text-white text-[13px] px-4 py-2.5 rounded-[6px] hover:border-[#cbfffc] transition-all"
+                    className="btn-hairline-ghost text-[13px] px-4 py-2 rounded-full transition-all"
                   >
                     {copiedReadme ? '✓ Disalin' : 'Salin Markdown'}
                   </button>
@@ -523,15 +523,15 @@ export default function ProjectDashboardPage({
             </div>
 
             {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-[#fde9ff] font-medium">
+                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Add-on Opsional
                 </span>
                 <h3 className="text-[22px] font-medium text-white leading-tight">
                   Slide Presentasi PPT Jadi
                 </h3>
-                <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
+                <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
                   Tidak sempat merangkum ke slide? Tim kami siapkan slide PowerPoint (.pptx/.pdf) siap pakai untuk demo kelompok Anda.
                 </p>
               </div>
@@ -539,25 +539,25 @@ export default function ProjectDashboardPage({
               <div>
                 {project.ppt_addon_paid ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-[12px] text-[#cbfffc] font-mono">✓ Add-on Aktif</span>
+                    <span className="text-[12px] text-white font-mono">✓ Add-on Aktif</span>
                     {project.ppt_file_url ? (
                       <a
                         href={project.ppt_file_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px] inline-block"
+                        className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full inline-block"
                       >
                         Unduh Slide PPT ↗
                       </a>
                     ) : (
-                      <span className="text-[13px] text-[#bbc7c6]">Admin sedang menyiapkan file</span>
+                      <span className="text-[13px] text-[#686868]">Admin sedang menyiapkan file</span>
                     )}
                   </div>
                 ) : (
                   <button
                     type="button"
                     onClick={() => setShowPptModal(true)}
-                    className="border border-[#00827c] text-white hover:border-[#cbfffc] text-[13px] font-medium uppercase tracking-[0.08em] px-5 py-2.5 rounded-[6px] transition-all"
+                    className="btn-hairline-ghost text-white text-[13px] font-medium px-5 py-2.5 rounded-full transition-all"
                   >
                     Pesan Slide PPT (Rp 75.000)
                   </button>
@@ -567,19 +567,19 @@ export default function ProjectDashboardPage({
           </div>
 
           {readmeContent && (
-            <div className="p-8 rounded-[16px] bg-[#011d1c] border border-[#003734] flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-[#003734] pb-3">
-                <span className="text-[12px] font-mono uppercase tracking-[0.12em] text-[#cbfffc]">
+            <div className="p-8 rounded-[24px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
+                <span className="text-[12px] font-mono text-white">
                   README.md Output Preview
                 </span>
                 <button
                   onClick={copyReadmeToClipboard}
-                  className="text-[12px] text-[#bbc7c6] hover:text-white"
+                  className="text-[12px] text-[#c2c2c2] hover:text-white"
                 >
                   {copiedReadme ? '✓ Disalin ke clipboard' : 'Salin Semua'}
                 </button>
               </div>
-              <pre className="text-[13px] font-mono text-[#bbc7c6] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto">
+              <pre className="text-[13px] font-mono text-[#c2c2c2] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto">
                 {readmeContent}
               </pre>
             </div>
@@ -588,30 +588,30 @@ export default function ProjectDashboardPage({
 
         {/* Modal Buy PPT */}
         {showPptModal && (
-          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-[#003734] rounded-[16px] p-8 flex flex-col gap-6">
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="max-w-md w-full bg-[#161616] border border-[#e5e5e5]/15 rounded-[24px] p-8 flex flex-col gap-6 shadow-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-[20px] font-medium text-white">Pesan Slide PPT Jadi</h3>
                 <button
                   onClick={() => setShowPptModal(false)}
-                  className="text-[#bbc7c6] hover:text-white text-[18px]"
+                  className="text-[#686868] hover:text-white text-[18px]"
                 >
                   ✕
                 </button>
               </div>
-              <p className="text-[14px] text-[#bbc7c6] leading-[1.4]">
-                Biaya add-on slide presentasi UAS: <strong className="text-[#fde9ff] font-mono">Rp 75.000</strong>. File PPTX & PDF akan diunggah admin ke dashboard ini dalam 1-2 hari kerja.
+              <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
+                Biaya add-on slide presentasi UAS: <strong className="text-white font-mono">Rp 75.000</strong>. File PPTX & PDF akan diunggah admin ke dashboard ini dalam 1-2 hari kerja.
               </p>
-              <div className="p-4 bg-[#011d1c] rounded-[6px] flex flex-col items-center gap-1.5">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-[#edfffe]">QRIS Statis Pembayaran</span>
-                <span className="text-[20px] text-[#fde9ff] font-mono font-medium">Rp 75.000</span>
-                <span className="text-[11px] text-[#bbc7c6]">NMID: ID102938475 (KOMIT PLATFORM)</span>
+              <div className="p-4 bg-[#0a0a0a] rounded-[14px] border border-[#e5e5e5]/10 flex flex-col items-center gap-1.5">
+                <span className="text-[11px] uppercase tracking-wider text-[#686868]">QRIS Statis Pembayaran</span>
+                <span className="text-[20px] text-white font-mono font-medium">Rp 75.000</span>
+                <span className="text-[11px] text-[#686868]">NMID: ID102938475 (KOMIT PLATFORM)</span>
               </div>
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowPptModal(false)}
-                  className="text-[13px] text-[#bbc7c6] hover:text-white px-3 py-1.5"
+                  className="text-[13px] text-[#686868] hover:text-white px-3 py-1.5"
                 >
                   Batal
                 </button>
@@ -619,9 +619,9 @@ export default function ProjectDashboardPage({
                   type="button"
                   onClick={handleBuyPptAddon}
                   disabled={isBuyingPpt}
-                  className="btn-aurora text-[13px] px-5 py-2.5 rounded-[6px]"
+                  className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full"
                 >
-                  {isBuyingPpt ? 'Memproses...' : 'Konfirmasi Pembayaran ↗'}
+                  {isBuyingPpt ? 'Memproses...' : 'Konfirmasi Pembayaran'}
                 </button>
               </div>
             </div>

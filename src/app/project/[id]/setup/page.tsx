@@ -210,29 +210,29 @@ export default function ProjectSetupPage({
   // 1. PAYMENT GATE
   if (project.payment_status !== 'paid') {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col">
+      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[760px] w-full mx-auto px-6 py-20 flex flex-col gap-8">
-          <div className="p-10 rounded-[16px] bg-[#003734] flex flex-col gap-6">
-            <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+          <div className="p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+            <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
               Menunggu Konfirmasi Operator
             </h1>
-            <p className="text-[15px] text-[#bbc7c6] leading-[1.4]">
-              Halo <strong className="text-white font-medium">{project.buyer_name}</strong>, bukti pembayaran untuk paket <strong className="text-white font-medium">{project.package_type}</strong> dengan total tagihan <strong className="text-[#fde9ff] font-mono">Rp {project.total_price.toLocaleString('id-ID')}</strong> telah masuk ke antrean verifikasi tim joki.
+            <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
+              Halo <strong className="text-white font-medium">{project.buyer_name}</strong>, bukti pembayaran untuk paket <strong className="text-white font-medium">{project.package_type}</strong> dengan total tagihan <strong className="text-white font-mono">Rp {project.total_price.toLocaleString('id-ID')}</strong> telah masuk ke antrean verifikasi tim joki.
             </p>
 
-            <div className="text-[13px] text-[#bbc7c6] font-mono border-t border-[#012624] pt-4 flex flex-col gap-1">
+            <div className="text-[13px] text-[#c2c2c2] font-mono border-t border-[#e5e5e5]/10 pt-4 flex flex-col gap-1">
               <div>WhatsApp Pemesan: <span className="text-white">{project.buyer_whatsapp}</span></div>
               <div>ID Proyek: <span className="text-white">{project.id}</span></div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-[#012624] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-[12px] text-[#bbc7c6]">Mode pengujian cepat:</span>
+            <div className="mt-4 pt-4 border-t border-[#e5e5e5]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-[13px] text-[#686868]">Mode pengujian cepat:</span>
               <button
                 onClick={handleSimulatePaymentApprove}
-                className="btn-aurora text-[12px] px-5 py-2.5 rounded-[6px]"
+                className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full"
               >
-                Simulasi Approve Pembayaran ↗
+                Simulasi Approve Pembayaran
               </button>
             </div>
           </div>
@@ -244,35 +244,35 @@ export default function ProjectSetupPage({
 
   // 2. SETUP ACTIVE
   return (
-    <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col selection:bg-[#00827c] selection:text-white">
+    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-12">
+      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase tracking-[0.12em] text-[#012624] bg-[#cbfffc] px-2 py-0.5 rounded-[4px] font-medium">
+            <span className="text-[11px] uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full font-medium">
               Pembayaran Terverifikasi
             </span>
-            <span className="text-[12px] text-[#bbc7c6] font-mono">
+            <span className="text-[12px] text-[#686868] font-mono">
               ID: {project.id.slice(0, 8)}
             </span>
           </div>
-          <h1 className="text-[36px] sm:text-[48px] font-medium leading-[1.0] text-white tracking-[-0.03em]">
+          <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Setup Proyek & Data Kelompok
           </h1>
-          <p className="text-[15px] text-[#bbc7c6] leading-[1.4] max-w-2xl">
+          <p className="text-[15px] text-[#c2c2c2] leading-[1.5] max-w-2xl">
             Pilih rekomendasi ide aplikasi dari AI, isi data anggota kelompok, dan bagikan tautan koneksi GitHub sebelum pengerjaan sprint dimulai.
           </p>
         </div>
 
         {/* STEP 1: AI IDEATION */}
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
-          <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+          <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
                 Rekomendasi Ide AI & Gimmick Dosen
               </h2>
-              <p className="text-[14px] text-[#bbc7c6]">
+              <p className="text-[14px] text-[#c2c2c2]">
                 Ketik topik mata kuliah atau niche, AI akan menyajikan 3 opsi proyek berdaya saing tinggi.
               </p>
             </div>
@@ -283,33 +283,33 @@ export default function ProjectSetupPage({
                 placeholder="Contoh: Pemrograman Web — Sistem Manajemen Lab Komputer"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
-                className="flex-1 bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-3 text-[14px] text-white outline-none"
+                className="flex-1 bg-[#0a0a0a] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
               />
               <button
                 type="button"
                 onClick={handleGenerateIdeas}
                 disabled={isGeneratingIdeas}
-                className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] transition-all shrink-0"
+                className="btn-white-pill text-[13px] px-6 py-3 rounded-full transition-all shrink-0"
               >
-                {isGeneratingIdeas ? 'Menghasilkan...' : 'Generate 3 Ide AI ↗'}
+                {isGeneratingIdeas ? 'Menghasilkan...' : 'Generate 3 Ide AI'}
               </button>
             </div>
 
             {selectedIdea && (
-              <div className="p-6 rounded-[12px] bg-[#011d1c] border border-[#cbfffc] flex flex-col gap-3">
+              <div className="p-6 rounded-[16px] bg-[#0a0a0a] border border-white flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#cbfffc]">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-white">
                     Ide Terpilih & Terkunci
                   </span>
-                  <span className="text-[11px] text-[#fde9ff] font-mono">Tersimpan</span>
+                  <span className="text-[11px] text-[#686868] font-mono">Tersimpan</span>
                 </div>
                 <h3 className="text-[22px] font-medium text-white">{selectedIdea.title}</h3>
-                <p className="text-[14px] text-[#bbc7c6]">{selectedIdea.description}</p>
-                <div className="p-4 rounded-[6px] bg-[#012624] text-[13px]">
-                  <span className="text-[11px] text-[#edfffe] uppercase tracking-[0.12em] block mb-1">
+                <p className="text-[14px] text-[#c2c2c2]">{selectedIdea.description}</p>
+                <div className="p-4 rounded-[10px] bg-[#161616] border border-[#e5e5e5]/10 text-[13px]">
+                  <span className="text-[11px] text-white uppercase tracking-wider block mb-1">
                     Gimmick Pemikat Dosen:
                   </span>
-                  <span className="text-white">{selectedIdea.gimmick}</span>
+                  <span className="text-[#ededed]">{selectedIdea.gimmick}</span>
                 </div>
               </div>
             )}
@@ -319,40 +319,40 @@ export default function ProjectSetupPage({
                 {generatedIdeas.map((idea) => (
                   <div
                     key={idea.id}
-                    className={`p-6 rounded-[12px] border transition-all flex flex-col gap-4 ${
+                    className={`p-6 rounded-[16px] border transition-all flex flex-col gap-4 ${
                       selectedIdea?.id === idea.id
-                        ? 'bg-[#011d1c] border-[#cbfffc]'
-                        : 'bg-[#012624] border-transparent hover:border-[#00827c]'
+                        ? 'bg-[#1f1f1f] border-white'
+                        : 'bg-[#0a0a0a] border-[#e5e5e5]/10 hover:border-[#e5e5e5]/25'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h4 className="text-[18px] font-medium text-white">{idea.title}</h4>
-                        <p className="text-[14px] text-[#bbc7c6] mt-1">{idea.description}</p>
+                        <p className="text-[14px] text-[#c2c2c2] mt-1">{idea.description}</p>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleSelectIdea(idea)}
-                        className={`text-[12px] font-medium uppercase tracking-[0.08em] px-4 py-2 rounded-[6px] shrink-0 transition-all ${
+                        className={`text-[12px] font-medium px-4 py-2 rounded-full shrink-0 transition-all ${
                           selectedIdea?.id === idea.id
-                            ? 'bg-[#cbfffc] text-[#012624]'
-                            : 'border border-[#00827c] text-white hover:bg-[#00827c]/20'
+                            ? 'bg-white text-[#161616]'
+                            : 'border border-[#e5e5e5]/20 text-white hover:border-white'
                         }`}
                       >
                         {selectedIdea?.id === idea.id ? 'Terkunci' : 'Kunci Ide Ini'}
                       </button>
                     </div>
 
-                    <div className="p-3.5 rounded-[6px] bg-[#011d1c]">
-                      <span className="text-[10px] uppercase tracking-[0.12em] text-[#edfffe] block mb-1">
+                    <div className="p-3.5 rounded-[10px] bg-[#161616]">
+                      <span className="text-[11px] uppercase tracking-wider text-white block mb-1">
                         Gimmick Dosen:
                       </span>
-                      <p className="text-[13px] text-white">{idea.gimmick}</p>
+                      <p className="text-[13px] text-[#ededed]">{idea.gimmick}</p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
                       {idea.techStack?.map((t) => (
-                        <span key={t} className="text-[11px] font-mono text-[#bbc7c6] px-2.5 py-1 rounded-[4px] bg-[#003734]">
+                        <span key={t} className="text-[11px] font-mono text-[#c2c2c2] px-2.5 py-1 rounded-[6px] bg-[#161616] border border-[#e5e5e5]/10">
                           {t}
                         </span>
                       ))}
@@ -365,20 +365,20 @@ export default function ProjectSetupPage({
         )}
 
         {/* STEP 2: MEMBER DATA FORM */}
-        <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+        <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
                 Data Anggota Kelompok ({project.member_count} Orang)
               </h2>
-              <p className="text-[14px] text-[#bbc7c6]">
+              <p className="text-[14px] text-[#c2c2c2]">
                 Data ini dicantumkan dalam README laporan resmi dan dikaitkan dengan akun GitHub masing-masing anggota.
               </p>
             </div>
             <button
               type="button"
               onClick={handleQuickFillMembers}
-              className="text-[12px] text-[#cbfffc] hover:underline self-start sm:self-auto shrink-0"
+              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0"
             >
               ⚡ Isi Data Contoh
             </button>
@@ -388,49 +388,49 @@ export default function ProjectSetupPage({
             {members.map((m, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-[12px] bg-[#012624] grid grid-cols-1 sm:grid-cols-4 gap-3 items-center"
+                className="p-4 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center"
               >
                 <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#bbc7c6]">Nama Anggota {idx + 1}</span>
+                  <span className="text-[11px] text-[#686868]">Nama Anggota {idx + 1}</span>
                   <input
                     type="text"
                     required
                     placeholder="Nama Lengkap"
                     value={m.name}
                     onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3 py-2 text-[14px] text-white outline-none"
+                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] text-white outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#bbc7c6]">NIM</span>
+                  <span className="text-[11px] text-[#686868]">NIM</span>
                   <input
                     type="text"
                     required
                     placeholder="211401001"
                     value={m.nim}
                     onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3 py-2 text-[14px] font-mono text-white outline-none"
+                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] font-mono text-white outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#bbc7c6]">Kelas / KOM</span>
+                  <span className="text-[11px] text-[#686868]">Kelas / KOM</span>
                   <input
                     type="text"
                     required
                     placeholder="A / B / C"
                     value={m.kom}
                     onChange={(e) => handleMemberChange(idx, 'kom', e.target.value)}
-                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3 py-2 text-[14px] text-white outline-none"
+                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] text-white outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[11px] text-[#bbc7c6]">Username GitHub</span>
+                  <span className="text-[11px] text-[#686868]">Username GitHub</span>
                   <input
                     type="text"
                     placeholder="cth: budi_dev"
                     value={m.github_username}
                     onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3 py-2 text-[14px] font-mono text-white outline-none"
+                    className="bg-[#161616] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-3 py-2 text-[14px] font-mono text-white outline-none"
                   />
                 </div>
               </div>
@@ -439,32 +439,32 @@ export default function ProjectSetupPage({
             <button
               type="submit"
               disabled={isSavingMembers}
-              className="self-end btn-aurora text-[13px] px-6 py-2.5 rounded-[6px] transition-all mt-2"
+              className="self-end btn-white-pill text-[13px] px-6 py-2.5 rounded-full transition-all mt-2"
             >
-              {isSavingMembers ? 'Menyimpan...' : 'Simpan Data Anggota ↗'}
+              {isSavingMembers ? 'Menyimpan...' : 'Simpan Data Anggota'}
             </button>
           </form>
         </section>
 
         {/* STEP 3: CONNECT GITHUB INVITATION */}
-        <section className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-6">
+        <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-[20px] font-medium text-white">
               Tautan Undangan Connect GitHub
             </h2>
-            <p className="text-[14px] text-[#bbc7c6]">
+            <p className="text-[14px] text-[#c2c2c2]">
               Bagikan link ini ke grup kelompok Anda. Masing-masing anggota klik &quot;Connect GitHub&quot; agar commit tercatat atas nama akun mereka.
             </p>
           </div>
 
-          <div className="p-5 rounded-[12px] bg-[#011d1c] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-[14px] font-mono text-[#bbc7c6] truncate max-w-md">
+          <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-[14px] font-mono text-[#c2c2c2] truncate max-w-md">
               {typeof window !== 'undefined' ? `${window.location.origin}/join/${id}` : `/join/${id}`}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={copyInviteLink}
-                className="bg-[#003734] hover:bg-[#004d49] text-white text-[13px] px-4 py-2 rounded-[6px] transition-all"
+                className="bg-[#161616] hover:bg-[#1f1f1f] border border-[#e5e5e5]/15 text-white text-[13px] px-4 py-2 rounded-full transition-all"
               >
                 {copiedLink ? '✓ Tautan Disalin!' : 'Salin Tautan'}
               </button>
@@ -478,7 +478,7 @@ export default function ProjectSetupPage({
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#25D366] hover:bg-[#20ba59] text-white text-[13px] font-medium px-4 py-2 rounded-[6px] transition-all inline-flex items-center gap-1.5"
+                className="bg-[#25D366] hover:bg-[#20ba59] text-white text-[13px] font-medium px-4 py-2 rounded-full transition-all inline-flex items-center gap-1.5"
               >
                 Kirim ke WhatsApp ↗
               </a>
@@ -487,19 +487,19 @@ export default function ProjectSetupPage({
 
           {dbMembers.length > 0 && (
             <div className="flex flex-col gap-2">
-              <span className="text-[12px] uppercase tracking-[0.12em] text-[#edfffe]">Status Koneksi Akun:</span>
+              <span className="text-[12px] uppercase tracking-wider text-[#686868]">Status Koneksi Akun:</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {dbMembers.map((m) => (
-                  <div key={m.id} className="p-4 rounded-[6px] bg-[#012624] flex items-center justify-between">
+                  <div key={m.id} className="p-4 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center justify-between">
                     <div>
                       <div className="text-[15px] font-medium text-white">{m.name}</div>
-                      <div className="text-[12px] text-[#bbc7c6] font-mono">@{m.github_username || 'unconnected'}</div>
+                      <div className="text-[12px] text-[#686868] font-mono">@{m.github_username || 'unconnected'}</div>
                     </div>
                     <span
-                      className={`text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-[4px] ${
+                      className={`text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-full ${
                         m.is_connected
-                          ? 'bg-[#cbfffc] text-[#012624] font-medium'
-                          : 'bg-[#003734] text-[#bbc7c6]'
+                          ? 'bg-white text-[#161616] font-medium'
+                          : 'bg-[#161616] text-[#686868]'
                       }`}
                     >
                       {m.is_connected ? 'Connected' : 'Menunggu'}
@@ -510,15 +510,15 @@ export default function ProjectSetupPage({
             </div>
           )}
 
-          <div className="flex justify-between items-center border-t border-[#012624] pt-4">
-            <Link href="/" className="text-[13px] uppercase tracking-[0.12em] text-[#bbc7c6] hover:text-white">
+          <div className="flex justify-between items-center border-t border-[#e5e5e5]/10 pt-4">
+            <Link href="/" className="text-[13px] text-[#c2c2c2] hover:text-white">
               Kembali
             </Link>
             <Link
               href={`/project/${id}`}
-              className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] transition-all"
+              className="btn-white-pill text-[13px] px-6 py-3 rounded-full"
             >
-              Buka Dashboard Proyek ↗
+              Buka Dashboard Proyek
             </Link>
           </div>
         </section>
