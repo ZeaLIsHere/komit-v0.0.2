@@ -122,9 +122,11 @@ export default function JoinProjectPage({
                 >
                   <div>
                     <div className="text-[15px] font-medium text-white">{m.name}</div>
-                    <div className="text-[12px] text-[#bbc7c6] font-mono mt-0.5">
-                      NIM: {m.nim} • KOM {m.kom}
-                    </div>
+                    {m.github_username && (
+                      <div className="text-[12px] text-[#cbfffc] font-mono mt-0.5">
+                        @{m.github_username}
+                      </div>
+                    )}
                   </div>
                   <span
                     className={`text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-[4px] ${

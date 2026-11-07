@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createProject, getAllProjects } from '@/lib/data';
+import { createProject, getAllProjects, saveProjectMembers } from '@/lib/data';
 import { getSessionFromRequest } from '@/lib/auth';
 
 export async function GET() {
@@ -43,6 +43,14 @@ export async function POST(req: Request) {
       payment_status: 'pending',
       status: 'waiting_payment',
     });
+
+    if (Array.isArray(body.members) && body.members.length > 0) {
+      try {
+        await saveProjectMembers(newProject.id, body.members.slice(0, memberCount));
+      } catch (e) {
+        console.error('Failed to save initial members:', e);
+      }
+    }
 
     return NextResponse.json({ project: newProject }, { status: 201 });
   } catch (error: unknown) {

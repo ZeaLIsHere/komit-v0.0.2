@@ -15,7 +15,11 @@ export async function POST(req: Request) {
     }
 
     const memberList = (members || [])
-      .map((m, idx) => `${idx + 1}. **${m.name}** (NIM: \`${m.nim}\`, KOM: \`${m.kom}\`, GitHub: \`@${m.github_username || 'contributor'}\`)`)
+      .map((m, idx) => {
+        const gh = m.github_username ? `GitHub: \`@${m.github_username}\`` : 'GitHub: Pending';
+        const nimKom = m.nim && m.nim !== '-' ? `, NIM: \`${m.nim}\`, KOM: \`${m.kom}\`` : '';
+        return `${idx + 1}. **${m.name}** (${gh}${nimKom})`;
+      })
       .join('\n');
 
     const memberRoles = (members || []).map((m, idx) => {

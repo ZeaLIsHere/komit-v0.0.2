@@ -13,9 +13,15 @@ export default function OrderPage() {
   const [serviceType, setServiceType] = useState<ServiceType>('project_joki');
   const [packageType, setPackageType] = useState<PackageType>('full');
   const [memberCount, setMemberCount] = useState<number>(4);
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+    { name: '', github_username: '' },
+  ]);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
-  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -30,8 +36,19 @@ export default function OrderPage() {
           const data = await res.json();
           if (data.user) {
             setCurrentUser(data.user);
-            if (data.user.name) setBuyerName(data.user.name);
+            const initialName = data.user.name || '';
+            if (initialName) setBuyerName(initialName);
             if (data.user.whatsapp) setBuyerWhatsapp(data.user.whatsapp);
+            setMembers((prev) => {
+              const copy = [...prev];
+              if (copy.length > 0) {
+                copy[0] = {
+                  name: copy[0].name || initialName,
+                  github_username: copy[0].github_username || data.user.githubUsername || '',
+                };
+              }
+              return copy;
+            });
           }
         }
       } catch {
@@ -40,6 +57,43 @@ export default function OrderPage() {
     }
     loadUser();
   }, []);
+
+  // Dynamic member resize based on count (1-8)
+  const handleMemberCountChange = (newCount: number) => {
+    const validCount = Math.max(1, Math.min(8, newCount));
+    setMemberCount(validCount);
+    setMembers((prev) => {
+      if (validCount > prev.length) {
+        const added = Array.from({ length: validCount - prev.length }, () => ({
+          name: '',
+          github_username: '',
+        }));
+        return [...prev, ...added];
+      }
+      return prev.slice(0, validCount);
+    });
+  };
+
+  const handleMemberChange = (index: number, field: 'name' | 'github_username', value: string) => {
+    setMembers((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+    if (index === 0 && field === 'name') {
+      setBuyerName(value);
+    }
+  };
+
+  const handleBuyerNameChange = (val: string) => {
+    setBuyerName(val);
+    setMembers((prev) => {
+      if (prev.length === 0) return [{ name: val, github_username: '' }];
+      const copy = [...prev];
+      copy[0] = { ...copy[0], name: val };
+      return copy;
+    });
+  };
 
   // Handle image upload from file picker with 5MB validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +158,7 @@ export default function OrderPage() {
           member_count: memberCount,
           total_price: totalPrice,
           payment_proof_url: proofUrl,
+          members: serviceType === 'project_joki' ? members : undefined,
         }),
       });
 
@@ -244,7 +299,7 @@ export default function OrderPage() {
                   max="8"
                   step="1"
                   value={memberCount}
-                  onChange={(e) => setMemberCount(Number(e.target.value))}
+                  onChange={(e) => handleMemberCountChange(Number(e.target.value))}
                   className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
                 />
 
@@ -257,7 +312,7 @@ export default function OrderPage() {
                       <button
                         key={num}
                         type="button"
-                        onClick={() => setMemberCount(num)}
+                        onClick={() => handleMemberCountChange(num)}
                         style={{ left: `${percent}%` }}
                         className={`absolute -translate-x-1/2 transition-all ${
                           isActive
@@ -269,6 +324,57 @@ export default function OrderPage() {
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
+              <div className="flex flex-col gap-3 pt-4 border-t border-[#012624]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[13px] uppercase tracking-[0.08em] text-[#edfffe] font-medium">
+                    Form Anggota Kelompok ({memberCount} Orang)
+                  </span>
+                  <span className="text-[11px] text-[#bbc7c6]">
+                    Hanya nama &amp; akun GitHub
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-3 mt-1">
+                  {members.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-[8px] bg-[#011d1c] border border-[#003734] grid grid-cols-1 sm:grid-cols-2 gap-3"
+                    >
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                          {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                          value={m.name}
+                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                          className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2.5 text-[14px] text-white outline-none"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                          Akun GitHub
+                        </label>
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-[#bbc7c6] font-mono text-[13px]">@</span>
+                          <input
+                            type="text"
+                            placeholder="username"
+                            value={m.github_username}
+                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
+                            className="w-full bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] pl-7 pr-3.5 py-2.5 text-[14px] font-mono text-white outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -287,7 +393,7 @@ export default function OrderPage() {
                   required
                   placeholder="Contoh: Budi Santoso"
                   value={buyerName}
-                  onChange={(e) => setBuyerName(e.target.value)}
+                  onChange={(e) => handleBuyerNameChange(e.target.value)}
                   className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>

@@ -244,16 +244,16 @@ export async function getProjectMembers(projectId: string): Promise<ProjectMembe
 
 export async function saveProjectMembers(
   projectId: string,
-  members: Array<{ name: string; nim: string; kom: string; github_username?: string }>
+  members: Array<{ name: string; nim?: string; kom?: string; github_username?: string }>
 ): Promise<ProjectMember[]> {
   const memberRecords: ProjectMember[] = members.map((m) => ({
     id: crypto.randomUUID(),
     created_at: new Date().toISOString(),
     project_id: projectId,
     name: m.name,
-    nim: m.nim,
-    kom: m.kom,
-    github_username: m.github_username || null,
+    nim: m.nim || '-',
+    kom: m.kom || '-',
+    github_username: m.github_username?.trim().replace(/^@/, '') || null,
     github_email: null,
     github_access_token: null,
     is_connected: false,
