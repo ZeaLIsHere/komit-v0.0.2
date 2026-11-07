@@ -1,13 +1,42 @@
 import { supabaseAdmin, isSupabaseConfigured } from './supabase';
-import { Project, ProjectMember, CommitSchedule } from './types';
+import { Project, ProjectMember, CommitSchedule, User } from './types';
 
 // ponytail: in-memory mock store when Supabase env variables not configured -> Supabase PostgreSQL
+const mockUsers: Map<string, User> = new Map([
+  [
+    'usr-admin',
+    {
+      id: 'usr-admin',
+      email: 'admin@komit.id',
+      name: 'Admin Tim Joki Komit',
+      whatsapp: '081299990000',
+      role: 'admin',
+      password: 'admin123',
+      created_at: new Date().toISOString(),
+    },
+  ],
+  [
+    'usr-customer-demo',
+    {
+      id: 'usr-customer-demo',
+      email: 'fadhil@student.ac.id',
+      name: 'Fadhil Pratama',
+      whatsapp: '081234567890',
+      role: 'customer',
+      password: 'customer123',
+      created_at: new Date().toISOString(),
+    },
+  ],
+]);
+
 const mockProjects: Map<string, Project> = new Map([
   [
     'demo-proyek-uas',
     {
       id: 'demo-proyek-uas',
       created_at: new Date().toISOString(),
+      customer_id: 'usr-customer-demo',
+      buyer_email: 'fadhil@student.ac.id',
       buyer_name: 'Budi Santoso',
       buyer_whatsapp: '081234567890',
       service_type: 'project_joki',
@@ -172,6 +201,8 @@ export async function createProject(payload: Partial<Project>): Promise<Project>
     created_at: new Date().toISOString(),
     buyer_name: payload.buyer_name || '',
     buyer_whatsapp: payload.buyer_whatsapp || '',
+    buyer_email: payload.buyer_email || null,
+    customer_id: payload.customer_id || null,
     service_type: payload.service_type || 'project_joki',
     package_type: payload.package_type || 'full',
     member_count: payload.member_count || 1,
@@ -389,4 +420,49 @@ export async function createCommitSchedule(
   list.push(newSchedule);
   mockSchedules.set(newSchedule.project_id, list);
   return newSchedule;
+}
+
+// User & Role Management
+export async function findUserByEmail(email: string): Promise<User | null> {
+  const normalized = email.trim().toLowerCase();
+  for (const user of mockUsers.values()) {
+    if (user.email.toLowerCase() === normalized) {
+      return user;
+    }
+  }
+  // Allow 'admin' shorthand for admin@komit.id
+  if (normalized === 'admin') {
+    return mockUsers.get('usr-admin') || null;
+  }
+  return null;
+}
+
+export async function findUserById(id: string): Promise<User | null> {
+  return mockUsers.get(id) || null;
+}
+
+export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Promise<User> {
+  const id = `usr-${crypto.randomUUID().slice(0, 8)}`;
+  const newUser: User = {
+    id,
+    email: payload.email.trim().toLowerCase(),
+    name: payload.name.trim(),
+    whatsapp: payload.whatsapp?.trim() || '',
+    role: payload.role || 'customer',
+    password: payload.password,
+    created_at: new Date().toISOString(),
+  };
+
+  mockUsers.set(id, newUser);
+  return newUser;
+}
+
+export async function getUserProjects(customerIdOrEmail: string): Promise<Project[]> {
+  const all = await getAllProjects();
+  const normalized = customerIdOrEmail.trim().toLowerCase();
+  return all.filter(
+    (p) =>
+      p.customer_id === customerIdOrEmail ||
+      (p.buyer_email && p.buyer_email.toLowerCase() === normalized)
+  );
 }

@@ -15,10 +15,31 @@ export default function OrderPage() {
   const [memberCount, setMemberCount] = useState<number>(4);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Auto-fill from active customer session
+  React.useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setCurrentUser(data.user);
+            if (data.user.name) setBuyerName(data.user.name);
+            if (data.user.whatsapp) setBuyerWhatsapp(data.user.whatsapp);
+          }
+        }
+      } catch {
+        // Fallback
+      }
+    }
+    loadUser();
+  }, []);
 
   // Handle image upload from file picker with 5MB validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,9 +278,16 @@ export default function OrderPage() {
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[16px] bg-[#003734] flex flex-col gap-4">
-            <h2 className="text-[18px] font-medium text-white">
-              {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h2 className="text-[18px] font-medium text-white">
+                {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
+              </h2>
+              {currentUser && (
+                <span className="text-[12px] font-mono text-[#cbfffc] bg-[#011d1c] px-2.5 py-1 rounded-[4px] border border-[#003734] self-start sm:self-auto">
+                  ✓ Akun Terhubung: {currentUser.name} ({currentUser.email})
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[12px] text-[#bbc7c6]">Nama Lengkap</span>

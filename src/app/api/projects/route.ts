@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createProject, getAllProjects } from '@/lib/data';
+import { getSessionFromRequest } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -25,7 +26,13 @@ export async function POST(req: Request) {
     const memberCount = Math.max(1, Math.min(8, Number(body.member_count) || 1));
     const totalPrice = memberCount * 50000;
 
+    const session = getSessionFromRequest(req);
+    const customerId = session?.userId || body.customer_id || null;
+    const buyerEmail = session?.email || body.buyer_email || null;
+
     const newProject = await createProject({
+      customer_id: customerId,
+      buyer_email: buyerEmail,
       buyer_name: body.buyer_name,
       buyer_whatsapp: body.buyer_whatsapp,
       service_type: body.service_type || 'project_joki',
