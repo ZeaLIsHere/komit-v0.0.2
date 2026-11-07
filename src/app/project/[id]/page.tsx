@@ -138,7 +138,7 @@ export default function ProjectDashboardPage({
     return (
       <div className="text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[20px] font-medium text-white">Proyek Tidak Ditemukan</h1>
-        <Link href="/" className="text-[#cbfffc] underline">
+        <Link href="/" className="text-white underline">
           Kembali ke Beranda
         </Link>
       </div>
@@ -267,9 +267,9 @@ export default function ProjectDashboardPage({
 
         {/* Completed Banner — shown when admin marks project completed */}
         {project.status === 'completed' && (
-          <div className="p-6 rounded-[16px] bg-[#003734] border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-[0.12em] text-[#59d499] font-medium mb-1">
+              <div className="text-[11px] uppercase tracking-wider text-[#59d499] font-medium mb-1">
                 ✓ Proyek Selesai &amp; Siap Sidang UAS
               </div>
               <p className="text-[15px] text-white">
@@ -278,7 +278,7 @@ export default function ProjectDashboardPage({
             </div>
             <Link
               href={`/project/${id}/present`}
-              className="btn-aurora text-[13px] px-6 py-3 rounded-[6px] shrink-0"
+              className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
               Buka Slide Presentasi 🖥️
             </Link>

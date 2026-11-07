@@ -144,7 +144,7 @@ export default function JoinProjectPage({
                   <div>
                     <div className="text-[15px] font-medium text-white">{m.name}</div>
                     {m.github_username && (
-                      <div className="text-[12px] text-[#cbfffc] font-mono mt-0.5">
+                      <div className="text-[12px] text-white/70 font-mono mt-0.5">
                         @{m.github_username}
                       </div>
                     )}
@@ -165,13 +165,13 @@ export default function JoinProjectPage({
             </div>
           </div>
 
-          <div className="border-t border-[#012624] pt-6 flex flex-col gap-4">
+          <div className="border-t border-white/10 pt-6 flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[12px] uppercase tracking-[0.08em] text-[#edfffe]">
+              <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
                 Username GitHub Anda
               </label>
               <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-[#bbc7c6] font-mono text-[14px]">@</span>
+                <span className="absolute left-3.5 text-white/50 font-mono text-[14px]">@</span>
                 <input
                   type="text"
                   placeholder="ZeaLIsHere"
@@ -181,18 +181,18 @@ export default function JoinProjectPage({
                     setGithubStatus('idle');
                   }}
                   onBlur={(e) => checkGitHubAccount(e.target.value)}
-                  className={`w-full bg-[#011d1c] border rounded-[6px] pl-8 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                  className={`w-full bg-white/[0.04] border rounded-[10px] pl-8 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                     githubStatus === 'invalid'
-                      ? 'border-red-500 focus:border-red-500'
+                      ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                       : githubStatus === 'valid'
                       ? 'border-[#59d499] focus:border-[#59d499]'
-                      : 'border-[#003734] focus:border-[#cbfffc]'
+                      : 'border-white/15 focus:border-white'
                   }`}
                 />
 
                 <div className="absolute right-3.5 flex items-center pointer-events-none">
                   {githubStatus === 'checking' && (
-                    <div className="w-4 h-4 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                   )}
                   {githubStatus === 'valid' && (
                     <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
@@ -200,7 +200,7 @@ export default function JoinProjectPage({
                     </svg>
                   )}
                   {githubStatus === 'invalid' && (
-                    <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   )}

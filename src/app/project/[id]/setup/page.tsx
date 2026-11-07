@@ -248,7 +248,7 @@ export default function ProjectSetupPage({
     return (
       <div className="text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[24px] font-medium text-white">Proyek Tidak Ditemukan</h1>
-        <Link href="/" className="text-[#cbfffc] underline">
+        <Link href="/" className="text-white underline">
           Kembali ke Beranda
         </Link>
       </div>
@@ -433,12 +433,12 @@ export default function ProjectSetupPage({
           </div>
 
           {/* Member Count Dynamic Slider */}
-          <div className="p-5 rounded-[12px] bg-[#011d1c] border border-[#003734] flex flex-col gap-3">
+          <div className="p-5 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[12px] uppercase tracking-[0.08em] text-[#edfffe]">
+              <span className="text-[12px] uppercase tracking-[0.08em] text-white/70">
                 Atur Jumlah Anggota:
               </span>
-              <span className="font-mono text-white text-[15px] font-medium text-[#cbfffc]">
+              <span className="font-mono text-white text-[15px] font-medium">
                 {memberCount} Orang
               </span>
             </div>
@@ -451,10 +451,10 @@ export default function ProjectSetupPage({
                 step="1"
                 value={memberCount}
                 onChange={(e) => handleMemberCountChange(Number(e.target.value))}
-                className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
+                className="w-full accent-white cursor-pointer relative z-10"
               />
 
-              <div className="relative w-full h-5 text-[11px] font-mono text-[#bbc7c6]">
+              <div className="relative w-full h-5 text-[11px] font-mono text-[#c2c2c2]">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
                   const percent = ((num - 1) / 7) * 100;
                   const isActive = memberCount === num;
@@ -466,8 +466,8 @@ export default function ProjectSetupPage({
                       style={{ left: `${percent}%` }}
                       className={`absolute -translate-x-1/2 transition-all ${
                         isActive
-                          ? 'text-[#cbfffc] font-bold text-[12px]'
-                          : 'text-[#bbc7c6] hover:text-white'
+                          ? 'text-white font-bold text-[12px]'
+                          : 'text-[#686868] hover:text-white'
                       }`}
                     >
                       {num}
@@ -482,10 +482,10 @@ export default function ProjectSetupPage({
             {members.map((m, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-[12px] bg-[#012624] border border-[#003734] grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
+                className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
               >
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                  <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
                     {idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
                   </span>
                   <input
@@ -494,35 +494,35 @@ export default function ProjectSetupPage({
                     placeholder={idx === 0 ? 'Nama Lengkap Ketua' : `Nama Anggota ${idx + 1}`}
                     value={m.name}
                     onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                    className="bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2.5 text-[14px] text-white outline-none"
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                  <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
                     Akun GitHub
                   </span>
                   <div className="relative flex items-center">
-                    <span className="absolute left-3 text-[#bbc7c6] font-mono text-[13px]">@</span>
+                    <span className="absolute left-3 text-white/50 font-mono text-[13px]">@</span>
                     <input
                       type="text"
                       placeholder="username"
                       value={m.github_username}
                       onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                       onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                      className={`w-full bg-[#011d1c] border rounded-[6px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                      className={`w-full bg-white/[0.04] border rounded-[10px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                         githubStatus[idx] === 'invalid'
-                          ? 'border-red-500 focus:border-red-500'
+                          ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                           : githubStatus[idx] === 'valid'
                           ? 'border-[#59d499] focus:border-[#59d499]'
-                          : 'border-[#003734] focus:border-[#cbfffc]'
+                          : 'border-white/15 focus:border-white'
                       }`}
                     />
 
                     {/* Status Icon on Right Side */}
                     <div className="absolute right-3 flex items-center pointer-events-none">
                       {githubStatus[idx] === 'checking' && (
-                        <div className="w-3.5 h-3.5 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                        <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                       )}
                       {githubStatus[idx] === 'valid' && (
                         <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
@@ -530,7 +530,7 @@ export default function ProjectSetupPage({
                         </svg>
                       )}
                       {githubStatus[idx] === 'invalid' && (
-                        <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                        <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       )}
@@ -601,7 +601,7 @@ export default function ProjectSetupPage({
               <span className="text-[12px] uppercase tracking-wider text-[#686868]">Status Koneksi Akun:</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {dbMembers.map((m) => (
-                  <div key={m.id} className="p-4 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center justify-between">
+                  <div key={m.id} className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 flex items-center justify-between">
                     <div>
                       <div className="text-[15px] font-medium text-white">{m.name}</div>
                       <div className="text-[12px] text-[#686868] font-mono">@{m.github_username || 'unconnected'}</div>

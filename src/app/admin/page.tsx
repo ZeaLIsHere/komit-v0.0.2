@@ -451,25 +451,25 @@ export default function AdminPage() {
 
                 {/* Quick Status Control */}
                 {selectedProjectId && (
-                  <div className="p-4 rounded-[12px] bg-[#011d1c] border border-[#003734] flex flex-wrap items-center justify-between gap-3 text-[13px]">
+                  <div className="p-4 rounded-[16px] bg-white/[0.04] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-[13px]">
                     <div className="flex items-center gap-2">
-                      <span className="text-[#bbc7c6]">Status Pengerjaan:</span>
-                      <span className="font-mono text-white capitalize bg-[#003734] px-2.5 py-1 rounded-[4px]">
+                      <span className="text-[#c2c2c2]">Status Pengerjaan:</span>
+                      <span className="font-mono text-white capitalize bg-white/[0.08] border border-white/10 px-2.5 py-1 rounded-[6px]">
                         {projects.find((p) => p.id === selectedProjectId)?.status || 'waiting_payment'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-[12px] text-[#bbc7c6]">Ubah Tahap:</span>
+                      <span className="text-[12px] text-[#c2c2c2]">Ubah Tahap:</span>
                       <button
                         onClick={() => handleUpdateProjectStatus('in_progress')}
-                        className="bg-[#003734] hover:bg-[#004d49] text-white px-3 py-1.5 rounded-[4px] text-[12px] transition-colors"
+                        className="bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 text-white px-3.5 py-1.5 rounded-full text-[12px] transition-colors"
                       >
                         ⚡ Tandai In-Progress
                       </button>
                       <button
                         onClick={() => handleUpdateProjectStatus('completed')}
-                        className="btn-aurora text-[12px] px-3 py-1.5 rounded-[4px]"
+                        className="btn-white-pill text-[12px] px-3.5 py-1.5 rounded-full"
                       >
                         ✓ Tandai Selesai (UAS Ready)
                       </button>

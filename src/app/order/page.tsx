@@ -335,7 +335,7 @@ export default function OrderPage() {
                   step="1"
                   value={memberCount}
                   onChange={(e) => handleMemberCountChange(Number(e.target.value))}
-                  className="w-full accent-[#cbfffc] cursor-pointer relative z-10"
+                  className="w-full accent-white cursor-pointer relative z-10"
                 />
 
                 {/* Synchronized Exact Position Ticks (1 to 8) */}
@@ -363,12 +363,12 @@ export default function OrderPage() {
               </div>
 
               {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
-              <div className="flex flex-col gap-3 pt-4 border-t border-[#012624]">
+              <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <span className="text-[13px] uppercase tracking-[0.08em] text-[#edfffe] font-medium">
+                  <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
                     Form Anggota Kelompok ({memberCount} Orang)
                   </span>
-                  <span className="text-[11px] text-[#bbc7c6]">
+                  <span className="text-[11px] text-white/60">
                     Hanya nama &amp; akun GitHub
                   </span>
                 </div>
@@ -377,10 +377,10 @@ export default function OrderPage() {
                   {members.map((m, idx) => (
                     <div
                       key={idx}
-                      className="p-4 rounded-[8px] bg-[#011d1c] border border-[#003734] grid grid-cols-1 sm:grid-cols-2 gap-3"
+                      className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
                     >
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
                           {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
                         </label>
                         <input
@@ -389,35 +389,35 @@ export default function OrderPage() {
                           placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
                           value={m.name}
                           onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                          className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-3.5 py-2.5 text-[14px] text-white outline-none"
+                          className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
                         />
                       </div>
 
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-[#bbc7c6]">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
                           Akun GitHub
                         </label>
                         <div className="relative flex items-center">
-                          <span className="absolute left-3 text-[#bbc7c6] font-mono text-[13px]">@</span>
+                          <span className="absolute left-3 text-white/50 font-mono text-[13px]">@</span>
                           <input
                             type="text"
                             placeholder="username"
                             value={m.github_username}
                             onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                             onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                            className={`w-full bg-[#012624] border rounded-[6px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                            className={`w-full bg-white/[0.04] border rounded-[10px] pl-7 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                               githubStatus[idx] === 'invalid'
-                                ? 'border-red-500 focus:border-red-500'
+                                ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                                 : githubStatus[idx] === 'valid'
                                 ? 'border-[#59d499] focus:border-[#59d499]'
-                                : 'border-[#003734] focus:border-[#cbfffc]'
+                                : 'border-white/15 focus:border-white'
                             }`}
                           />
 
                           {/* Status Icon on Right Side */}
                           <div className="absolute right-3 flex items-center pointer-events-none">
                             {githubStatus[idx] === 'checking' && (
-                              <div className="w-3.5 h-3.5 border-2 border-[#bbc7c6] border-t-transparent rounded-full animate-spin" />
+                              <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                             )}
                             {githubStatus[idx] === 'valid' && (
                               <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
@@ -425,7 +425,7 @@ export default function OrderPage() {
                               </svg>
                             )}
                             {githubStatus[idx] === 'invalid' && (
-                              <svg className="w-4 h-4 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                              <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                               </svg>
                             )}
@@ -460,7 +460,7 @@ export default function OrderPage() {
                   placeholder="Contoh: Budi Santoso"
                   value={buyerName}
                   onChange={(e) => handleBuyerNameChange(e.target.value)}
-                  className="bg-[#012624] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] px-4 py-2.5 text-[14px] text-white outline-none"
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
