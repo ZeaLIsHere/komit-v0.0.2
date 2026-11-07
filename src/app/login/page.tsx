@@ -101,14 +101,6 @@ function LoginForm() {
           </button>
         </form>
       </div>
-
-      {/* Back to Home Link */}
-      <Link
-        href="/"
-        className="text-[13px] text-[#c2c2c2] hover:text-white transition-colors text-center"
-      >
-        ← Kembali ke Beranda
-      </Link>
     </div>
   );
 }
@@ -117,10 +109,18 @@ export default function LoginPage() {
   return (
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center px-6 py-16">
-        <Suspense fallback={<div className="font-mono text-[14px] text-[#c2c2c2]">Memuat...</div>}>
-          <LoginForm />
-        </Suspense>
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-[13px] text-white/70 hover:text-white transition-colors self-start mb-6"
+        >
+          ← Kembali ke Beranda
+        </Link>
+        <div className="flex-1 flex items-center justify-center">
+          <Suspense fallback={<div className="font-mono text-[14px] text-[#c2c2c2]">Memuat...</div>}>
+            <LoginForm />
+          </Suspense>
+        </div>
       </main>
       <Footer />
     </div>

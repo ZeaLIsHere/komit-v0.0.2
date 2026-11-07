@@ -214,7 +214,14 @@ export default function OrderPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[960px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[960px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col gap-10">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-[13px] text-white/70 hover:text-white transition-colors self-start"
+        >
+          ← Kembali ke Beranda
+        </Link>
+
         <div className="flex flex-col gap-2">
           <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Pesan Layanan & Proyek Kuliah
@@ -545,10 +552,7 @@ export default function OrderPage() {
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-between pt-4">
-            <Link href="/" className="text-[13px] text-[#c2c2c2] hover:text-white transition-colors">
-              ← Kembali ke Beranda
-            </Link>
+          <div className="flex items-center justify-end pt-4">
             <button
               type="submit"
               disabled={isSubmitting}
