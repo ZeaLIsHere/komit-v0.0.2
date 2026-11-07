@@ -31,19 +31,20 @@ export default function ProjectSetupPage({
   const [isSavingMembers, setIsSavingMembers] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
-  // Quick fill demo members
+  // Quick fill template members
   const handleQuickFillMembers = () => {
-    const dummyList = [
-      { name: 'Fadhil Pratama', nim: '221401010', kom: 'A', github_username: 'fadhilpratama' },
-      { name: 'Sarah Amanda', nim: '221401011', kom: 'A', github_username: 'sarahamanda' },
-      { name: 'Reza Fauzan', nim: '221401012', kom: 'A', github_username: 'rezafauzan' },
-      { name: 'Nabila Putri', nim: '221401013', kom: 'A', github_username: 'nabilaputri' },
-      { name: 'Ilham Hidayat', nim: '221401014', kom: 'B', github_username: 'ilhamhidayat' },
-      { name: 'Aisyah Zahra', nim: '221401015', kom: 'B', github_username: 'aisyahzahra' },
-      { name: 'Kevin Santoso', nim: '221401016', kom: 'C', github_username: 'kevinsantoso' },
-      { name: 'Tiara Maharani', nim: '221401017', kom: 'C', github_username: 'tiaramaharani' },
-    ];
     const count = project?.member_count || 4;
+    const buyer = project?.buyer_name || 'Ketua Kelompok';
+    const dummyList = [
+      { name: buyer, nim: '221401010', kom: 'A', github_username: '' },
+      { name: 'Anggota 2', nim: '221401011', kom: 'A', github_username: '' },
+      { name: 'Anggota 3', nim: '221401012', kom: 'A', github_username: '' },
+      { name: 'Anggota 4', nim: '221401013', kom: 'A', github_username: '' },
+      { name: 'Anggota 5', nim: '221401014', kom: 'B', github_username: '' },
+      { name: 'Anggota 6', nim: '221401015', kom: 'B', github_username: '' },
+      { name: 'Anggota 7', nim: '221401016', kom: 'C', github_username: '' },
+      { name: 'Anggota 8', nim: '221401017', kom: 'C', github_username: '' },
+    ];
     setMembers(dummyList.slice(0, count));
   };
 

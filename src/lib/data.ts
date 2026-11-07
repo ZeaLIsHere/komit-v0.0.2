@@ -2,32 +2,7 @@ import { supabaseAdmin, isSupabaseConfigured } from './supabase';
 import { Project, ProjectMember, CommitSchedule, User } from './types';
 
 // ponytail: in-memory mock store when Supabase env variables not configured -> Supabase PostgreSQL
-const mockUsers: Map<string, User> = new Map([
-  [
-    'usr-admin',
-    {
-      id: 'usr-admin',
-      email: 'admin@komit.id',
-      name: 'Admin Tim Joki Komit',
-      whatsapp: '081299990000',
-      role: 'admin',
-      password: 'admin123',
-      created_at: new Date().toISOString(),
-    },
-  ],
-  [
-    'usr-customer-demo',
-    {
-      id: 'usr-customer-demo',
-      email: 'fadhil@student.ac.id',
-      name: 'Fadhil Pratama',
-      whatsapp: '081234567890',
-      role: 'customer',
-      password: 'customer123',
-      created_at: new Date().toISOString(),
-    },
-  ],
-]);
+const mockUsers: Map<string, User> = new Map();
 
 const mockProjects: Map<string, Project> = new Map([
   [
@@ -35,8 +10,8 @@ const mockProjects: Map<string, Project> = new Map([
     {
       id: 'demo-proyek-uas',
       created_at: new Date().toISOString(),
-      customer_id: 'usr-customer-demo',
-      buyer_email: 'fadhil@student.ac.id',
+      customer_id: null,
+      buyer_email: null,
       buyer_name: 'Budi Santoso',
       buyer_whatsapp: '081234567890',
       service_type: 'project_joki',
@@ -430,9 +405,15 @@ export async function findUserByEmail(email: string): Promise<User | null> {
       return user;
     }
   }
-  // Allow 'admin' shorthand for admin@komit.id
-  if (normalized === 'admin') {
-    return mockUsers.get('usr-admin') || null;
+  return null;
+}
+
+export async function findUserByGitHubUsername(username: string): Promise<User | null> {
+  const normalized = username.trim().toLowerCase();
+  for (const user of mockUsers.values()) {
+    if (user.github_username && user.github_username.toLowerCase() === normalized) {
+      return user;
+    }
   }
   return null;
 }
@@ -448,6 +429,7 @@ export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Prom
     email: payload.email.trim().toLowerCase(),
     name: payload.name.trim(),
     whatsapp: payload.whatsapp?.trim() || '',
+    github_username: payload.github_username?.trim() || undefined,
     role: payload.role || 'customer',
     password: payload.password,
     created_at: new Date().toISOString(),

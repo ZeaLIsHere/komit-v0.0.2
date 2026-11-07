@@ -16,6 +16,7 @@ export default function JoinProjectPage({
   const [project, setProject] = useState<Project | null>(null);
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<string>('');
+  const [githubHandle, setGithubHandle] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -37,6 +38,7 @@ export default function JoinProjectPage({
           const firstUnconnected = mData.members?.find((m: ProjectMember) => !m.is_connected);
           if (firstUnconnected) {
             setSelectedMemberId(firstUnconnected.id);
+            setGithubHandle(firstUnconnected.github_username || '');
           }
         }
       } catch (err: unknown) {
@@ -55,7 +57,8 @@ export default function JoinProjectPage({
       return;
     }
 
-    window.location.href = `/api/auth/github?projectId=${id}&memberId=${selectedMemberId}`;
+    const cleanUsername = githubHandle.trim().replace(/^@/, '');
+    window.location.href = `/api/auth/github?projectId=${id}&memberId=${selectedMemberId}&username=${encodeURIComponent(cleanUsername)}`;
   };
 
   if (loading) {
@@ -102,7 +105,12 @@ export default function JoinProjectPage({
                 <button
                   key={m.id}
                   type="button"
-                  onClick={() => !m.is_connected && setSelectedMemberId(m.id)}
+                  onClick={() => {
+                    if (!m.is_connected) {
+                      setSelectedMemberId(m.id);
+                      setGithubHandle(m.github_username || '');
+                    }
+                  }}
                   disabled={m.is_connected}
                   className={`p-4 rounded-[6px] border text-left flex items-center justify-between transition-all ${
                     m.is_connected
@@ -134,7 +142,23 @@ export default function JoinProjectPage({
             </div>
           </div>
 
-          <div className="border-t border-[#012624] pt-6 flex flex-col gap-3">
+          <div className="border-t border-[#012624] pt-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12px] uppercase tracking-[0.08em] text-[#edfffe]">
+                Username GitHub Anda
+              </label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3.5 text-[#bbc7c6] font-mono text-[14px]">@</span>
+                <input
+                  type="text"
+                  placeholder="ZeaLIsHere"
+                  value={githubHandle}
+                  onChange={(e) => setGithubHandle(e.target.value)}
+                  className="w-full bg-[#011d1c] border border-[#003734] focus:border-[#cbfffc] rounded-[6px] pl-8 pr-4 py-2.5 text-[14px] font-mono text-white outline-none"
+                />
+              </div>
+            </div>
+
             <button
               onClick={handleConnect}
               disabled={!selectedMemberId}

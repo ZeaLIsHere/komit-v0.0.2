@@ -4,6 +4,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const projectId = searchParams.get('projectId');
   const memberId = searchParams.get('memberId');
+  const username = searchParams.get('username');
 
   const clientId = process.env.GITHUB_CLIENT_ID;
 
@@ -14,10 +15,11 @@ export async function GET(req: Request) {
     callbackUrl.searchParams.set('mock', 'true');
     if (projectId) callbackUrl.searchParams.set('projectId', projectId);
     if (memberId) callbackUrl.searchParams.set('memberId', memberId);
+    if (username) callbackUrl.searchParams.set('username', username);
     return NextResponse.redirect(callbackUrl);
   }
 
-  const state = Buffer.from(JSON.stringify({ projectId, memberId })).toString('base64');
+  const state = Buffer.from(JSON.stringify({ projectId, memberId, username })).toString('base64');
   const scope = 'repo,workflow';
   const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/github/callback`;
 

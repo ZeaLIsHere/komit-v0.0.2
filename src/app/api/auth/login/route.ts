@@ -14,37 +14,25 @@ export async function POST(req: Request) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const adminEnvPass = process.env.ADMIN_PASSWORD || 'admin123';
 
-    // Direct check for admin login
-    if (
-      normalizedEmail === 'admin' ||
-      normalizedEmail === 'admin@komit.id' ||
-      role === 'admin'
-    ) {
-      if (
-        (normalizedEmail === 'admin' || normalizedEmail === 'admin@komit.id') &&
-        (password === 'admin123' || password === 'komit-admin-2024' || password === adminEnvPass)
-      ) {
-        const adminUser = {
-          userId: 'usr-admin',
-          email: 'admin@komit.id',
-          name: 'Admin Tim Joki Komit',
-          role: 'admin' as const,
-          whatsapp: '081299990000',
-        };
-
-        const res = NextResponse.json({ ok: true, user: adminUser });
-        setSessionCookie(res, adminUser);
-        return res;
+    // Check for admin login
+    if (role === 'admin') {
+      const adminPass = process.env.ADMIN_PASSWORD || 'komit-admin-2024';
+      if (password !== adminPass) {
+        return NextResponse.json({ error: 'Password admin tidak valid' }, { status: 401 });
       }
 
-      if (role === 'admin') {
-        return NextResponse.json(
-          { error: 'Kredensial admin salah. Gunakan admin@komit.id / admin123' },
-          { status: 401 }
-        );
-      }
+      const adminUser = {
+        userId: 'usr-admin',
+        email: normalizedEmail,
+        name: 'Admin Komit',
+        role: 'admin' as const,
+        whatsapp: '',
+      };
+
+      const res = NextResponse.json({ ok: true, user: adminUser });
+      setSessionCookie(res, adminUser);
+      return res;
     }
 
     // Customer login lookup

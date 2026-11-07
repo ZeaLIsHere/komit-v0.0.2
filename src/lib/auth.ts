@@ -9,6 +9,7 @@ export interface SessionData {
   name: string;
   role: UserRole;
   whatsapp?: string;
+  githubUsername?: string;
   exp: number;
 }
 

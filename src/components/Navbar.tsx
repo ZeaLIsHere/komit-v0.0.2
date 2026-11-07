@@ -10,6 +10,7 @@ interface UserSession {
   name: string;
   role: 'customer' | 'admin';
   whatsapp?: string;
+  githubUsername?: string;
 }
 
 export default function Navbar() {
@@ -91,7 +92,11 @@ export default function Navbar() {
           {!loading && user ? (
             <div className="flex items-center gap-3">
               <span className="hidden sm:inline-block text-[12px] text-[#bbc7c6] font-mono">
-                {user.role === 'admin' ? '🛡️ Admin' : `🎓 ${user.name.split(' ')[0]}`}
+                {user.role === 'admin'
+                  ? '🛡️ Admin'
+                  : user.githubUsername
+                  ? `🐙 @${user.githubUsername}`
+                  : `🎓 ${user.name.split(' ')[0]}`}
               </span>
 
               {user.role === 'customer' && (

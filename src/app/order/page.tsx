@@ -60,10 +60,8 @@ export default function OrderPage() {
     }
   };
 
-  // Quick fill for testing
+  // Quick attach test proof for local dev
   const handleQuickDemoFill = () => {
-    setBuyerName('Fadhil Pratama');
-    setBuyerWhatsapp('081234567890');
     setProofUrl('/dummy-qris-proof.jpg');
     setProofPreview('/dummy-qris-proof.jpg');
   };
@@ -368,7 +366,7 @@ export default function OrderPage() {
                       onClick={handleQuickDemoFill}
                       className="text-[12px] text-[#cbfffc] hover:underline"
                     >
-                      ⚡ Isi Data Cepat untuk Testing
+                      ⚡ Lampirkan Gambar Contoh
                     </button>
                   </div>
 

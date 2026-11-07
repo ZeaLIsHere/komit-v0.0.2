@@ -5,6 +5,7 @@ export interface User {
   email: string;
   name: string;
   whatsapp?: string;
+  github_username?: string;
   role: UserRole;
   password?: string;
   created_at: string;
