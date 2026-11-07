@@ -108,7 +108,7 @@ export default function PresentPage({
   return (
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white relative overflow-hidden font-sans">
       {/* Top Controls Bar (Hidden in Print) */}
-      <header className="print:hidden h-16 border-b border-[#e5e5e5]/10 px-6 sm:px-12 flex items-center justify-between bg-[#161616]/90 backdrop-blur-md relative z-30">
+      <header className="print:hidden h-16 border-b border-white/10 px-6 sm:px-12 flex items-center justify-between bg-white/[0.04] backdrop-blur-xl relative z-30">
         <div className="flex items-center gap-3">
           <Link
             href={`/project/${id}`}
@@ -153,7 +153,7 @@ export default function PresentPage({
               {idea.description}
             </p>
 
-            <div className="w-full max-w-3xl mt-4 p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 text-left">
+            <div className="w-full max-w-3xl mt-4 p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 text-left">
               <span className="text-[13px] text-white font-medium block mb-3">
                 Tim Pengembang (Kelompok)
               </span>
@@ -180,20 +180,20 @@ export default function PresentPage({
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4">
+              <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
                 <span className="text-[14px] text-white font-medium">
                   Masalah Nyata (Problem Statement)
                 </span>
-                <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
+                <p className="text-[15px] text-white/80 leading-[1.5]">
                   Sistem konvensional yang digunakan saat ini seringkali lambat, memerlukan input manual yang berulang, dan minim visualisasi audit data, sehingga menyulitkan proses monitoring performa secara berkala.
                 </p>
               </div>
 
-              <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4">
+              <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
                 <span className="text-[14px] text-white font-medium">
                   Solusi yang Diterapkan
                 </span>
-                <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
+                <p className="text-[15px] text-white/80 leading-[1.5]">
                   Membangun arsitektur modern berbasis web dengan respons real-time, automasi sinkronisasi data antar modul, serta validasi data berlapis di tingkat API untuk menjamin integritas sistem.
                 </p>
               </div>
@@ -208,7 +208,7 @@ export default function PresentPage({
               Struktur Perancangan Sistem
             </h2>
 
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-2">
                   <span className="text-[12px] uppercase text-white font-mono">Frontend Layer</span>
@@ -246,7 +246,7 @@ export default function PresentPage({
               Gimmick Pemikat Dosen Penguji
             </h2>
 
-            <div className="p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-white/20 flex flex-col gap-6">
+            <div className="p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col gap-6">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full font-bold">
                   Key Competitive Feature
@@ -275,7 +275,7 @@ export default function PresentPage({
               Kontribusi Nyata Tiap Anggota
             </h2>
 
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {members.map((m, idx) => {
                   const roles = [
@@ -315,7 +315,7 @@ export default function PresentPage({
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-2">
+              <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-2">
                 <span className="text-[14px] text-white font-medium">
                   Tanya: &quot;Apa tantangan teknis tersulit dalam proyek ini?&quot;
                 </span>
@@ -324,29 +324,29 @@ export default function PresentPage({
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-2">
+              <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-2">
                 <span className="text-[14px] text-white font-medium">
                   Tanya: &quot;Bagaimana cara membuktikan pembagian kerja tim adil?&quot;
                 </span>
-                <p className="text-[13px] text-[#c2c2c2] leading-[1.5]">
+                <p className="text-[13px] text-white/80 leading-[1.5]">
                   <strong className="text-white">Jawaban:</strong> Silakan cek riwayat git log dan grafik kontributor GitHub kami. Masing-masing anggota memiliki branch fitur dan commit terisolasi.
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-2">
+              <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-2">
                 <span className="text-[14px] text-white font-medium">
                   Tanya: &quot;Mengapa tidak menggunakan framework lain?&quot;
                 </span>
-                <p className="text-[13px] text-[#c2c2c2] leading-[1.5]">
+                <p className="text-[13px] text-white/80 leading-[1.5]">
                   <strong className="text-white">Jawaban:</strong> Stack yang dipilih menawarkan efisiensi pengembangan tertinggi dengan dukungan static typing penuh untuk mencegah bug di tahap produksi.
                 </p>
               </div>
 
-              <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-2">
+              <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-2">
                 <span className="text-[14px] text-white font-medium">
                   Tanya: &quot;Apa rencana pengembangan proyek ke depan?&quot;
                 </span>
-                <p className="text-[13px] text-[#c2c2c2] leading-[1.5]">
+                <p className="text-[13px] text-white/80 leading-[1.5]">
                   <strong className="text-white">Jawaban:</strong> Menambahkan integrasi payment gateway otomatis, automasi pipeline CI/CD, dan aplikasi mobile pendukung.
                 </p>
               </div>
@@ -356,7 +356,7 @@ export default function PresentPage({
       </main>
 
       {/* Bottom Slide Navigation Bar (Hidden in Print) */}
-      <footer className="print:hidden h-20 border-t border-[#e5e5e5]/10 px-6 sm:px-12 flex items-center justify-between bg-[#161616]/90 backdrop-blur-md relative z-30">
+      <footer className="print:hidden h-20 border-t border-white/10 px-6 sm:px-12 flex items-center justify-between bg-white/[0.04] backdrop-blur-xl relative z-30">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}

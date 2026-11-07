@@ -123,7 +123,7 @@ export default function OrderPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* 1. Pilih Kategori Layanan */}
-          <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4">
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
               Kategori Layanan
             </h2>
@@ -140,12 +140,12 @@ export default function OrderPage() {
                   onClick={() => setServiceType(item.id as ServiceType)}
                   className={`text-left p-4 rounded-[10px] border transition-all ${
                     serviceType === item.id
-                      ? 'bg-[#1f1f1f] border-white text-white'
-                      : 'bg-[#0a0a0a] border-[#e5e5e5]/10 hover:border-[#e5e5e5]/25 text-[#c2c2c2]'
+                      ? 'bg-white/[0.12] border-white text-white'
+                      : 'bg-white/[0.03] border-white/10 hover:border-white/25 text-white/80'
                   }`}
                 >
                   <div className="text-[15px] font-medium text-white">{item.label}</div>
-                  <div className="text-[12px] text-[#c2c2c2] mt-1">{item.desc}</div>
+                  <div className="text-[12px] text-white/70 mt-1">{item.desc}</div>
                 </button>
               ))}
             </div>
@@ -153,7 +153,7 @@ export default function OrderPage() {
 
           {/* 2. Pilih Paket (Khusus Proyek Berkelompok) */}
           {serviceType === 'project_joki' && (
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
               <h2 className="text-[18px] font-medium text-white">
                 Paket Proyek
               </h2>
@@ -182,8 +182,8 @@ export default function OrderPage() {
                     onClick={() => setPackageType(item.id as PackageType)}
                     className={`text-left p-4 rounded-[10px] border flex flex-col justify-between transition-all ${
                       packageType === item.id
-                        ? 'bg-[#1f1f1f] border-white text-white'
-                        : 'bg-[#0a0a0a] border-[#e5e5e5]/10 hover:border-[#e5e5e5]/25 text-[#c2c2c2]'
+                        ? 'bg-white/[0.12] border-white text-white'
+                        : 'bg-white/[0.03] border-white/10 hover:border-white/25 text-white/80'
                     }`}
                   >
                     <div>
@@ -195,7 +195,7 @@ export default function OrderPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-[12px] text-[#c2c2c2] mt-2 leading-relaxed">
+                      <p className="text-[12px] text-white/70 mt-2 leading-relaxed">
                         {item.desc}
                       </p>
                     </div>
@@ -207,7 +207,7 @@ export default function OrderPage() {
 
           {/* 3. Jumlah Anggota Kelompok */}
           {serviceType === 'project_joki' && (
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-5">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-[18px] font-medium text-white">
                   Jumlah Anggota Kelompok
@@ -256,51 +256,51 @@ export default function OrderPage() {
           )}
 
           {/* 4. Data Pemesan */}
-          <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4">
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
               {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[12px] text-[#c2c2c2]">Nama Lengkap</span>
+                <span className="text-[12px] text-white/70">Nama Lengkap</span>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: Budi Santoso"
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
-                  className="bg-[#0a0a0a] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <span className="text-[12px] text-[#c2c2c2]">Nomor WhatsApp</span>
+                <span className="text-[12px] text-white/70">Nomor WhatsApp</span>
                 <input
                   type="tel"
                   required
                   placeholder="Contoh: 081234567890"
                   value={buyerWhatsapp}
                   onChange={(e) => setBuyerWhatsapp(e.target.value)}
-                  className="bg-[#0a0a0a] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
                 />
               </div>
             </div>
           </div>
 
           {/* 5. Pembayaran QRIS Statis */}
-          <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] font-medium text-white">
                 Pembayaran QRIS
               </h2>
               <div className="text-right">
-                <span className="text-[11px] text-[#c2c2c2] uppercase tracking-[0.08em] block">Total Tagihan</span>
+                <span className="text-[11px] text-white/70 uppercase tracking-[0.08em] block">Total Tagihan</span>
                 <span className="text-[26px] font-medium text-white font-mono leading-none">
                   Rp {totalPrice.toLocaleString('id-ID')}
                 </span>
               </div>
             </div>
 
-            <div className="p-6 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col sm:flex-row items-center gap-6">
+            <div className="p-6 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center gap-6">
               <div className="w-[140px] h-[140px] bg-white rounded-[10px] p-2 flex flex-col items-center justify-center shrink-0">
                 <div className="text-black text-center text-[9px] font-mono font-bold leading-tight">
                   <div className="text-[12px] tracking-wider mb-1">QRIS STATIS</div>
@@ -311,7 +311,7 @@ export default function OrderPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 text-[14px] text-[#c2c2c2]">
+              <div className="flex flex-col gap-2 text-[14px] text-white/80">
                 <p className="leading-[1.5]">
                   Scan kode QRIS di samping menggunakan m-Banking atau e-Wallet Anda.
                 </p>
@@ -325,7 +325,7 @@ export default function OrderPage() {
                   <span className="text-[12px] text-white">Upload Bukti Transfer (Screenshot/Foto)</span>
 
                   <div className="flex flex-col sm:flex-row items-center gap-3">
-                    <label className="cursor-pointer bg-[#161616] hover:bg-[#1f1f1f] border border-[#e5e5e5]/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
+                    <label className="cursor-pointer bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
                       <span>📁 Pilih Gambar Bukti</span>
                       <input
                         type="file"
@@ -345,9 +345,9 @@ export default function OrderPage() {
                   </div>
 
                   {proofPreview && (
-                    <div className="mt-2 flex items-center gap-3 p-2 bg-[#161616] rounded-[10px] border border-[#e5e5e5]/10">
+                    <div className="mt-2 flex items-center gap-3 p-2 bg-white/[0.06] rounded-[10px] border border-white/10">
                       <span className="text-[11px] text-white font-medium">✓ Bukti bayar terlampir</span>
-                      <span className="text-[11px] text-[#c2c2c2] truncate max-w-xs">{proofUrl.slice(0, 32)}...</span>
+                      <span className="text-[11px] text-white/70 truncate max-w-xs">{proofUrl.slice(0, 32)}...</span>
                     </div>
                   )}
                 </div>

@@ -213,7 +213,7 @@ export default function ProjectSetupPage({
       <div className="text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[760px] w-full mx-auto px-6 py-20 flex flex-col gap-8">
-          <div className="p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+          <div className="p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
               Menunggu Konfirmasi Operator
             </h1>
@@ -267,7 +267,7 @@ export default function ProjectSetupPage({
 
         {/* STEP 1: AI IDEATION */}
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
-          <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+          <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
                 Rekomendasi Ide AI & Gimmick Dosen
@@ -283,7 +283,7 @@ export default function ProjectSetupPage({
                 placeholder="Contoh: Pemrograman Web — Sistem Manajemen Lab Komputer"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
-                className="flex-1 bg-[#0a0a0a] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
+                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
               />
               <button
                 type="button"
@@ -296,7 +296,7 @@ export default function ProjectSetupPage({
             </div>
 
             {selectedIdea && (
-              <div className="p-6 rounded-[16px] bg-[#0a0a0a] border border-white flex flex-col gap-3">
+              <div className="p-6 rounded-[16px] bg-white/[0.04] border border-white flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-white">
                     Ide Terpilih & Terkunci
@@ -305,7 +305,7 @@ export default function ProjectSetupPage({
                 </div>
                 <h3 className="text-[22px] font-medium text-white">{selectedIdea.title}</h3>
                 <p className="text-[14px] text-[#c2c2c2]">{selectedIdea.description}</p>
-                <div className="p-4 rounded-[10px] bg-[#161616] border border-[#e5e5e5]/10 text-[13px]">
+                <div className="p-4 rounded-[10px] bg-white/[0.05] border border-white/10 text-[13px]">
                   <span className="text-[11px] text-white uppercase tracking-wider block mb-1">
                     Gimmick Pemikat Dosen:
                   </span>
@@ -365,7 +365,7 @@ export default function ProjectSetupPage({
         )}
 
         {/* STEP 2: MEMBER DATA FORM */}
-        <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+        <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
@@ -447,7 +447,7 @@ export default function ProjectSetupPage({
         </section>
 
         {/* STEP 3: CONNECT GITHUB INVITATION */}
-        <section className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+        <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-[20px] font-medium text-white">
               Tautan Undangan Connect GitHub
@@ -457,14 +457,14 @@ export default function ProjectSetupPage({
             </p>
           </div>
 
-          <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-[14px] font-mono text-[#c2c2c2] truncate max-w-md">
+          <div className="p-5 rounded-[16px] bg-white/[0.04] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-[14px] font-mono text-white/80 truncate max-w-md">
               {typeof window !== 'undefined' ? `${window.location.origin}/join/${id}` : `/join/${id}`}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={copyInviteLink}
-                className="bg-[#161616] hover:bg-[#1f1f1f] border border-[#e5e5e5]/15 text-white text-[13px] px-4 py-2 rounded-full transition-all"
+                className="bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 text-white text-[13px] px-4 py-2 rounded-full transition-all"
               >
                 {copiedLink ? '✓ Tautan Disalin!' : 'Salin Tautan'}
               </button>

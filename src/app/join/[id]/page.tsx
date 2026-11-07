@@ -92,7 +92,7 @@ export default function JoinProjectPage({
           </p>
         </div>
 
-        <div className="p-8 sm:p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-8">
+        <div className="p-8 sm:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-8">
           <div className="flex flex-col gap-3">
             <label className="text-[13px] text-white font-medium">
               Pilih Nama Anda di Kelompok Ini:
@@ -106,15 +106,15 @@ export default function JoinProjectPage({
                   disabled={m.is_connected}
                   className={`p-4 rounded-[12px] border text-left flex items-center justify-between transition-all ${
                     m.is_connected
-                      ? 'border-[#e5e5e5]/5 bg-[#0a0a0a] opacity-50 cursor-not-allowed'
+                      ? 'border-white/5 bg-white/[0.02] opacity-50 cursor-not-allowed'
                       : selectedMemberId === m.id
-                      ? 'border-white bg-[#1f1f1f] text-white'
-                      : 'border-[#e5e5e5]/10 bg-[#0a0a0a] hover:border-[#e5e5e5]/25 text-[#c2c2c2]'
+                      ? 'border-white bg-white/[0.12] text-white'
+                      : 'border-white/10 bg-white/[0.03] hover:border-white/25 text-white/80'
                   }`}
                 >
                   <div>
                     <div className="text-[15px] font-medium text-white">{m.name}</div>
-                    <div className="text-[12px] text-[#686868] font-mono mt-0.5">
+                    <div className="text-[12px] text-white/60 font-mono mt-0.5">
                       NIM: {m.nim} • KOM {m.kom}
                     </div>
                   </div>
@@ -124,7 +124,7 @@ export default function JoinProjectPage({
                         ? 'bg-white text-[#161616] font-medium'
                         : selectedMemberId === m.id
                         ? 'bg-white text-[#161616] font-medium'
-                        : 'bg-[#161616] text-[#686868]'
+                        : 'bg-white/[0.06] text-white/60'
                     }`}
                   >
                     {m.is_connected ? 'Sudah Terhubung' : selectedMemberId === m.id ? 'Dipilih' : 'Pilih'}

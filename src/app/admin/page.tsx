@@ -302,10 +302,10 @@ export default function AdminPage() {
                   </button>
                 </div>
 
-                <div className="border border-[#e5e5e5]/10 rounded-[24px] overflow-hidden bg-[#161616]/75 backdrop-blur-md">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[14px]">
-                      <thead className="bg-[#0a0a0a] text-[#686868] text-[12px] border-b border-[#e5e5e5]/10">
+                      <thead className="bg-white/[0.05] text-white/70 text-[12px] border-b border-white/10">
                         <tr>
                           <th className="p-4">Tanggal & ID</th>
                           <th className="p-4">Pemesan</th>
@@ -399,7 +399,7 @@ export default function AdminPage() {
             {activeTab === 'scheduler' && (
               <div className="flex flex-col gap-6">
                 {/* Project Selector */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
                   <div className="flex items-center gap-3">
                     <span className="text-[13px] text-white">Pilih Proyek:</span>
                     <select
@@ -435,7 +435,7 @@ export default function AdminPage() {
                 {/* Form Add Commit Schedule */}
                 <form
                   onSubmit={handleAddSchedule}
-                  className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-4"
+                  className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4"
                 >
                   <h3 className="text-[17px] font-medium text-white">Tambah Jadwal Commit Baru</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -487,8 +487,8 @@ export default function AdminPage() {
                 </form>
 
                 {/* Schedules Table */}
-                <div className="border border-[#e5e5e5]/10 rounded-[24px] overflow-hidden bg-[#161616]/75 backdrop-blur-md">
-                  <div className="p-4 bg-[#0a0a0a] border-b border-[#e5e5e5]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
+                  <div className="p-4 bg-white/[0.05] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <span className="text-[14px] font-medium text-white">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})
                     </span>
@@ -581,7 +581,7 @@ export default function AdminPage() {
                     .map((p) => (
                       <div
                         key={p.id}
-                        className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col md:flex-row md:items-center justify-between gap-6"
+                        className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6"
                       >
                         <div className="flex flex-col gap-1">
                           <div className="text-[16px] font-medium text-white">

@@ -164,7 +164,7 @@ export default function ProjectDashboardPage({
             </p>
           </div>
 
-          <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-5">
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-4 text-[14px]">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Pemesan</div>
@@ -225,7 +225,7 @@ export default function ProjectDashboardPage({
           <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
             Bukti transfer tidak valid atau nominal tidak sesuai. Hubungi tim Komit via WhatsApp untuk klarifikasi.
           </p>
-          <div className="p-5 rounded-[16px] bg-[#161616] border border-[#e5e5e5]/10">
+          <div className="p-5 rounded-[16px] bg-white/[0.04] border border-white/10">
             <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">ID Pesanan</div>
             <div className="text-white font-mono text-[14px]">{project.id}</div>
           </div>
@@ -247,7 +247,7 @@ export default function ProjectDashboardPage({
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         {/* Setup Banner */}
         {project.status === 'setup' && (
-          <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-white font-medium mb-1">
                 Pembayaran Terverifikasi
@@ -266,21 +266,21 @@ export default function ProjectDashboardPage({
         )}
 
         {/* Top Header / Project Overview */}
-        <div className="p-8 sm:p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+        <div className="p-8 sm:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-medium uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full">
+                <span className="text-[11px] font-medium uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full font-mono">
                   {project.package_type.toUpperCase()} • {project.service_type}
                 </span>
-                <span className="text-[12px] text-[#686868] font-mono">
+                <span className="text-[12px] text-white/60 font-mono">
                   ID: {project.id.slice(0, 8)}
                 </span>
               </div>
               <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
                 {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
               </h1>
-              <p className="text-[15px] text-[#c2c2c2] max-w-2xl leading-[1.5]">
+              <p className="text-[15px] text-white/80 max-w-2xl leading-[1.5]">
                 {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
               </p>
             </div>
@@ -303,12 +303,12 @@ export default function ProjectDashboardPage({
                   href={project.github_repo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[#1f1f1f] hover:bg-[#282828] text-white border border-[#e5e5e5]/15 text-[13px] px-5 py-2.5 rounded-full transition-all"
+                  className="btn-hairline-ghost text-[13px] px-5 py-2.5 rounded-full transition-all"
                 >
                   GitHub Repo ↗
                 </a>
               ) : (
-                <span className="text-[12px] text-[#686868] px-4 py-2 bg-[#0a0a0a] rounded-full font-mono border border-[#e5e5e5]/10">
+                <span className="text-[12px] text-white/60 px-4 py-2 bg-white/[0.05] rounded-full font-mono border border-white/10">
                   Repo Sedang Dibuat
                 </span>
               )}
@@ -316,26 +316,26 @@ export default function ProjectDashboardPage({
           </div>
 
           {/* Customer Milestone Pipeline */}
-          <div className="pt-4 border-t border-[#e5e5e5]/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
-            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+          <div className="pt-4 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-[13px]">
+            <div className="p-3.5 rounded-[12px] bg-white/[0.05] border border-white/10 flex items-center gap-2.5">
               <span className="text-white font-bold">✓</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Pembayaran QRIS</div>
-                <div className="text-[11px] text-[#c2c2c2]">Terverifikasi</div>
+                <div className="text-[11px] text-white/70">Terverifikasi</div>
               </div>
             </div>
-            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+            <div className="p-3.5 rounded-[12px] bg-white/[0.05] border border-white/10 flex items-center gap-2.5">
               <span className="text-white font-bold">{project.selected_idea ? '✓' : '•'}</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Ide & Anggota</div>
-                <div className="text-[11px] text-[#c2c2c2]">{project.selected_idea ? 'Ide AI Terkunci' : 'Lengkapi Setup'}</div>
+                <div className="text-[11px] text-white/70">{project.selected_idea ? 'Ide AI Terkunci' : 'Lengkapi Setup'}</div>
               </div>
             </div>
-            <div className="p-3.5 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex items-center gap-2.5">
+            <div className="p-3.5 rounded-[12px] bg-white/[0.05] border border-white/10 flex items-center gap-2.5">
               <span className="text-white font-bold">●</span>
               <div>
                 <div className="text-white font-medium text-[13px]">Cicil Commit</div>
-                <div className="text-[11px] text-white font-mono">
+                <div className="text-[11px] text-white/90 font-mono">
                   {schedules.filter((s) => s.status === 'pushed').length}/{schedules.length} Selesai
                 </div>
               </div>
@@ -345,16 +345,16 @@ export default function ProjectDashboardPage({
 
         {/* Gimmick Banner */}
         {project.selected_idea?.gimmick && (
-          <div className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <span className="text-[13px] text-white font-medium block mb-1">
                 Gimmick Pemikat Nilai Dosen
               </span>
-              <p className="text-[15px] text-[#c2c2c2] font-normal">
+              <p className="text-[15px] text-white/80 font-normal">
                 {project.selected_idea.gimmick}
               </p>
             </div>
-            <span className="text-[12px] text-white font-mono shrink-0 uppercase tracking-wider bg-[#0a0a0a] px-3 py-1 rounded-full border border-[#e5e5e5]/10">
+            <span className="text-[12px] text-white font-mono shrink-0 uppercase tracking-wider bg-white/[0.06] px-3 py-1 rounded-full border border-white/10">
               Target Nilai A
             </span>
           </div>
@@ -380,24 +380,24 @@ export default function ProjectDashboardPage({
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-6 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-4"
+                className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
               >
                 <div>
                   <div className="text-[16px] font-medium text-white">{m.name}</div>
-                  <div className="text-[12px] text-[#686868] font-mono mt-1">
+                  <div className="text-[12px] text-white/60 font-mono mt-1">
                     NIM: {m.nim} • KOM {m.kom}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-[#e5e5e5]/10 pt-3">
-                  <span className="text-[12px] font-mono text-[#c2c2c2]">
+                <div className="flex items-center justify-between border-t border-white/10 pt-3">
+                  <span className="text-[12px] font-mono text-white/80">
                     @{m.github_username || 'unconnected'}
                   </span>
                   <span
-                    className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                    className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-mono ${
                       m.is_connected
                         ? 'bg-white text-[#161616] font-medium'
-                        : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
+                        : 'bg-white/[0.08] text-white/70 border border-white/15'
                     }`}
                   >
                     {m.is_connected ? 'Connected' : 'Pending'}
@@ -420,7 +420,7 @@ export default function ProjectDashboardPage({
               <h2 className="text-[20px] font-medium text-white tracking-tight">
                 Antrean & Riwayat Cicil Commit GitHub
               </h2>
-              <p className="text-[14px] text-[#c2c2c2]">
+              <p className="text-[14px] text-white/70">
                 Commit didorong secara natural atas nama masing-masing anggota kelompok hingga batas UAS.
               </p>
             </div>
@@ -429,13 +429,13 @@ export default function ProjectDashboardPage({
             </span>
           </div>
 
-          <div className="border border-[#e5e5e5]/10 rounded-[24px] overflow-hidden bg-[#161616]/75 backdrop-blur-md">
+          <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
             {schedules.length === 0 ? (
-              <div className="p-8 text-center text-[#686868] text-[14px] font-mono">
+              <div className="p-8 text-center text-white/60 text-[14px] font-mono">
                 Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
               </div>
             ) : (
-              <div className="divide-y divide-[#e5e5e5]/10">
+              <div className="divide-y divide-white/10">
                 {schedules.map((s) => (
                   <div
                     key={s.id}
@@ -443,10 +443,10 @@ export default function ProjectDashboardPage({
                   >
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-mono text-white bg-[#0a0a0a] border border-[#e5e5e5]/10 px-2 py-0.5 rounded-[6px]">
+                        <span className="text-[12px] font-mono text-white bg-white/[0.08] border border-white/15 px-2.5 py-0.5 rounded-[6px]">
                           @{s.github_username || 'member'}
                         </span>
-                        <span className="text-[12px] text-[#686868] font-mono">
+                        <span className="text-[12px] text-white/60 font-mono">
                           {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'short',
@@ -459,15 +459,15 @@ export default function ProjectDashboardPage({
 
                     <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
                       {s.commit_hash && (
-                        <span className="text-[11px] font-mono text-[#ededed] bg-[#0a0a0a] border border-[#e5e5e5]/10 px-2 py-0.5 rounded-[6px]">
+                        <span className="text-[11px] font-mono text-white/80 bg-white/[0.06] border border-white/10 px-2.5 py-0.5 rounded-[6px]">
                           #{s.commit_hash}
                         </span>
                       )}
                       <span
-                        className={`text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                        className={`text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full font-mono ${
                           s.status === 'pushed'
                             ? 'bg-white text-[#161616] font-medium'
-                            : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
+                            : 'bg-white/[0.08] text-white/80 border border-white/15'
                         }`}
                       >
                         {s.status === 'pushed' ? 'Pushed' : 'Scheduled'}
@@ -488,7 +488,7 @@ export default function ProjectDashboardPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Termasuk di Paket (Gratis)
@@ -523,7 +523,7 @@ export default function ProjectDashboardPage({
             </div>
 
             {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Add-on Opsional
@@ -567,7 +567,7 @@ export default function ProjectDashboardPage({
           </div>
 
           {readmeContent && (
-            <div className="p-8 rounded-[24px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-4">
+            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
               <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
                 <span className="text-[12px] font-mono text-white">
                   README.md Output Preview
@@ -588,8 +588,8 @@ export default function ProjectDashboardPage({
 
         {/* Modal Buy PPT */}
         {showPptModal && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-[#161616] border border-[#e5e5e5]/15 rounded-[24px] p-8 flex flex-col gap-6 shadow-2xl">
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="max-w-md w-full bg-white/[0.06] backdrop-blur-2xl border border-white/15 rounded-[24px] p-8 flex flex-col gap-6 shadow-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-[20px] font-medium text-white">Pesan Slide PPT Jadi</h3>
                 <button

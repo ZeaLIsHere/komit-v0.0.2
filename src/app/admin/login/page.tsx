@@ -33,12 +33,12 @@ export default function AdminLoginPage() {
 
   return (
     <div className="text-[#ededed] min-h-screen flex items-center justify-center px-6 font-sans">
-      <div className="w-full max-w-sm p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
+      <div className="w-full max-w-sm p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-[28px] font-medium leading-[1.1] text-white tracking-[-0.02em]">
             Admin Komit
           </h1>
-          <p className="text-[14px] text-[#c2c2c2]">
+          <p className="text-[14px] text-white/70">
             Masuk untuk mengakses panel operator internal.
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="bg-[#0a0a0a] border border-[#e5e5e5]/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none transition-colors"
+              className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none transition-colors"
             />
           </div>
 
