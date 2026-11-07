@@ -22,9 +22,6 @@ export default function Footer() {
           <Link href="/order" className="hover:text-white transition-colors">
             Order Proyek
           </Link>
-          <Link href="/project/demo-proyek-uas" className="hover:text-white transition-colors">
-            Live Preview
-          </Link>
           <Link href="/admin" className="hover:text-white transition-colors">
             Joki Panel
           </Link>

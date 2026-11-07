@@ -79,12 +79,6 @@ export default function Navbar() {
           >
             Biaya
           </Link>
-          <Link
-            href="/project/demo-proyek-uas"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
-          >
-            Preview
-          </Link>
 
           {user?.role === 'customer' && (
             <Link
