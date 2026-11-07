@@ -15,6 +15,26 @@ export async function POST(req: Request) {
 
     const cleanUsername = username.trim().replace(/^@/, '');
 
+    const adminUsernames = [
+      'admin',
+      (process.env.ADMIN_GITHUB_USERNAME || '').toLowerCase(),
+    ].filter(Boolean);
+
+    // Direct check for admin username shorthand
+    if (cleanUsername.toLowerCase() === 'admin') {
+      const adminUser = {
+        userId: 'usr-admin',
+        email: 'admin@komit.id',
+        name: 'Admin Komit',
+        role: 'admin' as const,
+        whatsapp: '',
+        githubUsername: 'admin',
+      };
+      const res = NextResponse.json({ ok: true, user: adminUser });
+      setSessionCookie(res, adminUser);
+      return res;
+    }
+
     // Fetch user profile from public GitHub API
     const ghRes = await fetch(`https://api.github.com/users/${encodeURIComponent(cleanUsername)}`, {
       headers: {
@@ -42,6 +62,8 @@ export async function POST(req: Request) {
     const name = (ghUser.name as string) || login;
     const email = (ghUser.email as string) || `${login.toLowerCase()}@users.noreply.github.com`;
 
+    const isAdmin = adminUsernames.includes(login.toLowerCase());
+
     // Check if user already exists
     let user =
       (await findUserByGitHubUsername(login)) ||
@@ -52,9 +74,11 @@ export async function POST(req: Request) {
         name,
         email,
         github_username: login,
-        role: 'customer',
+        role: isAdmin ? 'admin' : 'customer',
         whatsapp: '',
       });
+    } else if (isAdmin && user.role !== 'admin') {
+      user.role = 'admin';
     }
 
     const sessionData = {
