@@ -128,32 +128,18 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-[13px] text-white/70 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
+                className="text-[13px] text-white/70 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
               >
                 Keluar
               </button>
-
-              <Link
-                href="/order"
-                className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
-              >
-                Pesan Proyek ↗
-              </Link>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="text-[14px] text-white/80 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/[0.08] transition-all"
-              >
-                Masuk
-              </Link>
-
-              <Link
-                href="/login?redirect=/order"
                 className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
               >
-                Pesan Proyek ↗
+                Masuk
               </Link>
             </div>
           )}

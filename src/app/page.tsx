@@ -102,8 +102,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION: KATALOG LAYANAN (ASYMMETRIC BENTO: FLAGSHIP VS SECONDARY) */}
-        <section id="layanan" className="flex flex-col gap-12">
+        {/* SECTION: KATALOG LAYANAN (BENTO 1+3: FULL-WIDTH FLAGSHIP + 3 EQUAL SUB-SERVICES) */}
+        <section id="layanan" className="flex flex-col gap-8">
           {/* Section Header */}
           <div className="border-b border-white/10 pb-6">
             <h2 className="text-[32px] md:text-[40px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
@@ -111,88 +111,87 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {/* Asymmetric 7:5 Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-            {/* Left Column (7 cols): Flagship Core Service */}
-            <div className="lg:col-span-7 p-8 md:p-10 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-8">
-              <div className="flex flex-col gap-5">
-                <div className="flex flex-col gap-3">
-                  <h3 className="text-[26px] md:text-[32px] font-medium text-white leading-[1.15] tracking-[-0.02em]">
-                    Joki Proyek Kuliah Berkelompok
-                  </h3>
-                  <p className="text-[15px] text-white/80 leading-[1.6]">
-                    Pengerjaan kode aplikasi fullstack terstandar industri, cicil commit mingguan otomatis atas nama akun asli masing-masing anggota kelompok via GitHub OAuth, dan bahan presentasi UAS siap pakai.
-                  </p>
+          <div className="flex flex-col gap-6">
+            {/* 1. Flagship Hero Card (Full Width) */}
+            <div className="p-8 md:p-12 rounded-[28px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                {/* Left (7 cols): Title, Description, Packages & CTA */}
+                <div className="lg:col-span-7 flex flex-col gap-6">
+                  <div className="flex flex-col gap-3">
+                    <h3 className="text-[28px] md:text-[34px] font-medium text-white leading-[1.15] tracking-[-0.02em]">
+                      Joki Proyek Kuliah Berkelompok
+                    </h3>
+                    <p className="text-[15px] md:text-[16px] text-white/80 leading-[1.6]">
+                      Pengerjaan kode aplikasi fullstack terstandar industri, cicil commit mingguan otomatis atas nama akun asli masing-masing anggota kelompok via GitHub OAuth, dan bahan presentasi UAS siap pakai.
+                    </p>
+                  </div>
+
+                  {/* Package Badges & Action */}
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <div className="flex flex-wrap items-center gap-2 text-[12px]">
+                      <span className="px-3 py-1.5 rounded-full bg-white/[0.08] border border-white/15 text-white">
+                        Paket Full
+                      </span>
+                      <span className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
+                        Koding Saja
+                      </span>
+                      <span className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
+                        Ide &amp; Blueprint
+                      </span>
+                    </div>
+
+                    <Link
+                      href="/order"
+                      className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0 ml-auto sm:ml-0"
+                    >
+                      Pesan Proyek ↗
+                    </Link>
+                  </div>
                 </div>
 
-                {/* Core Capability Checklist */}
-                <div className="flex flex-col gap-2.5 pt-2 border-t border-white/10 text-[13px] text-white/85">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                {/* Right (5 cols): Clear Key Deliverables with Divider */}
+                <div className="lg:col-span-5 flex flex-col gap-4 border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 lg:pl-10 text-[14px] text-white/85">
+                  <div className="flex items-start gap-3">
+                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">01</span>
                     <span>Commit GitHub otomatis terjadwal atas akun asli tiap anggota</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
-                    <span>Rekomendasi ide sesuai /topik bidang yang kamu sukai</span>
+                  <div className="flex items-start gap-3">
+                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">02</span>
+                    <span>Rekomendasi ide sesuai topik bidang yang kamu sukai</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                  <div className="flex items-start gap-3">
+                    <span className="text-white/60 font-mono text-[13px] shrink-0 mt-0.5">03</span>
                     <span>Mode presentasi interaktif &amp; generate README anti-tanya dosen</span>
                   </div>
                 </div>
               </div>
-
-              {/* Bottom Package Options & Direct CTA */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-white/10">
-                <div className="flex flex-wrap items-center gap-2 text-[12px]">
-                  <span className="px-3 py-1 rounded-full bg-white/[0.08] border border-white/15 text-white/90">
-                    Paket Full
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
-                    Koding Saja
-                  </span>
-                  <span className="px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-white/70">
-                    Ide &amp; Blueprint
-                  </span>
-                </div>
-
-                <Link
-                  href="/order"
-                  className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
-                >
-                  Pesan Proyek ↗
-                </Link>
-              </div>
             </div>
 
-            {/* Right Column (5 cols): 3 Secondary Complementary Services */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              {/* Secondary Service 1 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
-                <h4 className="text-[18px] font-medium text-white">
+            {/* 2. Three Supporting Services (Clean 3-Column Grid) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
+                <h4 className="text-[19px] font-medium text-white">
                   Makalah &amp; Laporan Akademik
                 </h4>
-                <p className="text-[13px] text-white/75 leading-[1.5]">
+                <p className="text-[14px] text-white/75 leading-[1.6]">
                   Penyusunan laporan standar kampus, perancangan diagram UML (Use Case, Activity, Sequence), relasi ERD database, dan referensi jurnal terindeks.
                 </p>
               </div>
 
-              {/* Secondary Service 2 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
-                <h4 className="text-[18px] font-medium text-white">
+              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
+                <h4 className="text-[19px] font-medium text-white">
                   Slide Presentasi (PPT)
                 </h4>
-                <p className="text-[13px] text-white/75 leading-[1.5]">
+                <p className="text-[14px] text-white/75 leading-[1.6]">
                   Slide PowerPoint (.pptx) estetis dan ringkas untuk presentasi demo aplikasi di hadapan dosen penguji tanpa rasa cemas.
                 </p>
               </div>
 
-              {/* Secondary Service 3 */}
-              <div className="flex-1 p-6 rounded-[22px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-center gap-2">
-                <h4 className="text-[18px] font-medium text-white">
+              <div className="p-7 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
+                <h4 className="text-[19px] font-medium text-white">
                   Tugas Ringan &amp; Praktikum
                 </h4>
-                <p className="text-[13px] text-white/75 leading-[1.5]">
+                <p className="text-[14px] text-white/75 leading-[1.6]">
                   Penyelesaian tugas mingguan algoritma pemrograman, struktur data, pembuatan query database SQL, dan modul praktikum lab.
                 </p>
               </div>
