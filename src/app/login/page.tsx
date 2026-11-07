@@ -84,7 +84,7 @@ function LoginForm() {
                 autoFocus
                 value={githubUsername}
                 onChange={(e) => setGithubUsername(e.target.value)}
-                placeholder="ZeaLIsHere"
+                placeholder="username"
                 className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] pl-8 pr-4 py-3 text-[14px] font-mono text-white outline-none transition-colors"
               />
             </div>

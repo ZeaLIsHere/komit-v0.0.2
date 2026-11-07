@@ -174,7 +174,7 @@ export default function JoinProjectPage({
                 <span className="absolute left-3.5 text-white/50 font-mono text-[14px]">@</span>
                 <input
                   type="text"
-                  placeholder="ZeaLIsHere"
+                  placeholder="username"
                   value={githubHandle}
                   onChange={(e) => {
                     setGithubHandle(e.target.value);
