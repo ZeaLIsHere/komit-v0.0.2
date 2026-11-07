@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${dmSans.variable} ${geist.variable}`}>
-      <body className="bg-[#0a0a0a] text-[#ededed] min-h-screen font-sans selection:bg-[#6b62f2]/30 selection:text-white">
+      <body className="text-[#ededed] min-h-screen font-sans selection:bg-[#6b62f2]/30 selection:text-white">
         {children}
       </body>
     </html>

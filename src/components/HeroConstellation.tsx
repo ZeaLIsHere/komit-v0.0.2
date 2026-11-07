@@ -301,7 +301,7 @@ export default function HeroConstellation() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center"
     >
       {/* Center atmospheric glow and radial fade */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0a0a0a]/20 to-[#0a0a0a] pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0a0a0a]/10 to-[#0a0a0a]/60 pointer-events-none" />
     </div>
   );
 }

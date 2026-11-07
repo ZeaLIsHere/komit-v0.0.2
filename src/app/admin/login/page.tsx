@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex items-center justify-center px-6 font-sans">
+    <div className="text-[#ededed] min-h-screen flex items-center justify-center px-6 font-sans">
       <div className="w-full max-w-sm p-8 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-[28px] font-medium leading-[1.1] text-white tracking-[-0.02em]">

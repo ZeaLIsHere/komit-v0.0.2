@@ -84,6 +84,21 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Fixed atmospheric backdrop: sunrise wash muted under a dark veil */
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.8) 0%,
+      rgba(10, 10, 10, 0.55) 38%,
+      rgba(10, 10, 10, 0.6) 68%,
+      rgba(10, 10, 10, 0.85) 100%
+    ),
+    url("/assets/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 ::selection {

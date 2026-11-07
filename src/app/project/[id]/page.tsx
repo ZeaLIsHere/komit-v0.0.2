@@ -128,7 +128,7 @@ export default function ProjectDashboardPage({
 
   if (loading) {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex items-center justify-center font-mono text-[14px]">
+      <div className="text-[#bbc7c6] min-h-screen flex items-center justify-center font-mono text-[14px]">
         Memuat dashboard proyek...
       </div>
     );
@@ -136,7 +136,7 @@ export default function ProjectDashboardPage({
 
   if (errorMsg || !project) {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[20px] font-medium text-white">Proyek Tidak Ditemukan</h1>
         <Link href="/" className="text-[#cbfffc] underline">
           Kembali ke Beranda
@@ -148,7 +148,7 @@ export default function ProjectDashboardPage({
   // Show waiting payment screen before admin approves
   if (project.payment_status === 'pending') {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
+      <div className="text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-8">
           <div className="flex flex-col gap-4">
@@ -216,7 +216,7 @@ export default function ProjectDashboardPage({
   // Payment rejected screen
   if (project.payment_status === 'rejected') {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
+      <div className="text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-24 flex flex-col gap-6">
           <h1 className="text-[36px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
@@ -241,7 +241,7 @@ export default function ProjectDashboardPage({
   const allConnected = members.length > 0 && members.every((m) => m.is_connected);
 
   return (
-    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">

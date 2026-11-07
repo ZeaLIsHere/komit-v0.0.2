@@ -81,7 +81,7 @@ export default function PresentPage({
 
   if (loading) {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex items-center justify-center font-mono text-[14px]">
+      <div className="text-[#ededed] min-h-screen flex items-center justify-center font-mono text-[14px]">
         Menyiapkan slide presentasi UAS...
       </div>
     );
@@ -89,7 +89,7 @@ export default function PresentPage({
 
   if (!project) {
     return (
-      <div className="bg-[#0a0a0a] text-white min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="text-white min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[20px] font-medium">Data Proyek Tidak Ditemukan</h1>
         <Link href="/" className="text-white underline">
           Kembali ke Beranda
@@ -106,7 +106,7 @@ export default function PresentPage({
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white relative overflow-hidden font-sans">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white relative overflow-hidden font-sans">
       {/* Top Controls Bar (Hidden in Print) */}
       <header className="print:hidden h-16 border-b border-[#e5e5e5]/10 px-6 sm:px-12 flex items-center justify-between bg-[#161616]/90 backdrop-blur-md relative z-30">
         <div className="flex items-center gap-3">

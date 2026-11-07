@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center p-6 text-center gap-6">
+    <div className="text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center p-6 text-center gap-6">
       <span className="text-[12px] font-medium uppercase tracking-[0.15em] text-[#edfffe]">
         404 • Halaman Tidak Ditemukan
       </span>

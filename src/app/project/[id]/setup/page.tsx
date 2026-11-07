@@ -190,7 +190,7 @@ export default function ProjectSetupPage({
 
   if (loading) {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex items-center justify-center font-mono text-[14px]">
+      <div className="text-[#bbc7c6] min-h-screen flex items-center justify-center font-mono text-[14px]">
         Memuat data setup proyek...
       </div>
     );
@@ -198,7 +198,7 @@ export default function ProjectSetupPage({
 
   if (errorMsg || !project) {
     return (
-      <div className="bg-[#012624] text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="text-[#bbc7c6] min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[24px] font-medium text-white">Proyek Tidak Ditemukan</h1>
         <Link href="/" className="text-[#cbfffc] underline">
           Kembali ke Beranda
@@ -210,7 +210,7 @@ export default function ProjectSetupPage({
   // 1. PAYMENT GATE
   if (project.payment_status !== 'paid') {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col font-sans">
+      <div className="text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[760px] w-full mx-auto px-6 py-20 flex flex-col gap-8">
           <div className="p-10 rounded-[24px] bg-[#161616]/75 backdrop-blur-md border border-[#e5e5e5]/10 flex flex-col gap-6">
@@ -244,7 +244,7 @@ export default function ProjectSetupPage({
 
   // 2. SETUP ACTIVE
   return (
-    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">

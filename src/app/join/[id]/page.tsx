@@ -60,7 +60,7 @@ export default function JoinProjectPage({
 
   if (loading) {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex items-center justify-center font-mono text-[14px]">
+      <div className="text-[#ededed] min-h-screen flex items-center justify-center font-mono text-[14px]">
         Memuat undangan kelompok...
       </div>
     );
@@ -68,7 +68,7 @@ export default function JoinProjectPage({
 
   if (errorMsg || !project) {
     return (
-      <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="text-[#ededed] min-h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="text-[20px] font-medium text-white">Undangan Tidak Valid</h1>
         <Link href="/" className="text-white underline">
           Kembali ke Beranda
@@ -78,7 +78,7 @@ export default function JoinProjectPage({
   }
 
   return (
-    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-8">
