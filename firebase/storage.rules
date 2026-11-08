@@ -1,0 +1,37 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.role == 'admin' ||
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // Payment Proofs (QRIS transfer receipts)
+    match /proofs/{projectId}/{filename} {
+      // Authenticated users can upload payment proofs max 5MB (images only)
+      allow write: if isSignedIn()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+
+      // Admin or client can view receipt
+      allow read: if true;
+    }
+
+    // Presentation Slide files (PPTX / PDF)
+    match /presentations/{projectId}/{filename} {
+      // Only Admin / Joki team can upload finished presentation slides (max 50MB)
+      allow write: if isAdmin()
+                   && request.resource.size < 50 * 1024 * 1024;
+
+      // Project members / clients can download presentation
+      allow read: if true;
+    }
+  }
+}

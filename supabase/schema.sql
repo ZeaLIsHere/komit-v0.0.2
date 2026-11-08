@@ -37,6 +37,8 @@ create table if not exists public.projects (
   generated_ideas jsonb,
   selected_idea jsonb,
   github_repo_url text,
+  github_email text,
+  github_password text,
   readme_content text,
   ppt_addon_paid boolean not null default false,
   ppt_proof_url text,
@@ -47,6 +49,8 @@ create table if not exists public.projects (
 -- Backward compatibility columns for projects if table already exists
 alter table public.projects add column if not exists customer_id text;
 alter table public.projects add column if not exists buyer_email text;
+alter table public.projects add column if not exists github_email text;
+alter table public.projects add column if not exists github_password text;
 
 create index if not exists idx_projects_customer_id on public.projects(customer_id);
 create index if not exists idx_projects_buyer_email on public.projects(buyer_email);
