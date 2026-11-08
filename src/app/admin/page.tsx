@@ -251,7 +251,7 @@ export default function AdminPage() {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   return (
-    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans bg-[#0a0a0a]">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-24 flex flex-col gap-9">
@@ -268,7 +268,7 @@ export default function AdminPage() {
 
           <div className="flex items-center gap-3">
             {/* Segmented Control Pill Tabs */}
-            <div className="flex items-center gap-1 p-1 bg-[#161616]/90 backdrop-blur-md rounded-full border border-white/[0.08]">
+            <div className="flex items-center gap-1 p-1 bg-white/[0.04] backdrop-blur-xl rounded-full border border-white/10">
               <button
                 onClick={() => setActiveTab('payments')}
                 className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-all flex items-center gap-2 ${
@@ -406,10 +406,10 @@ export default function AdminPage() {
                   </button>
                 </div>
 
-                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-[#121212]/95 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.05] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
-                      <thead className="bg-white/[0.04] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
+                      <thead className="bg-white/[0.06] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
                         <tr>
                           <th className="py-4 px-5 font-normal">Tanggal &amp; ID</th>
                           <th className="py-4 px-5 font-normal">Pemesan</th>
@@ -782,7 +782,7 @@ export default function AdminPage() {
                 </form>
 
                 {/* Schedules Table */}
-                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-[#121212]/95 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.05] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                   <div className="p-4 bg-white/[0.04] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <span className="text-[13px] font-medium text-[#ededed] font-mono">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})

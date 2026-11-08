@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { Eye, EyeOff } from 'lucide-react';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
 import {
   signInWithPopup,
@@ -22,6 +23,9 @@ function LoginForm() {
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState('');
 
   // Status states
@@ -94,6 +98,13 @@ function LoginForm() {
       }
 
       if (isRegisterMode) {
+        if (password.length < 6) {
+          throw new Error('Kata sandi minimal 6 karakter.');
+        }
+        if (password !== confirmPassword) {
+          throw new Error('Konfirmasi kata sandi tidak cocok. Periksa kembali sandi Anda.');
+        }
+
         // Mode Daftar Baru
         const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
         await syncFirebaseUser({
@@ -219,15 +230,69 @@ function LoginForm() {
             <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono">
               Kata Sandi
             </label>
-            <input
-              type="password"
-              required
-              placeholder="Minimal 6 karakter"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 py-3.5 text-[14px] text-white outline-none transition-colors"
-            />
+            <div className="relative flex items-center">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder="Minimal 6 karakter"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 pr-12 py-3.5 text-[14px] text-white outline-none transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+                className="absolute right-4 p-1 text-white/50 hover:text-white transition-colors cursor-pointer"
+                aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
+
+          {isRegisterMode && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono">
+                Konfirmasi Kata Sandi
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  required
+                  placeholder="Masukkan ulang kata sandi"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={`w-full bg-white/[0.04] border rounded-full px-5 pr-12 py-3.5 text-[14px] text-white outline-none transition-colors ${
+                    confirmPassword && confirmPassword !== password
+                      ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
+                      : confirmPassword && confirmPassword === password
+                      ? 'border-[#59d499] focus:border-[#59d499]'
+                      : 'border-white/15 focus:border-white'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  tabIndex={-1}
+                  className="absolute right-4 p-1 text-white/50 hover:text-white transition-colors cursor-pointer"
+                  aria-label={showConfirmPassword ? 'Sembunyikan konfirmasi kata sandi' : 'Tampilkan konfirmasi kata sandi'}
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {confirmPassword && confirmPassword !== password && (
+                <span className="text-[11px] text-red-400 font-mono pl-2">
+                  ✕ Kata sandi tidak cocok
+                </span>
+              )}
+              {confirmPassword && confirmPassword === password && (
+                <span className="text-[11px] text-[#59d499] font-mono pl-2">
+                  ✓ Kata sandi cocok
+                </span>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -310,6 +375,7 @@ function LoginForm() {
             onClick={() => {
               setIsRegisterMode(!isRegisterMode);
               setError(null);
+              setConfirmPassword('');
             }}
             className="text-[13px] text-white/60 hover:text-white transition-colors"
           >

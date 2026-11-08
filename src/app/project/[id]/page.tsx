@@ -658,10 +658,10 @@ export default function ProjectDashboardPage({
               <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
                 Biaya add-on slide presentasi UAS: <strong className="text-white font-mono">Rp 75.000</strong>. File PPTX & PDF akan diunggah admin ke dashboard ini dalam 1-2 hari kerja.
               </p>
-              <div className="p-4 bg-[#0a0a0a] rounded-[14px] border border-[#e5e5e5]/10 flex flex-col items-center gap-1.5">
-                <span className="text-[11px] uppercase tracking-wider text-[#686868]">QRIS Statis Pembayaran</span>
+              <div className="p-4 bg-white/[0.04] rounded-[14px] border border-white/10 flex flex-col items-center gap-1.5">
+                <span className="text-[11px] uppercase tracking-wider text-white/60 font-mono">QRIS Statis Pembayaran</span>
                 <span className="text-[20px] text-white font-mono font-medium">Rp 75.000</span>
-                <span className="text-[11px] text-[#686868]">NMID: ID102938475 (KOMIT PLATFORM)</span>
+                <span className="text-[11px] text-white/50 font-mono">NMID: ID102938475 (KOMIT PLATFORM)</span>
               </div>
               <div className="flex justify-end gap-3">
                 <button

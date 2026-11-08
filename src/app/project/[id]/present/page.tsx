@@ -159,12 +159,12 @@ export default function PresentPage({
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {members.map((m, idx) => (
-                  <div key={m.id} className="p-3.5 bg-[#0a0a0a] border border-[#e5e5e5]/10 rounded-[12px] flex items-center justify-between">
+                  <div key={m.id} className="p-3.5 bg-white/[0.04] border border-white/10 rounded-[14px] flex items-center justify-between">
                     <div>
                       <div className="text-[15px] font-medium text-white">{idx + 1}. {m.name}</div>
-                      <div className="text-[12px] text-[#686868] font-mono">NIM: {m.nim} • KOM {m.kom}</div>
+                      <div className="text-[12px] text-white/60 font-mono">NIM: {m.nim} • KOM {m.kom}</div>
                     </div>
-                    <span className="text-[11px] font-mono text-[#ededed]">@{m.github_username || 'contributor'}</span>
+                    <span className="text-[11px] font-mono text-white/80">@{m.github_username || 'contributor'}</span>
                   </div>
                 ))}
               </div>
@@ -210,27 +210,27 @@ export default function PresentPage({
 
             <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-2">
-                  <span className="text-[12px] uppercase text-white font-mono">Frontend Layer</span>
-                  <div className="text-[16px] font-medium text-white">Next.js 15 & React 19</div>
-                  <p className="text-[12px] text-[#c2c2c2]">Antarmuka interaktif, server rendering cepat, & responsive styling Tailwind v4.</p>
+                <div className="p-6 rounded-[18px] bg-white/[0.04] border border-white/10 flex flex-col gap-2">
+                  <span className="text-[12px] uppercase text-white/70 font-mono">Frontend Layer</span>
+                  <div className="text-[17px] font-medium text-white">Next.js 15 & React 19</div>
+                  <p className="text-[13px] text-white/75 leading-relaxed">Antarmuka interaktif, server rendering cepat, & responsive styling Tailwind v4.</p>
                 </div>
-                <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-2">
-                  <span className="text-[12px] uppercase text-white font-mono">Backend Layer</span>
-                  <div className="text-[16px] font-medium text-white">Server Actions & API</div>
-                  <p className="text-[12px] text-[#c2c2c2]">Validasi tipe end-to-end, middleware keamanan, dan endpoint webhook otomatis.</p>
+                <div className="p-6 rounded-[18px] bg-white/[0.04] border border-white/10 flex flex-col gap-2">
+                  <span className="text-[12px] uppercase text-white/70 font-mono">Backend Layer</span>
+                  <div className="text-[17px] font-medium text-white">Server Actions & API</div>
+                  <p className="text-[13px] text-white/75 leading-relaxed">Validasi tipe end-to-end, middleware keamanan, dan endpoint webhook otomatis.</p>
                 </div>
-                <div className="p-5 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-2">
-                  <span className="text-[12px] uppercase text-white font-mono">Database Layer</span>
-                  <div className="text-[16px] font-medium text-white">PostgreSQL & Supabase</div>
-                  <p className="text-[12px] text-[#c2c2c2]">Relational schema terindeks, Row Level Security (RLS), & realtime subscriptions.</p>
+                <div className="p-6 rounded-[18px] bg-white/[0.04] border border-white/10 flex flex-col gap-2">
+                  <span className="text-[12px] uppercase text-white/70 font-mono">Database Layer</span>
+                  <div className="text-[17px] font-medium text-white">PostgreSQL & Supabase</div>
+                  <p className="text-[13px] text-white/75 leading-relaxed">Relational schema terindeks, Row Level Security (RLS), & realtime subscriptions.</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap justify-center border-t border-[#e5e5e5]/10 pt-4">
-                <span className="text-[12px] text-[#686868] uppercase font-mono mr-2">Tech Stack:</span>
+              <div className="flex items-center gap-2 flex-wrap justify-center border-t border-white/10 pt-4">
+                <span className="text-[12px] text-white/60 uppercase font-mono mr-2">Tech Stack:</span>
                 {(idea.techStack || []).map((t) => (
-                  <span key={t} className="text-[12px] font-mono bg-[#0a0a0a] text-white px-3 py-1 rounded-[6px] border border-[#e5e5e5]/10">
+                  <span key={t} className="text-[12px] font-mono bg-white/[0.05] text-white px-3 py-1 rounded-full border border-white/10">
                     {t}
                   </span>
                 ))}
@@ -258,7 +258,7 @@ export default function PresentPage({
                 {idea.gimmick}
               </h3>
 
-              <div className="p-6 rounded-[16px] bg-[#0a0a0a] border border-[#e5e5e5]/10 text-[14px] text-[#c2c2c2] leading-[1.5] flex flex-col gap-2">
+              <div className="p-6 rounded-[18px] bg-white/[0.04] border border-white/10 text-[14px] text-white/80 leading-[1.6] flex flex-col gap-2">
                 <strong className="text-white">Poin Pembuktian Saat Demo UAS:</strong>
                 <p>
                   Fitur ini dirancang khusus untuk membedakan proyek ini dengan aplikasi CRUD biasa. Dosen penguji dapat langsung melihat pengujian interaktif yang membuktikan implementasi logika tingkat lanjut, bukan sekadar copy-paste template.
@@ -285,13 +285,13 @@ export default function PresentPage({
                     'Integrasi Endpoint & QA Testing',
                   ];
                   return (
-                    <div key={m.id} className="p-4 rounded-[12px] bg-[#0a0a0a] border border-[#e5e5e5]/10 flex flex-col gap-1.5">
+                    <div key={m.id} className="p-5 rounded-[16px] bg-white/[0.04] border border-white/10 flex flex-col gap-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[15px] font-medium text-white">{m.name}</span>
-                        <span className="text-[11px] font-mono text-[#c2c2c2]">@{m.github_username || 'member'}</span>
+                        <span className="text-[11px] font-mono text-white/70">@{m.github_username || 'member'}</span>
                       </div>
                       <div className="text-[12px] text-white font-mono">{roles[idx % roles.length]}</div>
-                      <div className="text-[11px] text-[#686868] mt-1">
+                      <div className="text-[11px] text-white/60 mt-1 font-mono">
                         Status Commit: <span className="text-white">Terjadwal & Berkontribusi</span>
                       </div>
                     </div>
@@ -299,7 +299,7 @@ export default function PresentPage({
                 })}
               </div>
 
-              <div className="p-4 rounded-[12px] bg-[#0a0a0a] text-[12px] font-mono text-[#c2c2c2] border border-[#e5e5e5]/10 flex items-center justify-between">
+              <div className="p-4 rounded-[14px] bg-white/[0.04] text-[12px] font-mono text-white/80 border border-white/10 flex items-center justify-between">
                 <span>Total Jadwal Sprint: {schedules.length} Commit</span>
                 <span className="text-white font-medium">Grafik Kontribusi GitHub Terdistribusi Merata</span>
               </div>
@@ -361,16 +361,16 @@ export default function PresentPage({
           <button
             onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
             disabled={currentSlide === 0}
-            className="p-2.5 px-4 rounded-full bg-[#0a0a0a] border border-[#e5e5e5]/10 disabled:opacity-40 hover:border-white text-white text-[13px] transition-all"
+            className="p-2.5 px-4 rounded-full bg-white/[0.06] border border-white/15 disabled:opacity-40 hover:bg-white/[0.12] text-white text-[13px] transition-all"
           >
             ← Slide Sebelumnya
           </button>
           <button
             onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, totalSlides - 1))}
             disabled={currentSlide === totalSlides - 1}
-            className="p-2.5 px-4 rounded-full bg-[#0a0a0a] border border-[#e5e5e5]/10 disabled:opacity-40 hover:border-white text-white text-[13px] transition-all"
+            className="p-2.5 px-4 rounded-full bg-white/[0.06] border border-white/15 disabled:opacity-40 hover:bg-white/[0.12] text-white text-[13px] transition-all"
           >
-            Slide Berikutnya →
+            Slide Selanjutnya →
           </button>
         </div>
 

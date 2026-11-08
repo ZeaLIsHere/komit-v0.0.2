@@ -592,12 +592,12 @@ export default function ProjectSetupPage({
                   <span className="text-[11px] text-[#686868] font-mono">Tersimpan di Proyek</span>
                 </div>
                 <h3 className="text-[20px] sm:text-[22px] font-medium text-white">{selectedIdea.title}</h3>
-                <p className="text-[14px] text-[#c2c2c2] leading-relaxed">{selectedIdea.description}</p>
-                <div className="p-4 rounded-[12px] bg-[#161616] border border-white/10 text-[13px] flex flex-col gap-1">
-                  <span className="text-[11px] font-mono text-white/70 uppercase tracking-wider">
+                <p className="text-[14px] text-white/80 leading-relaxed">{selectedIdea.description}</p>
+                <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
+                  <span className="text-[11px] font-mono text-[#ffb829] uppercase tracking-wider">
                     Gimmick Pemikat Dosen:
                   </span>
-                  <p className="text-[#ededed] font-sans">{selectedIdea.gimmick}</p>
+                  <p className="text-white/90 font-sans text-[14px]">{selectedIdea.gimmick}</p>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {selectedIdea.techStack?.map((t) => (
@@ -613,7 +613,7 @@ export default function ProjectSetupPage({
             )}
 
             {/* Interactive Chat Feed Container */}
-            <div className="flex flex-col gap-5 p-4 sm:p-6 rounded-[12px] bg-[#0d0d0d] border border-white/10 min-h-[300px]">
+            <div className="flex flex-col gap-5 p-4 sm:p-6 rounded-[20px] bg-white/[0.03] backdrop-blur-xl border border-white/10 min-h-[300px]">
               {chatMessages.map((msg) => (
                 <div
                   key={msg.id}
@@ -666,11 +666,11 @@ export default function ProjectSetupPage({
                               </button>
                             </div>
 
-                            <div className="p-3.5 rounded-[12px] bg-[#161616] border border-white/[0.06]">
-                              <span className="text-[11px] font-mono uppercase tracking-wider text-white/70 block mb-1">
+                            <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
+                              <span className="text-[11px] font-mono uppercase tracking-wider text-[#ffb829] block mb-0.5">
                                 Gimmick Pemikat Dosen:
                               </span>
-                              <p className="text-[13px] text-[#ededed] leading-relaxed">
+                              <p className="text-[13px] text-white/90 leading-relaxed">
                                 {idea.gimmick}
                               </p>
                             </div>
@@ -825,20 +825,17 @@ export default function ProjectSetupPage({
           </div>
 
           {/* User Form Explanation Box */}
-          <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex items-start gap-3 text-[13px] text-white/80">
-            <span className="text-[16px] shrink-0 mt-0.5">ℹ️</span>
-            <div className="flex flex-col gap-1 leading-relaxed">
-              <span className="font-medium text-white">
-                {project?.service_type === 'makalah' || project?.service_type === 'ppt'
-                  ? 'Panduan Data Anggota (Makalah / PPT):'
-                  : 'Panduan Data Anggota (Proyek Koding & GitHub):'}
-              </span>
-              <p className="text-white/70 text-[12px]">
-                {project?.service_type === 'makalah' || project?.service_type === 'ppt'
-                  ? 'Nama dan NIM anggota akan disusun pada laporan akademik atau slide presentasi resmi tim Anda.'
-                  : 'Pastikan username GitHub setiap anggota valid (ditandai ceklis hijau ✓) agar pembagian tugas di README dan jadwal cicil commit mingguan tercatat akurat di repository.'}
-              </p>
-            </div>
+          <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
+            <span className="font-medium text-white">
+              {project?.service_type === 'makalah' || project?.service_type === 'ppt'
+                ? 'Panduan Data Anggota (Makalah / PPT):'
+                : 'Panduan Data Anggota (Proyek Koding & GitHub):'}
+            </span>
+            <p className="text-white/70 text-[12px]">
+              {project?.service_type === 'makalah' || project?.service_type === 'ppt'
+                ? 'Nama dan NIM anggota akan disusun pada laporan akademik atau slide presentasi resmi tim Anda.'
+                : 'Akun GitHub anggota digunakan untuk mencatat grafik commit mingguan agar kontribusi terbagi merata di mata dosen.'}
+            </p>
           </div>
 
           <form onSubmit={handleSaveMembers} className="flex flex-col gap-4">
