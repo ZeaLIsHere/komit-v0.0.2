@@ -100,6 +100,41 @@ export async function GET(req: Request) {
         github_access_token: accessToken,
         is_connected: true,
       });
+    } else {
+      // General user login via GitHub OAuth
+      const { findUserByGitHubUsername, findUserByEmail, createUser } = await import('@/lib/data');
+      const { setSessionCookie } = await import('@/lib/auth');
+      
+      const login = userData.login;
+      const email = userData.email || `${login.toLowerCase()}@users.noreply.github.com`;
+      const name = userData.name || login;
+      
+      const adminUsernames = ['admin', (process.env.ADMIN_GITHUB_USERNAME || '').toLowerCase()].filter(Boolean);
+      const isAdmin = adminUsernames.includes(login.toLowerCase());
+
+      let user = (await findUserByGitHubUsername(login)) || (await findUserByEmail(email));
+      if (!user) {
+        user = await createUser({
+          name,
+          email,
+          github_username: login,
+          role: isAdmin ? 'admin' : 'customer',
+          whatsapp: '',
+        });
+      }
+
+      const sessionData = {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        whatsapp: user.whatsapp,
+        githubUsername: login,
+      };
+
+      const redirectRes = NextResponse.redirect(new URL('/my-projects', req.url));
+      setSessionCookie(redirectRes, sessionData);
+      return redirectRes;
     }
 
     // Check if all members in the project are connected

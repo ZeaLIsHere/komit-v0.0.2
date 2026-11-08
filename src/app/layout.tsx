@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Geist } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -15,7 +16,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Komit — Joki Proyek Kuliah Berkelompok & Cicil Commit GitHub",
+  title: "Komit",
   description:
     "Layanan pengerjaan proyek kuliah IT, cicil commit terjadwal atas nama akun GitHub anggota kelompok hingga UAS, makalah, dan PPT presentasi.",
   icons: {
@@ -36,6 +37,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${dmSans.variable} ${geist.variable}`}>
       <body className="text-[#ededed] min-h-screen font-sans selection:bg-[#6b62f2]/30 selection:text-white">
+        <SmoothScroll />
         {children}
       </body>
     </html>
