@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
 ---
 
-## 👥 Tim Pengembang (Kelompok)
+## Tim Pengembang (Kelompok)
 ${memberList || '- Belum ada data anggota'}
 
 ### Pembagian Tugas & Tanggung Jawab
@@ -53,7 +53,7 @@ ${memberRoles || '- Pembagian tugas tim'}
 
 ---
 
-## 🏛️ Arsitektur Sistem
+## Arsitektur Sistem
 Aplikasi ini dibangun menggunakan arsitektur modular berlapis (*separation of concerns*):
 1. **Presentation Layer:** Antarmuka responsif dengan standar UX modern dan feedback visual instan.
 2. **Business Logic Layer:** Controller terisolasi dengan validasi ketat di batas request.
@@ -61,7 +61,7 @@ Aplikasi ini dibangun menggunakan arsitektur modular berlapis (*separation of co
 
 ---
 
-## 🚀 Panduan Menjawab Pertanyaan Dosen Penguji UAS
+## Panduan Menjawab Pertanyaan Dosen Penguji UAS
 Ketika dosen menguji kelayakan dan orisinalitas proyek ini, gunakan argumen teknis berikut:
 
 1. **"Mengapa memilih stack ${selectedIdea.techStack?.[0] || 'ini'}?"**  

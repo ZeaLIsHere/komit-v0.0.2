@@ -32,36 +32,41 @@ export default function MyProjectsPage() {
   const getStatusBadge = (status: Project['status'], paymentStatus: Project['payment_status']) => {
     if (paymentStatus === 'pending') {
       return (
-        <span className="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">
-          ⏳ Menunggu Verifikasi QRIS
+        <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/25 inline-flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+          <span>Menunggu Verifikasi QRIS</span>
         </span>
       );
     }
     if (paymentStatus === 'rejected') {
       return (
-        <span className="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">
-          ✕ Pembayaran Ditolak
+        <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-300 border border-red-500/25 inline-flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+          <span>Pembayaran Ditolak</span>
         </span>
       );
     }
     if (status === 'setup') {
       return (
-        <span className="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-white border border-white/20">
-          🚀 Siap Setup Ide &amp; Kelompok
+        <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/[0.06] text-[#ededed] border border-white/15 inline-flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#c2c2c2]" />
+          <span>Siap Setup Ide &amp; Kelompok</span>
         </span>
       );
     }
     if (status === 'in_progress') {
       return (
-        <span className="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-white text-[#161616] font-medium">
-          ⚡ Sedang Dikerjakan &amp; Cicil Commit
+        <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white/[0.08] text-white border border-white/20 inline-flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-white" />
+          <span>Sedang Dikerjakan &amp; Cicil Commit</span>
         </span>
       );
     }
     if (status === 'completed') {
       return (
-        <span className="text-[11px] uppercase tracking-wider px-3 py-1 rounded-full bg-[#59d499]/20 text-[#59d499] border border-[#59d499]/30">
-          ✓ Selesai &amp; Lulus UAS
+        <span className="text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#59d499]/10 text-[#59d499] border border-[#59d499]/25 inline-flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#59d499]" />
+          <span>Selesai &amp; Siap UAS</span>
         </span>
       );
     }
@@ -72,7 +77,7 @@ export default function MyProjectsPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-white/10 pb-6">
           <div className="flex flex-col gap-2">
             <span className="text-[11px] uppercase tracking-wider text-white/60 font-mono">
@@ -106,8 +111,10 @@ export default function MyProjectsPage() {
           </div>
         ) : projects.length === 0 ? (
           <div className="p-12 sm:p-16 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 text-center flex flex-col items-center gap-6">
-            <div className="w-12 h-12 rounded-full bg-white/[0.06] border border-white/15 flex items-center justify-center text-[20px]">
-              📁
+            <div className="w-12 h-12 rounded-full bg-white/[0.06] border border-white/15 flex items-center justify-center text-white/70">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
             </div>
             <div className="flex flex-col gap-2 max-w-md">
               <h2 className="text-[20px] font-medium text-white">Belum Ada Proyek Aktif</h2>
@@ -136,7 +143,7 @@ export default function MyProjectsPage() {
 
                   <h3 className="text-[22px] font-medium text-white leading-[1.2]">
                     {p.selected_idea?.title ||
-                      `${p.service_type.replace('_', ' ').toUpperCase()} — Paket ${p.package_type.toUpperCase()}`}
+                      `${p.service_type.replace('_', ' ').toUpperCase()} (${p.package_type.toUpperCase()})`}
                   </h3>
 
                   {p.selected_idea?.gimmick && (

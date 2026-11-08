@@ -160,11 +160,11 @@ export default function ProjectDashboardPage({
             </h1>
             <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
               Tim Komit sedang memverifikasi bukti transfer QRIS kamu. Proses verifikasi biasanya selesai dalam{' '}
-              <strong className="text-white">1–3 jam</strong> pada hari kerja.
+              <strong className="text-white">1 sampai 3 jam</strong> pada hari kerja.
             </p>
           </div>
 
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-4 text-[14px]">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Pemesan</div>
@@ -176,7 +176,7 @@ export default function ProjectDashboardPage({
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Layanan</div>
-                <div className="text-white capitalize">{project.service_type.replace('_', ' ')} — {project.package_type}</div>
+                <div className="text-white capitalize">{project.service_type.replace('_', ' ')} ({project.package_type})</div>
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Total Tagihan</div>
@@ -244,10 +244,10 @@ export default function ProjectDashboardPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         {/* Setup Banner */}
         {project.status === 'setup' && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
@@ -255,11 +255,11 @@ export default function ProjectDashboardPage({
                 </span>
                 {project.github_email && project.github_password ? (
                   <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
-                    ✓ Akun GitHub Terkirim ke Admin
+                    Akun GitHub Terkirim ke Admin
                   </span>
                 ) : (
                   <span className="text-[10px] text-yellow-300 font-mono px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30">
-                    ⚠️ Email &amp; Password GitHub Diperlukan
+                    Email &amp; Password GitHub Diperlukan
                   </span>
                 )}
               </div>
@@ -280,10 +280,10 @@ export default function ProjectDashboardPage({
 
         {/* Completed Banner — shown when admin marks project completed */}
         {project.status === 'completed' && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-[#59d499] font-medium mb-1">
-                ✓ Proyek Selesai &amp; Siap Sidang UAS
+                Proyek Selesai &amp; Siap Sidang UAS
               </div>
               <p className="text-[15px] text-white">
                 Seluruh pengerjaan kode dan cicil commit telah tuntas. Unduh README atau buka Slide Presentasi untuk demo dosen.
@@ -293,7 +293,7 @@ export default function ProjectDashboardPage({
               href={`/project/${id}/present`}
               className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
-              Buka Slide Presentasi 🖥️
+              Buka Slide Presentasi
             </Link>
           </div>
         )}
@@ -302,7 +302,9 @@ export default function ProjectDashboardPage({
         {project.payment_status === 'paid' && project.status !== 'setup' && (
           <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
             <div className="flex items-center gap-2.5">
-              <span className="text-[16px]">🔐</span>
+              <svg className="w-4 h-4 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
               <div>
                 <span className="text-white font-medium">Akun GitHub untuk Admin:</span>{' '}
                 <span className="text-white/80 font-mono">
@@ -320,7 +322,7 @@ export default function ProjectDashboardPage({
         )}
 
         {/* Top Header / Project Overview */}
-        <div className="p-8 sm:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+        <div className="p-8 sm:p-10 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -344,7 +346,7 @@ export default function ProjectDashboardPage({
                 href={`/project/${id}/present`}
                 className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full transition-all"
               >
-                Mode Presentasi UAS 🖥️
+                Mode Presentasi UAS
               </Link>
               <Link
                 href={`/project/${id}/setup`}
@@ -399,7 +401,7 @@ export default function ProjectDashboardPage({
 
         {/* Gimmick Banner */}
         {project.selected_idea?.gimmick && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <span className="text-[13px] text-white font-medium block mb-1">
                 Gimmick Pemikat Nilai Dosen
@@ -434,7 +436,7 @@ export default function ProjectDashboardPage({
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
+                className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
               >
                 <div>
                   <div className="text-[16px] font-medium text-white">{m.name}</div>
@@ -483,7 +485,7 @@ export default function ProjectDashboardPage({
             </span>
           </div>
 
-          <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
+          <div className="border border-white/10 rounded-[14px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
             {schedules.length === 0 ? (
               <div className="p-8 text-center text-white/60 text-[14px] font-mono">
                 Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
@@ -542,7 +544,7 @@ export default function ProjectDashboardPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Termasuk di Paket (Gratis)
@@ -577,7 +579,7 @@ export default function ProjectDashboardPage({
             </div>
 
             {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Add-on Opsional
@@ -621,7 +623,7 @@ export default function ProjectDashboardPage({
           </div>
 
           {readmeContent && (
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
               <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
                 <span className="text-[12px] font-mono text-white">
                   README.md Output Preview
@@ -643,7 +645,7 @@ export default function ProjectDashboardPage({
         {/* Modal Buy PPT */}
         {showPptModal && (
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-white/[0.06] backdrop-blur-2xl border border-white/15 rounded-[24px] p-8 flex flex-col gap-6 shadow-2xl">
+            <div className="max-w-md w-full bg-white/[0.06] backdrop-blur-2xl border border-white/15 rounded-[14px] p-8 flex flex-col gap-6 shadow-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-[20px] font-medium text-white">Pesan Slide PPT Jadi</h3>
                 <button

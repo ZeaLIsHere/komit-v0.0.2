@@ -42,6 +42,8 @@ export async function POST(req: Request) {
       buyer_email: buyerEmail,
       buyer_name: body.buyer_name,
       buyer_whatsapp: body.buyer_whatsapp,
+      github_email: body.github_email?.trim() || null,
+      github_password: body.github_password?.trim() || null,
       service_type: body.service_type || 'project_joki',
       package_type: body.package_type || 'full',
       member_count: memberCount,

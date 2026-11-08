@@ -319,7 +319,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-[16px] md:text-[17px] text-white/80 leading-[1.65]">
-                Hanya <strong className="text-white font-medium">Rp 50.000 per anggota</strong>—setara sekali nongkrong untuk memastikan kode aplikasi selesai terstandar, riwayat commit aktif atas nama akun GitHub masing-masing, dan materi presentasi UAS siap diuji dosen.
+                Hanya <strong className="text-white font-medium">Rp 50.000 per anggota</strong> untuk memastikan kode aplikasi selesai terstandar, riwayat commit aktif atas nama akun GitHub masing-masing, dan materi presentasi UAS siap diuji dosen.
               </p>
             </div>
 

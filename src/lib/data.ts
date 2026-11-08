@@ -40,7 +40,7 @@ const mockProjects: Map<string, Project> = new Map([
       niche_input: 'Aplikasi Rekomendasi Tempat Magang Berdasarkan Portofolio GitHub',
       selected_idea: {
         id: 'idea-1',
-        title: 'InternSync — AI Resume & Repo Matcher',
+        title: 'InternSync AI Resume & Repo Matcher',
         description: 'Web dashboard untuk memetakan skill dari commit GitHub mahasiswa ke lowongan magang.',
         gimmick: 'Live skill radar chart dari commit history + prediksi kecocokan kultur tim magang via AI.',
         techStack: ['Next.js 15', 'Tailwind CSS', 'FastAPI', 'PostgreSQL'],

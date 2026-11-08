@@ -19,7 +19,15 @@ export default function ProjectSetupPage({
   const [memberCount, setMemberCount] = useState<number>(4);
   const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
-  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' }>({});
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' | 'duplicate' }>({});
+  const [githubProfiles, setGithubProfiles] = useState<{
+    [index: number]: {
+      username: string;
+      name: string;
+      avatar_url: string;
+      html_url: string;
+    } | null;
+  }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -28,6 +36,15 @@ export default function ProjectSetupPage({
   const [isGeneratingIdeas, setIsGeneratingIdeas] = useState<boolean>(false);
   const [generatedIdeas, setGeneratedIdeas] = useState<IdeaItem[]>([]);
   const [selectedIdea, setSelectedIdea] = useState<IdeaItem | null>(null);
+  const [chatMessages, setChatMessages] = useState<
+    Array<{
+      id: string;
+      role: 'user' | 'assistant';
+      content: string;
+      ideas?: IdeaItem[];
+    }>
+  >([]);
+  const [chatInput, setChatInput] = useState<string>('');
 
   // GitHub credentials for admin state
   const [githubEmail, setGithubEmail] = useState<string>('');
@@ -61,19 +78,42 @@ export default function ProjectSetupPage({
     const clean = username.trim().replace(/^@/, '');
     if (!clean) {
       setGithubStatus((prev) => ({ ...prev, [index]: 'empty' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
       return;
     }
+
+    // Check duplicate
+    const isDuplicate = members.some(
+      (m, i) => i !== index && m.github_username.trim().replace(/^@/, '').toLowerCase() === clean.toLowerCase()
+    );
+    if (isDuplicate) {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'duplicate' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
+      return;
+    }
+
     setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
     try {
       const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
       const data = await res.json();
       if (data.exists) {
         setGithubStatus((prev) => ({ ...prev, [index]: 'valid' }));
+        setGithubProfiles((prev) => ({
+          ...prev,
+          [index]: {
+            username: data.username,
+            name: data.name || data.username,
+            avatar_url: data.avatar_url,
+            html_url: data.html_url,
+          },
+        }));
       } else {
         setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+        setGithubProfiles((prev) => ({ ...prev, [index]: null }));
       }
     } catch {
       setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
     }
   };
 
@@ -110,6 +150,25 @@ export default function ProjectSetupPage({
         }
         if (data.project.niche_input) {
           setNiche(data.project.niche_input);
+        }
+        if (data.project.generated_ideas && data.project.generated_ideas.length > 0) {
+          setGeneratedIdeas(data.project.generated_ideas);
+          setChatMessages([
+            {
+              id: 'init-1',
+              role: 'assistant',
+              content: `Halo! Saya konsultan AI Komit. Berdasarkan topik "${data.project.niche_input || 'yang Anda pilih'}", berikut 3 rekomendasi ide yang telah dirancang:`,
+              ideas: data.project.generated_ideas,
+            },
+          ]);
+        } else {
+          setChatMessages([
+            {
+              id: 'init-0',
+              role: 'assistant',
+              content: 'Halo! Saya konsultan AI Komit. Ceritakan topik mata kuliah atau ide awal aplikasi yang kamu inginkan. Kamu bisa bebas berdiskusi atau meminta ganti ide seperti "Saya kurang suka, tolong ganti dengan ide lain" kapan saja.',
+            },
+          ]);
         }
         if (data.project.github_email) {
           setGithubEmail(data.project.github_email);
@@ -198,24 +257,63 @@ export default function ProjectSetupPage({
     }
   };
 
-  const handleGenerateIdeas = async () => {
-    if (!niche.trim()) {
-      alert('Masukkan topik mata kuliah terlebih dahulu');
-      return;
-    }
+  const handleSendChat = async (overridePrompt?: string) => {
+    const text = (overridePrompt || chatInput || niche).trim();
+    if (!text || isGeneratingIdeas) return;
 
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user' as const,
+      content: text,
+    };
+
+    const nextMessages = [...chatMessages, userMessage];
+    setChatMessages(nextMessages);
+    setChatInput('');
     setIsGeneratingIdeas(true);
+
     try {
+      const apiMessages = nextMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
       const res = await fetch('/api/ai/ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ niche, service_type: project?.service_type }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          prompt: text,
+          niche: niche || text,
+          service_type: project?.service_type,
+        }),
       });
+
       const data = await res.json();
       if (res.ok && data.ideas) {
         setGeneratedIdeas(data.ideas);
+        if (!niche) setNiche(text);
+
+        const botMessage = {
+          id: `bot-${Date.now()}`,
+          role: 'assistant' as const,
+          content: data.reply || 'Berikut 3 rekomendasi ide yang telah diperbarui sesuai arahan Anda:',
+          ideas: data.ideas,
+        };
+
+        setChatMessages((prev) => [...prev, botMessage]);
+
+        // Auto sync generated ideas to project
+        await fetch(`/api/projects/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            niche_input: niche || text,
+            generated_ideas: data.ideas,
+          }),
+        });
       } else {
-        throw new Error(data.error || 'Gagal generate ide');
+        throw new Error(data.error || 'Gagal memproses ide dari AI');
       }
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Gagal memanggil AI');
@@ -235,6 +333,7 @@ export default function ProjectSetupPage({
           niche_input: niche,
         }),
       });
+      alert(`Ide "${idea.title}" berhasil dipilih dan dikunci untuk proyek ini!`);
     } catch (err) {
       console.error('Failed to lock idea:', err);
     }
@@ -331,7 +430,7 @@ export default function ProjectSetupPage({
       <div className="text-[#ededed] min-h-screen flex flex-col font-sans">
         <Navbar />
         <main className="flex-1 max-w-[760px] w-full mx-auto px-6 py-20 flex flex-col gap-8">
-          <div className="p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          <div className="p-10 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
               Menunggu Konfirmasi Operator
             </h1>
@@ -365,7 +464,7 @@ export default function ProjectSetupPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Setup Proyek & Data Kelompok
@@ -376,7 +475,7 @@ export default function ProjectSetupPage({
         </div>
 
         {/* SECTION: GITHUB CREDENTIALS FOR ADMIN SETUP */}
-        <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+        <section className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center gap-2">
@@ -439,8 +538,11 @@ export default function ProjectSetupPage({
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-              <p className="text-[12px] text-white/50 leading-relaxed font-mono">
-                🔒 Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.
+              <p className="text-[12px] text-white/50 leading-relaxed font-mono flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span>Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.</span>
               </p>
               <button
                 type="submit"
@@ -450,123 +552,212 @@ export default function ProjectSetupPage({
                 {isSavingCredentials
                   ? 'Mengirim...'
                   : credentialsSaved
-                  ? '✓ Berhasil Dikirim!'
+                  ? 'Berhasil Dikirim'
                   : 'Kirim Kredensial ke Admin ↗'}
               </button>
             </div>
           </form>
         </section>
 
-        {/* STEP 1: AI IDEATION */}
+        {/* STEP 1: INTERACTIVE AI IDEATION ASSISTANT (CHATGPT-STYLE) */}
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
-          <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          <section className="p-8 rounded-[14px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <h2 className="text-[20px] font-medium text-white">
-                Rekomendasi Ide AI & Gimmick Dosen
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                  Interactive AI Ideation
+                </span>
+                <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
+                  DeepSeek &amp; Groq LPU Ready
+                </span>
+              </div>
+              <h2 className="text-[22px] font-medium text-white">
+                Konsultan Ide AI &amp; Gimmick Dosen
               </h2>
-              <p className="text-[14px] text-[#c2c2c2]">
-                Ketik topik mata kuliah atau niche, AI akan menyajikan 3 opsi proyek berdaya saing tinggi.
+              <p className="text-[14px] text-[#c2c2c2] max-w-3xl leading-relaxed">
+                Diskusikan topik proyek Anda layaknya berkonsultasi dengan ChatGPT. Anda dapat meminta ide baru, mengganti opsi yang kurang disukai, atau memfokuskan tech stack kapan saja.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                placeholder="Contoh: Pemrograman Web — Sistem Manajemen Lab Komputer"
-                value={niche}
-                onChange={(e) => setNiche(e.target.value)}
-                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-6 py-3.5 text-[14px] text-white outline-none transition-colors"
-              />
-              <button
-                type="button"
-                onClick={handleGenerateIdeas}
-                disabled={isGeneratingIdeas}
-                className="btn-white-pill text-[13px] px-7 py-3.5 rounded-full transition-all shrink-0"
-              >
-                {isGeneratingIdeas ? 'Menghasilkan...' : 'Generate 3 Ide AI'}
-              </button>
-            </div>
-
+            {/* Active Selected / Locked Idea Banner */}
             {selectedIdea && (
-              <div className="p-7 rounded-[24px] bg-white/[0.06] backdrop-blur-xl border border-white flex flex-col gap-4 shadow-[0_8px_30px_rgba(255,255,255,0.08)]">
+              <div className="p-6 rounded-[12px] bg-white/[0.05] border border-white/30 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#161616] bg-white px-3 py-1 rounded-full font-medium">
-                    ✓ Ide Terpilih &amp; Terkunci
-                  </span>
-                  <span className="text-[12px] text-white/60 font-mono">Tersimpan</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#59d499]" />
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#59d499] font-medium">
+                      Ide Terpilih &amp; Terkunci untuk Proyek
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#686868] font-mono">Tersimpan di Proyek</span>
                 </div>
-                <h3 className="text-[24px] font-medium text-white leading-tight">{selectedIdea.title}</h3>
-                <p className="text-[15px] text-white/80 leading-relaxed">{selectedIdea.description}</p>
-                
-                <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
-                  <span className="text-[11px] text-[#ffb829] font-mono uppercase tracking-wider block">
+                <h3 className="text-[20px] sm:text-[22px] font-medium text-white">{selectedIdea.title}</h3>
+                <p className="text-[14px] text-[#c2c2c2] leading-relaxed">{selectedIdea.description}</p>
+                <div className="p-4 rounded-[12px] bg-[#161616] border border-white/10 text-[13px] flex flex-col gap-1">
+                  <span className="text-[11px] font-mono text-white/70 uppercase tracking-wider">
                     Gimmick Pemikat Dosen:
                   </span>
-                  <p className="text-[14px] text-white/90 leading-relaxed">{selectedIdea.gimmick}</p>
+                  <p className="text-[#ededed] font-sans">{selectedIdea.gimmick}</p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {selectedIdea.techStack?.map((t) => (
+                    <span
+                      key={t}
+                      className="text-[11px] font-mono text-white/80 px-2.5 py-1 rounded-[6px] bg-white/[0.06] border border-white/10"
+                    >
+                      {t}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}
 
-            {generatedIdeas.length > 0 && (
-              <div className="grid grid-cols-1 gap-5">
-                {generatedIdeas.map((idea) => {
-                  const isSelected = selectedIdea?.id === idea.id;
-                  return (
-                    <div
-                      key={idea.id}
-                      className={`p-7 rounded-[24px] backdrop-blur-xl border transition-all flex flex-col gap-5 ${
-                        isSelected
-                          ? 'bg-white/[0.07] border-white shadow-[0_8px_30px_rgba(255,255,255,0.06)]'
-                          : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.05]'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col gap-1.5 flex-1">
-                          <h4 className="text-[20px] font-medium text-white leading-snug">{idea.title}</h4>
-                          <p className="text-[14px] text-white/75 leading-relaxed">{idea.description}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleSelectIdea(idea)}
-                          className={`text-[13px] font-medium px-5 py-2.5 rounded-full shrink-0 transition-all ${
-                            isSelected
-                              ? 'btn-white-pill shadow-[0_0_20px_rgba(255,255,255,0.2)]'
-                              : 'bg-white/[0.08] hover:bg-white/[0.15] border border-white/20 text-white hover:border-white'
-                          }`}
-                        >
-                          {isSelected ? '✓ Terkunci' : 'Kunci Ide Ini ↗'}
-                        </button>
-                      </div>
+            {/* Interactive Chat Feed Container */}
+            <div className="flex flex-col gap-5 p-4 sm:p-6 rounded-[12px] bg-[#0d0d0d] border border-white/10 min-h-[300px]">
+              {chatMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex flex-col gap-3 ${
+                    msg.role === 'user' ? 'items-end' : 'items-start'
+                  }`}
+                >
+                  {/* Message Bubble */}
+                  <div
+                    className={`max-w-[85%] sm:max-w-xl text-[14px] leading-relaxed rounded-[10px] p-4 ${
+                      msg.role === 'user'
+                        ? 'bg-white text-[#161616] font-medium rounded-tr-sm shadow-sm'
+                        : 'bg-white/[0.04] text-[#ededed] border border-white/10 rounded-tl-sm'
+                    }`}
+                  >
+                    <p>{msg.content}</p>
+                  </div>
 
-                      {/* Gimmick Panel */}
-                      <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
-                        <span className="text-[11px] uppercase tracking-wider text-[#ffb829] font-mono">
-                          Gimmick Dosen:
-                        </span>
-                        <p className="text-[14px] text-white/90 leading-relaxed">{idea.gimmick}</p>
-                      </div>
-
-                      {/* Tech Stack Chips */}
-                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-white/10">
-                        {idea.techStack?.map((t) => (
-                          <span
-                            key={t}
-                            className="text-[12px] font-mono text-white/80 px-3.5 py-1 rounded-full bg-white/[0.05] border border-white/10"
+                  {/* If assistant returned ideas, render the interactive cards under the bubble */}
+                  {msg.role === 'assistant' && msg.ideas && msg.ideas.length > 0 && (
+                    <div className="w-full grid grid-cols-1 gap-4 mt-2">
+                      {msg.ideas.map((idea) => {
+                        const isSelected = selectedIdea?.id === idea.id;
+                        return (
+                          <div
+                            key={idea.id}
+                            className={`p-6 rounded-[10px] border transition-all flex flex-col gap-4 ${
+                              isSelected
+                                ? 'bg-white/[0.08] border-white shadow-[0_0_24px_rgba(255,255,255,0.06)]'
+                                : 'bg-white/[0.02] border-white/10 hover:border-white/25'
+                            }`}
                           >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                              <div className="flex flex-col gap-1">
+                                <h4 className="text-[18px] font-medium text-white">{idea.title}</h4>
+                                <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
+                                  {idea.description}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleSelectIdea(idea)}
+                                className={`text-[12px] font-medium px-4 py-2 rounded-full shrink-0 transition-all ${
+                                  isSelected
+                                    ? 'bg-white text-[#161616]'
+                                    : 'bg-white/[0.06] hover:bg-white text-white hover:text-[#161616] border border-white/20'
+                                }`}
+                              >
+                                {isSelected ? '✓ Terkunci untuk Proyek' : 'Pilih & Kunci Ide Ini ↗'}
+                              </button>
+                            </div>
+
+                            <div className="p-3.5 rounded-[12px] bg-[#161616] border border-white/[0.06]">
+                              <span className="text-[11px] font-mono uppercase tracking-wider text-white/70 block mb-1">
+                                Gimmick Pemikat Dosen:
+                              </span>
+                              <p className="text-[13px] text-[#ededed] leading-relaxed">
+                                {idea.gimmick}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                              {idea.techStack?.map((t) => (
+                                <span
+                                  key={t}
+                                  className="text-[11px] font-mono text-[#c2c2c2] px-2.5 py-1 rounded-[6px] bg-white/[0.03] border border-white/10"
+                                >
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
+                  )}
+                </div>
+              ))}
+
+              {/* Typing indicator */}
+              {isGeneratingIdeas && (
+                <div className="flex items-center gap-2.5 p-3.5 bg-white/[0.03] border border-white/10 rounded-[10px] w-fit text-[13px] text-white/70 font-mono">
+                  <div className="w-2 h-2 rounded-full bg-white animate-ping" />
+                  <span>Konsultan AI sedang menganalisis &amp; merancang ide proyek...</span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">
+                Pintasan Konsultasi Cepat:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'Buatkan 3 Ide Lain', prompt: 'Saya kurang suka, tolong buatkan 3 ide baru yang berbeda dari sebelumnya' },
+                  { label: 'Fokuskan ke Mobile App', prompt: 'Tolong fokuskan rekomendasinya ke aplikasi mobile Flutter atau React Native' },
+                  { label: 'Fokuskan ke Web Fullstack', prompt: 'Tolong fokuskan rekomendasinya ke web application fullstack modern' },
+                  { label: 'Tambahkan Fitur AI & ML', prompt: 'Tolong tambahkan fitur kecerdasan buatan (AI/ML) atau deteksi cerdas pada ide' },
+                  { label: 'Opsi Lebih Ringkas', prompt: 'Tolong berikan ide alternatif yang arsitekturnya lebih ringkas dan cepat dikerjakan' },
+                ].map((chip, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={isGeneratingIdeas}
+                    onClick={() => handleSendChat(chip.prompt)}
+                    className="text-[12px] text-white/80 hover:text-white px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 transition-all font-mono"
+                  >
+                    {chip.label}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+
+            {/* Prompt Bar Input */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendChat();
+              }}
+              className="flex flex-col sm:flex-row gap-2.5"
+            >
+              <input
+                type="text"
+                placeholder="Ketik topik atau permintaan khusus (misal: 'Saya kurang suka, ganti dengan ide berbasis IoT' atau 'Buatkan opsi untuk e-commerce')..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                disabled={isGeneratingIdeas}
+                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[12px] px-4 py-3 text-[14px] text-white outline-none transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={isGeneratingIdeas || !chatInput.trim()}
+                className="btn-white-pill text-[13px] px-7 py-3 rounded-full transition-all shrink-0 flex items-center justify-center gap-1.5 font-medium disabled:opacity-40"
+              >
+                <span>{isGeneratingIdeas ? 'Merancang...' : 'Kirim'}</span>
+                <span>↗</span>
+              </button>
+            </form>
           </section>
         )}
 
         {/* STEP 2: MEMBER DATA FORM */}
-        <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+        <section className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
@@ -581,14 +772,14 @@ export default function ProjectSetupPage({
             <button
               type="button"
               onClick={handleQuickFillMembers}
-              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0"
+              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0 font-mono"
             >
-              ⚡ Isi Template Nama
+              Isi Template Nama
             </button>
           </div>
 
           {/* Member Count Dynamic Slider */}
-          <div className="p-5 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col gap-3">
+          <div className="p-5 rounded-[10px] bg-white/[0.03] border border-white/10 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-[12px] uppercase tracking-[0.08em] text-white/70">
                 Atur Jumlah Anggota:
@@ -637,7 +828,7 @@ export default function ProjectSetupPage({
             {members.map((m, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
+                className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
               >
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
@@ -689,66 +880,48 @@ export default function ProjectSetupPage({
                       )}
                     </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                      Akun GitHub
+
+                  {/* Notification messages */}
+                  {githubStatus[idx] === 'invalid' && (
+                    <span className="text-[12px] text-red-400 font-mono mt-1 flex items-center gap-1 font-medium">
+                      <span>Akun @{m.github_username.trim().replace(/^@/, '')} tidak ditemukan di GitHub</span>
                     </span>
-                    <div className="relative flex items-center">
-                      <input
-                        type="text"
-                        required
-                        placeholder="username GitHub"
-                        value={m.github_username}
-                        onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                        onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                        className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
-                          githubStatus[idx] === 'invalid'
-                            ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                            : githubStatus[idx] === 'empty'
-                            ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
-                            : githubStatus[idx] === 'valid'
-                            ? 'border-[#59d499] focus:border-[#59d499]'
-                            : 'border-white/15 focus:border-white'
-                        }`}
-                      />
-
-                      {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
-                      <div className="absolute right-3.5 flex items-center pointer-events-none">
-                        {githubStatus[idx] === 'checking' && (
-                          <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
-                        )}
-                        {githubStatus[idx] === 'valid' && (
-                          <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        )}
-                        {githubStatus[idx] === 'invalid' && (
-                          <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                          </svg>
-                        )}
+                  )}
+                  {githubStatus[idx] === 'duplicate' && (
+                    <span className="text-[12px] text-yellow-300 font-mono mt-1 flex items-center gap-1 font-medium">
+                      <span>Username ini sudah diinput untuk anggota lain</span>
+                    </span>
+                  )}
+                  {githubStatus[idx] === 'empty' && (
+                    <span className="text-[12px] text-yellow-300 font-mono mt-1 flex items-center gap-1 font-medium">
+                      <span>Akun GitHub belum diisi</span>
+                    </span>
+                  )}
+                  {githubStatus[idx] === 'valid' && githubProfiles[idx] && (
+                    <div className="mt-2 p-2 rounded-[8px] bg-white/[0.04] border border-[#59d499]/30 flex items-center justify-between gap-2.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <img
+                          src={githubProfiles[idx]!.avatar_url}
+                          alt={githubProfiles[idx]!.username}
+                          className="w-5 h-5 rounded-full border border-white/20 shrink-0"
+                        />
+                        <div className="flex items-center gap-1.5 truncate text-[11px] font-mono">
+                          <span className="text-[#59d499] font-medium">✓ Terverifikasi:</span>
+                          <span className="text-white truncate font-medium">{githubProfiles[idx]!.name}</span>
+                          <span className="text-white/60">(@{githubProfiles[idx]!.username})</span>
+                        </div>
                       </div>
+                      <a
+                        href={githubProfiles[idx]!.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-white/70 hover:text-white underline font-mono shrink-0"
+                      >
+                        Buka ↗
+                      </a>
                     </div>
-
-                    {/* Notification messages */}
-                    {githubStatus[idx] === 'invalid' && (
-                      <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                        ✕ tidak dapat menemukan akun
-                      </span>
-                    )}
-                    {githubStatus[idx] === 'empty' && (
-                      <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                        ⚠️ Akun GitHub belum diisi
-                      </span>
-                    )}
-                    {githubStatus[idx] === 'valid' && (
-                      <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                        ✓ Akun GitHub terverifikasi
-                      </span>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
 
@@ -762,16 +935,20 @@ export default function ProjectSetupPage({
           </form>
         </section>
 
-        {/* STEP 3: CONNECT GITHUB INVITATION (Hanya untuk proyek yang butuh GitHub commit) */}
-        {project.service_type !== 'makalah' && project.service_type !== 'ppt' && (
-          <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-[20px] font-medium text-white">
-                Tautan Undangan Connect GitHub
-              </h2>
-              <p className="text-[14px] text-[#c2c2c2]">
-                Bagikan link ini ke grup kelompok Anda. Masing-masing anggota klik &quot;Connect GitHub&quot; agar commit tercatat atas nama akun mereka.
-              </p>
+        {/* STEP 3: CONNECT GITHUB INVITATION */}
+        <section className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-[20px] font-medium text-white">
+              Tautan Undangan Connect GitHub
+            </h2>
+            <p className="text-[14px] text-[#c2c2c2]">
+              Bagikan link ini ke grup kelompok Anda. Masing-masing anggota klik &quot;Connect GitHub&quot; agar commit tercatat atas nama akun mereka.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-[10px] bg-white/[0.04] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-[14px] font-mono text-white/80 truncate max-w-md">
+              {typeof window !== 'undefined' ? `${window.location.origin}/join/${id}` : `/join/${id}`}
             </div>
 
             <div className="p-5 rounded-[16px] bg-white/[0.04] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -802,25 +979,15 @@ export default function ProjectSetupPage({
               </div>
             </div>
 
-            {dbMembers.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <span className="text-[12px] uppercase tracking-wider text-[#686868]">Status Koneksi Akun:</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {dbMembers.map((m) => (
-                    <div key={m.id} className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 flex items-center justify-between">
-                      <div>
-                        <div className="text-[15px] font-medium text-white">{m.name}</div>
-                        <div className="text-[12px] text-[#686868] font-mono">@{m.github_username || 'unconnected'}</div>
-                      </div>
-                      <span
-                        className={`text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                          m.is_connected
-                            ? 'bg-white text-[#161616] font-medium'
-                            : 'bg-[#161616] text-[#686868]'
-                        }`}
-                      >
-                        {m.is_connected ? 'Connected' : 'Menunggu'}
-                      </span>
+          {dbMembers.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <span className="text-[12px] uppercase tracking-wider text-[#686868]">Status Koneksi Akun:</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {dbMembers.map((m) => (
+                  <div key={m.id} className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                    <div>
+                      <div className="text-[15px] font-medium text-white">{m.name}</div>
+                      <div className="text-[12px] text-[#686868] font-mono">@{m.github_username || 'unconnected'}</div>
                     </div>
                   ))}
                 </div>

@@ -24,7 +24,18 @@ export default function OrderPage() {
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
-  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' }>({});
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' | 'duplicate' }>({});
+  const [githubProfiles, setGithubProfiles] = useState<{
+    [index: number]: {
+      username: string;
+      name: string;
+      avatar_url: string;
+      html_url: string;
+    } | null;
+  }>({});
+  const [githubEmail, setGithubEmail] = useState<string>('');
+  const [githubPassword, setGithubPassword] = useState<string>('');
+  const [showGithubPassword, setShowGithubPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -68,19 +79,43 @@ export default function OrderPage() {
     const clean = username.trim().replace(/^@/, '');
     if (!clean) {
       setGithubStatus((prev) => ({ ...prev, [index]: 'empty' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
       return;
     }
+
+    // Check duplicate username with other members
+    const isDuplicate = members.some(
+      (m, i) => i !== index && m.github_username.trim().replace(/^@/, '').toLowerCase() === clean.toLowerCase()
+    );
+    if (isDuplicate) {
+      setGithubStatus((prev) => ({ ...prev, [index]: 'duplicate' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
+      setErrorMsg(`Akun GitHub @${clean} sudah diinput untuk anggota lain.`);
+      return;
+    }
+
     setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
     try {
       const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
       const data = await res.json();
       if (data.exists) {
         setGithubStatus((prev) => ({ ...prev, [index]: 'valid' }));
+        setGithubProfiles((prev) => ({
+          ...prev,
+          [index]: {
+            username: data.username,
+            name: data.name || data.username,
+            avatar_url: data.avatar_url,
+            html_url: data.html_url,
+          },
+        }));
       } else {
         setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+        setGithubProfiles((prev) => ({ ...prev, [index]: null }));
       }
     } catch {
       setGithubStatus((prev) => ({ ...prev, [index]: 'invalid' }));
+      setGithubProfiles((prev) => ({ ...prev, [index]: null }));
     }
   };
 
@@ -205,6 +240,13 @@ export default function OrderPage() {
       }
     }
 
+    // Validasi akun GitHub tim joki
+    if (!githubEmail.trim() || !githubPassword.trim()) {
+      setErrorMsg('Email dan password akun GitHub wajib diisi agar operator joki dapat memulai pengerjaan!');
+      alert('Tolong masukkan email dan password akun GitHub Anda untuk tim joki!');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
 
@@ -215,6 +257,8 @@ export default function OrderPage() {
         body: JSON.stringify({
           buyer_name: buyerName,
           buyer_whatsapp: buyerWhatsapp,
+          github_email: githubEmail.trim(),
+          github_password: githubPassword.trim(),
           service_type: serviceType,
           package_type: packageType,
           member_count: memberCount,
@@ -266,7 +310,7 @@ export default function OrderPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* 1. Pilih Kategori Layanan */}
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
               Kategori Layanan
             </h2>
@@ -296,7 +340,7 @@ export default function OrderPage() {
 
           {/* 2. Pilih Paket (Khusus Proyek Berkelompok) */}
           {serviceType === 'project_joki' && (
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
               <h2 className="text-[18px] font-medium text-white">
                 Paket Proyek
               </h2>
@@ -349,7 +393,7 @@ export default function OrderPage() {
           )}
 
           {/* 3. Jumlah Anggota & Form Anggota Kelompok (Tersedia untuk semua kategori layanan) */}
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-[18px] font-medium text-white">
@@ -421,7 +465,7 @@ export default function OrderPage() {
                 {members.map((m, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
+                    className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
                   >
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
@@ -491,25 +535,6 @@ export default function OrderPage() {
                             )}
                           </div>
                         </div>
-
-                        {/* Notification messages */}
-                        {githubStatus[idx] === 'invalid' && (
-                          <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ✕ tidak dapat menemukan akun
-                          </span>
-                        )}
-                        {githubStatus[idx] === 'empty' && (
-                          <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ⚠️ Akun GitHub belum diisi
-                          </span>
-                        )}
-                        {githubStatus[idx] === 'valid' && (
-                          <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ✓ Akun GitHub terverifikasi
-                          </span>
-                        )}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -517,7 +542,7 @@ export default function OrderPage() {
           </div>
 
           {/* 4. Data Pemesan */}
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
               {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
             </h2>
@@ -547,8 +572,66 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* 5. Pembayaran QRIS Statis */}
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          {/* 5. Kredensial Akun GitHub untuk Tim Joki */}
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                  Setup Repository
+                </span>
+                <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
+                  Terkirim ke Admin
+                </span>
+              </div>
+              <h2 className="text-[18px] font-medium text-white">
+                Akun GitHub untuk Pengerjaan Proyek
+              </h2>
+              <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
+                Masukkan email atau username akun GitHub serta password Anda. Data ini akan diteruskan ke panel admin agar operator joki kami dapat langsung login, membuat repository, dan memproses cicil commit atas nama Anda.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[12px] text-white/70">Email / Username GitHub</span>
+                <input
+                  type="text"
+                  required
+                  placeholder="contoh: akun@gmail.com atau usergh"
+                  value={githubEmail}
+                  onChange={(e) => setGithubEmail(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-white/70">Password Akun GitHub</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowGithubPassword(!showGithubPassword)}
+                    className="text-[11px] text-white/60 hover:text-white"
+                  >
+                    {showGithubPassword ? 'Sembunyikan' : 'Lihat'}
+                  </button>
+                </div>
+                <input
+                  type={showGithubPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••••••"
+                  value={githubPassword}
+                  onChange={(e) => setGithubPassword(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-white/50 font-mono">
+              Data hanya diteruskan secara aman ke operator joki untuk inisialisasi git repository proyek.
+            </p>
+          </div>
+
+          {/* 6. Pembayaran QRIS Statis */}
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] font-medium text-white">
                 Pembayaran QRIS
@@ -561,7 +644,7 @@ export default function OrderPage() {
               </div>
             </div>
 
-            <div className="p-6 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center gap-6">
+            <div className="p-6 rounded-[10px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center gap-6">
               <div className="w-[140px] h-[140px] bg-white rounded-[10px] p-2 flex flex-col items-center justify-center shrink-0">
                 <div className="text-black text-center text-[9px] font-mono font-bold leading-tight">
                   <div className="text-[12px] tracking-wider mb-1">QRIS STATIS</div>
@@ -587,7 +670,10 @@ export default function OrderPage() {
 
                   <div className="flex flex-col sm:flex-row items-center gap-3">
                     <label className="cursor-pointer bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
-                      <span>📁 Pilih Gambar Bukti</span>
+                      <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span>Pilih Gambar Bukti</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -599,16 +685,19 @@ export default function OrderPage() {
                     <button
                       type="button"
                       onClick={handleQuickDemoFill}
-                      className="text-[12px] text-white/80 hover:text-white underline"
+                      className="text-[12px] text-white/80 hover:text-white underline font-mono"
                     >
-                      ⚡ Lampirkan Gambar Contoh
+                      Lampirkan Gambar Contoh
                     </button>
                   </div>
 
                   {proofPreview && (
-                    <div className="mt-2 flex items-center gap-3 p-2 bg-white/[0.06] rounded-[10px] border border-white/10">
-                      <span className="text-[11px] text-white font-medium">✓ Bukti bayar terlampir</span>
-                      <span className="text-[11px] text-white/70 truncate max-w-xs">{proofUrl.slice(0, 32)}...</span>
+                    <div className="mt-2 flex items-center gap-2.5 p-2.5 bg-white/[0.06] rounded-[10px] border border-white/10">
+                      <svg className="w-4 h-4 text-[#59d499] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-[11px] text-white font-medium">Bukti bayar terlampir</span>
+                      <span className="text-[11px] text-white/70 truncate max-w-xs font-mono">{proofUrl.slice(0, 32)}...</span>
                     </div>
                   )}
                 </div>

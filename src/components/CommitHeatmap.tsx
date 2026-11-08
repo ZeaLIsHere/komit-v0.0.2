@@ -152,8 +152,11 @@ export default function CommitHeatmap({ schedules, members }: CommitHeatmapProps
           <div>
             Sprint Push Selesai: <span className="text-white font-medium">{pushedSchedulesCount}</span>
           </div>
-          <div className="text-white">
-            ✓ Status Blame Natural
+          <div className="text-white inline-flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-[#59d499]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Status Blame Natural</span>
           </div>
         </div>
 

@@ -123,9 +123,13 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-[13px] text-white/70 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+                title="Keluar"
+                aria-label="Keluar"
+                className="h-[28px] w-[28px] text-white/75 hover:text-white bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 hover:border-white/25 rounded-full transition-all inline-flex items-center justify-center shrink-0"
               >
-                Keluar
+                <svg className="w-[17px] h-[17px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
           ) : (

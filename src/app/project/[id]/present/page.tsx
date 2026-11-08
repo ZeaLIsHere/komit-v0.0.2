@@ -133,7 +133,7 @@ export default function PresentPage({
             onClick={toggleFullscreen}
             className="btn-white-pill text-[12px] px-4 py-1.5 rounded-full"
           >
-            {isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh (F)'}
+            {isFullscreen ? 'Tutup Layar Penuh' : 'Layar Penuh (F)'}
           </button>
         </div>
       </header>

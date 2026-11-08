@@ -105,7 +105,7 @@ export default function JoinProjectPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-8">
+      <main className="flex-1 max-w-[700px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Hubungkan Akun GitHub Anda
@@ -207,7 +207,7 @@ export default function JoinProjectPage({
 
               {githubStatus === 'invalid' && (
                 <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                  ✕ tidak dapat menemukan akun
+                  tidak dapat menemukan akun
                 </span>
               )}
             </div>
