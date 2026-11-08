@@ -254,14 +254,14 @@ export default function AdminPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans bg-[#0a0a0a]">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-14 flex flex-col gap-8">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-24 flex flex-col gap-9">
         {/* Header Title & Segmented Control */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.08] pb-6">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] uppercase tracking-[0.12em] text-[#686868] font-mono">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-[#8e8e8e] font-mono">
               Panel Operator &amp; Joki
             </span>
-            <h1 className="text-[32px] sm:text-[36px] font-medium leading-[1.1] text-[#ededed] tracking-[-0.035em]">
+            <h1 className="text-[32px] sm:text-[38px] font-medium leading-[1.1] text-[#ededed] tracking-[-0.035em]">
               Admin Workspace
             </h1>
           </div>
@@ -406,89 +406,125 @@ export default function AdminPage() {
                   </button>
                 </div>
 
-                <div className="border border-white/[0.08] rounded-[24px] overflow-hidden bg-white/[0.02] backdrop-blur-xl">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-[#121212]/95 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
-                      <thead className="bg-white/[0.03] text-[#686868] text-[11px] uppercase tracking-[0.08em] font-mono border-b border-white/[0.08]">
+                      <thead className="bg-white/[0.04] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
                         <tr>
-                          <th className="py-3.5 px-4 font-normal">Tanggal &amp; ID</th>
-                          <th className="py-3.5 px-4 font-normal">Pemesan</th>
-                          <th className="py-3.5 px-4 font-normal">Layanan &amp; Paket</th>
-                          <th className="py-3.5 px-4 font-normal">Nominal</th>
-                          <th className="py-3.5 px-4 font-normal">Bukti QRIS</th>
-                          <th className="py-3.5 px-4 font-normal">Akun GitHub Klien</th>
-                          <th className="py-3.5 px-4 font-normal">Status</th>
-                          <th className="py-3.5 px-4 text-right font-normal">Aksi</th>
+                          <th className="py-4 px-5 font-normal">Tanggal &amp; ID</th>
+                          <th className="py-4 px-5 font-normal">Pemesan</th>
+                          <th className="py-4 px-5 font-normal">Layanan &amp; Paket</th>
+                          <th className="py-4 px-5 font-normal">Nominal</th>
+                          <th className="py-4 px-5 font-normal">Bukti QRIS</th>
+                          <th className="py-4 px-5 font-normal">Akun GitHub Klien</th>
+                          <th className="py-4 px-5 font-normal">Status</th>
+                          <th className="py-4 px-5 text-right font-normal">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.06]">
                         {projects.map((p) => (
-                          <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
-                            <td className="py-4 px-4 font-mono text-[12px] text-[#c2c2c2]">
-                              <div className="text-[#ededed]">{new Date(p.created_at).toLocaleDateString('id-ID')}</div>
-                              <div className="text-[11px] text-[#686868]">{p.id.slice(0, 8)}</div>
+                          <tr key={p.id} className="hover:bg-white/[0.025] transition-colors duration-150">
+                            <td className="py-4 px-5 font-mono text-[12px]">
+                              <div className="text-[#ededed] font-medium">
+                                {new Date(p.created_at).toLocaleDateString('id-ID', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                })}
+                              </div>
+                              <span className="text-[10px] text-[#8e8e8e] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] w-fit inline-block mt-0.5">
+                                #{p.id.slice(0, 8)}
+                              </span>
                             </td>
-                            <td className="py-4 px-4">
-                              <div className="font-medium text-[#ededed]">{p.buyer_name}</div>
-                              <div className="text-[12px] text-[#686868] font-mono">{p.buyer_whatsapp}</div>
+                            <td className="py-4 px-5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center font-mono text-[12px] font-medium text-white shrink-0">
+                                  {p.buyer_name ? p.buyer_name.charAt(0).toUpperCase() : 'U'}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="font-medium text-[#ededed] text-[13px] leading-snug">
+                                    {p.buyer_name}
+                                  </span>
+                                  <span className="text-[11px] text-[#8e8e8e] font-mono leading-snug">
+                                    {p.buyer_whatsapp}
+                                  </span>
+                                </div>
+                              </div>
                             </td>
-                            <td className="py-4 px-4">
-                              <div className="text-[#ededed] capitalize">{p.service_type.replace('_', ' ')}</div>
-                              <div className="text-[12px] text-[#686868]">{p.package_type} • {p.member_count} org</div>
+                            <td className="py-4 px-5">
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-[#ededed] capitalize font-medium text-[13px]">
+                                  {p.service_type.replace('_', ' ')}
+                                </span>
+                                <span className="text-[11px] text-[#8e8e8e] font-mono">
+                                  Paket {p.package_type} • {p.member_count} org
+                                </span>
+                              </div>
                             </td>
-                            <td className="py-4 px-4 font-mono text-[#ededed] font-medium tabular-nums">
+                            <td className="py-4 px-5 font-mono text-[#ededed] font-medium tabular-nums text-[13px]">
                               Rp {p.total_price.toLocaleString('id-ID')}
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="py-4 px-5">
                               {p.payment_proof_url ? (
                                 <a
                                   href={p.payment_proof_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-[12px] text-[#ededed] hover:text-white underline inline-flex items-center gap-1 font-mono"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-[11px] font-mono text-[#ededed] transition-all"
                                 >
-                                  <span>Lihat Bukti</span>
-                                  <span>↗</span>
+                                  <svg className="w-3.5 h-3.5 text-[#c2c2c2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                  </svg>
+                                  <span>Bukti Bayar</span>
+                                  <span className="text-[10px] text-[#8e8e8e]">↗</span>
                                 </a>
                               ) : (
-                                <span className="text-[12px] text-[#686868]">Tidak ada</span>
+                                <span className="text-[11px] text-[#686868] font-mono">Tidak ada</span>
                               )}
                             </td>
-                            <td className="py-4 px-4 font-mono text-[12px]">
+                            <td className="py-4 px-5 font-mono text-[12px]">
                               {p.github_email ? (
                                 <div className="flex flex-col gap-0.5">
-                                  <span className="text-[#ededed] truncate max-w-[150px]">{p.github_email}</span>
-                                  <span className="text-[#686868] text-[11px]">
+                                  <div className="flex items-center gap-1">
+                                    <svg className="w-3.5 h-3.5 text-[#59d499]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span className="text-[#ededed] truncate max-w-[140px]" title={p.github_email}>
+                                      {p.github_email}
+                                    </span>
+                                  </div>
+                                  <span className="text-[#8e8e8e] text-[10px] pl-4.5">
                                     PW: {p.github_password ? '••••••••' : '-'}
                                   </span>
                                 </div>
                               ) : (
-                                <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-mono bg-white/[0.03] text-[#686868] border border-white/[0.06]">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-mono text-[#8e8e8e] px-2.5 py-0.5 rounded-full bg-white/[0.02] border border-white/[0.06]">
                                   Belum diisi
                                 </span>
                               )}
                             </td>
-                            <td className="py-4 px-4">
+                            <td className="py-4 px-5">
                               {p.payment_status === 'paid' && (
-                                <span className="bg-[#59d499]/10 text-[#59d499] border border-[#59d499]/25 text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30 text-[11px] font-mono uppercase tracking-wider font-medium">
                                   <span className="w-1.5 h-1.5 rounded-full bg-[#59d499]" />
-                                  <span>paid</span>
+                                  <span>Paid</span>
                                 </span>
                               )}
                               {p.payment_status === 'pending' && (
-                                <span className="bg-[#ffb829]/10 text-[#ffb829] border border-[#ffb829]/25 text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-[#ffb829]" />
-                                  <span>pending</span>
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffb829]/15 text-[#ffb829] border border-[#ffb829]/30 text-[11px] font-mono uppercase tracking-wider font-medium">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#ffb829] animate-pulse" />
+                                  <span>Pending</span>
                                 </span>
                               )}
                               {p.payment_status === 'rejected' && (
-                                <span className="bg-red-500/10 text-red-400 border border-red-500/25 text-[11px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/15 text-red-300 border border-red-500/30 text-[11px] font-mono uppercase tracking-wider font-medium">
                                   <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                                  <span>rejected</span>
+                                  <span>Rejected</span>
                                 </span>
                               )}
                             </td>
-                            <td className="py-4 px-4 text-right">
+                            <td className="py-4 px-5 text-right">
                               {p.payment_status === 'pending' ? (
                                 <div className="flex items-center justify-end gap-2">
                                   <button
@@ -507,10 +543,10 @@ export default function AdminPage() {
                               ) : (
                                 <Link
                                   href={`/project/${p.id}`}
-                                  className="text-[11px] font-mono text-[#c2c2c2] hover:text-white border border-white/10 hover:border-white/25 px-3 py-1 rounded-full transition-all inline-flex items-center gap-1"
+                                  className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#c2c2c2] hover:text-white px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 transition-all"
                                 >
                                   <span>Dashboard</span>
-                                  <span>↗</span>
+                                  <span className="text-[10px]">↗</span>
                                 </Link>
                               )}
                             </td>
@@ -746,15 +782,15 @@ export default function AdminPage() {
                 </form>
 
                 {/* Schedules Table */}
-                <div className="border border-white/[0.08] rounded-[24px] overflow-hidden bg-white/[0.02] backdrop-blur-xl">
-                  <div className="p-4 bg-white/[0.03] border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-[#121212]/95 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                  <div className="p-4 bg-white/[0.04] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <span className="text-[13px] font-medium text-[#ededed] font-mono">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})
                     </span>
                     <button
                       onClick={handleRunCronAutoPush}
                       disabled={isRunningCron}
-                      className="btn-white-pill text-[11px] px-4 py-1.5 rounded-full self-start sm:self-auto"
+                      className="btn-white-pill text-[11px] px-4 py-1.5 rounded-full self-start sm:self-auto font-medium"
                     >
                       {isRunningCron ? 'Mengeksekusi...' : 'Jalankan Auto-Push Sekarang'}
                     </button>
@@ -762,34 +798,34 @@ export default function AdminPage() {
 
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
-                      <thead className="bg-white/[0.02] text-[#686868] text-[11px] uppercase tracking-[0.08em] font-mono border-b border-white/[0.08]">
+                      <thead className="bg-white/[0.02] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
                         <tr>
-                          <th className="py-3.5 px-4 font-normal">Anggota</th>
-                          <th className="py-3.5 px-4 font-normal">Pesan Commit</th>
-                          <th className="py-3.5 px-4 font-normal">Jadwal</th>
-                          <th className="py-3.5 px-4 font-normal">Status</th>
-                          <th className="py-3.5 px-4 text-right font-normal">Eksekusi Push</th>
+                          <th className="py-4 px-5 font-normal">Anggota</th>
+                          <th className="py-4 px-5 font-normal">Pesan Commit</th>
+                          <th className="py-4 px-5 font-normal">Jadwal</th>
+                          <th className="py-4 px-5 font-normal">Status</th>
+                          <th className="py-4 px-5 text-right font-normal">Eksekusi Push</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.06]">
                         {projectSchedules.map((s) => {
                           const member = projectMembers.find((m) => m.id === s.member_id);
                           return (
-                            <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
-                              <td className="py-4 px-4">
+                            <tr key={s.id} className="hover:bg-white/[0.025] transition-colors duration-150">
+                              <td className="py-4 px-5">
                                 <div className="text-[#ededed] font-medium">{member?.name || s.member_name || 'Anggota'}</div>
-                                <div className="text-[12px] text-[#686868] font-mono">
+                                <div className="text-[12px] text-[#8e8e8e] font-mono">
                                   @{member?.github_username || s.github_username || 'contributor'}
                                 </div>
                               </td>
-                              <td className="py-4 px-4 font-mono text-[13px] text-[#ededed]">{s.commit_message}</td>
-                              <td className="py-4 px-4 font-mono text-[12px] text-[#c2c2c2]">
+                              <td className="py-4 px-5 font-mono text-[13px] text-[#ededed]">{s.commit_message}</td>
+                              <td className="py-4 px-5 font-mono text-[12px] text-[#c2c2c2]">
                                 {new Date(s.scheduled_at).toLocaleString('id-ID')}
                               </td>
-                              <td className="py-4 px-4">
+                              <td className="py-4 px-5">
                                 <div className="flex items-center gap-2">
                                   {s.status === 'pushed' && (
-                                    <span className="bg-[#59d499]/10 text-[#59d499] border border-[#59d499]/25 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                    <span className="bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 font-medium">
                                       <span className="w-1.5 h-1.5 rounded-full bg-[#59d499]" />
                                       <span>pushed</span>
                                     </span>
@@ -801,19 +837,19 @@ export default function AdminPage() {
                                     </span>
                                   )}
                                   {s.status === 'failed' && (
-                                    <span className="bg-red-500/10 text-red-400 border border-red-500/25 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                    <span className="bg-red-500/15 text-red-300 border border-red-500/30 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
                                       <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                                       <span>failed</span>
                                     </span>
                                   )}
                                   {s.commit_hash && (
-                                    <span className="text-[11px] font-mono text-[#c2c2c2] bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-[6px]">
+                                    <span className="text-[11px] font-mono text-[#ededed] bg-white/[0.06] border border-white/10 px-2 py-0.5 rounded-[6px]">
                                       #{s.commit_hash}
                                     </span>
                                   )}
                                 </div>
                               </td>
-                              <td className="py-4 px-4 text-right">
+                              <td className="py-4 px-5 text-right">
                                 {s.status !== 'pushed' ? (
                                   <button
                                     onClick={() => handlePushCommitNow(s)}
@@ -823,7 +859,7 @@ export default function AdminPage() {
                                     {isPushingCommit === s.id ? 'Pushing...' : 'Push Sekarang ↗'}
                                   </button>
                                 ) : (
-                                  <span className="text-[12px] text-[#59d499] font-mono">✓ Pushed</span>
+                                  <span className="text-[12px] text-[#59d499] font-mono font-medium">✓ Pushed</span>
                                 )}
                               </td>
                             </tr>
@@ -831,7 +867,7 @@ export default function AdminPage() {
                         })}
                         {projectSchedules.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="py-8 px-4 text-center text-[#686868] font-mono text-[13px]">
+                            <td colSpan={5} className="py-8 px-5 text-center text-[#686868] font-mono text-[13px]">
                               Belum ada jadwal commit untuk proyek ini.
                             </td>
                           </tr>
