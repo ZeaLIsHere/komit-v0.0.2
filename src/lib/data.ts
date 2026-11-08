@@ -358,11 +358,22 @@ export async function getCommitSchedules(projectId: string): Promise<CommitSched
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('commit_schedules')
-      .select('*')
+      .select('*, project_members(name, github_username)')
       .eq('project_id', projectId)
       .order('scheduled_at', { ascending: true });
     if (error || !data) return [];
-    return data as CommitSchedule[];
+    return data.map((item: any) => ({
+      id: item.id,
+      created_at: item.created_at,
+      project_id: item.project_id,
+      member_id: item.member_id,
+      member_name: item.project_members?.name,
+      github_username: item.project_members?.github_username,
+      commit_message: item.commit_message,
+      scheduled_at: item.scheduled_at,
+      status: item.status,
+      commit_hash: item.commit_hash,
+    })) as CommitSchedule[];
   }
   return mockSchedules.get(projectId) || [];
 }
@@ -400,6 +411,18 @@ export async function createCommitSchedule(
 // User & Role Management
 export async function findUserByEmail(email: string): Promise<User | null> {
   const normalized = email.trim().toLowerCase();
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .ilike('email', normalized)
+        .maybeSingle();
+      if (data) return data as User;
+    } catch {
+      // Fallback to in-memory mock store
+    }
+  }
   for (const user of mockUsers.values()) {
     if (user.email.toLowerCase() === normalized) {
       return user;
@@ -410,6 +433,18 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 
 export async function findUserByGitHubUsername(username: string): Promise<User | null> {
   const normalized = username.trim().toLowerCase();
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .ilike('github_username', normalized)
+        .maybeSingle();
+      if (data) return data as User;
+    } catch {
+      // Fallback to in-memory mock store
+    }
+  }
   for (const user of mockUsers.values()) {
     if (user.github_username && user.github_username.toLowerCase() === normalized) {
       return user;
@@ -419,6 +454,18 @@ export async function findUserByGitHubUsername(username: string): Promise<User |
 }
 
 export async function findUserById(id: string): Promise<User | null> {
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+      if (data) return data as User;
+    } catch {
+      // Fallback to in-memory mock store
+    }
+  }
   return mockUsers.get(id) || null;
 }
 
@@ -435,13 +482,40 @@ export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Prom
     created_at: new Date().toISOString(),
   };
 
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .insert([newUser])
+        .select()
+        .maybeSingle();
+      if (!error && data) {
+        return data as User;
+      }
+    } catch {
+      // Fallback to in-memory mock store
+    }
+  }
+
   mockUsers.set(id, newUser);
   return newUser;
 }
 
 export async function getUserProjects(customerIdOrEmail: string): Promise<Project[]> {
-  const all = await getAllProjects();
   const normalized = customerIdOrEmail.trim().toLowerCase();
+  if (isSupabaseConfigured && supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('projects')
+        .select('*')
+        .or(`customer_id.eq.${customerIdOrEmail},buyer_email.ilike.${normalized}`)
+        .order('created_at', { ascending: false });
+      if (!error && data) return data as Project[];
+    } catch {
+      // Fallback
+    }
+  }
+  const all = await getAllProjects();
   return all.filter(
     (p) =>
       p.customer_id === customerIdOrEmail ||
