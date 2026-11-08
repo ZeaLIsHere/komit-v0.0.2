@@ -220,6 +220,8 @@ export async function createProject(payload: Partial<Project>): Promise<Project>
     payment_proof_url: payload.payment_proof_url || null,
     payment_status: payload.payment_status || 'pending',
     niche_input: payload.niche_input || null,
+    doc_topic: payload.doc_topic || null,
+    doc_details: payload.doc_details || null,
     generated_ideas: payload.generated_ideas || null,
     selected_idea: payload.selected_idea || null,
     github_repo_url: payload.github_repo_url || null,

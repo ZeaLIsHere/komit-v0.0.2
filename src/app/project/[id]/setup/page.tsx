@@ -474,93 +474,95 @@ export default function ProjectSetupPage({
           </p>
         </div>
 
-        {/* SECTION: GITHUB CREDENTIALS FOR ADMIN SETUP */}
-        <section className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
-                  Form Akun Pengerjaan Joki
-                </span>
-                {project.github_email && project.github_password && (
-                  <span className="text-[11px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
-                    ✓ Kredensial Terkirim ke Admin
+        {/* SECTION: GITHUB CREDENTIALS FOR ADMIN SETUP (HANYA UNTUK JOKI PROYEK & KODING RINGAN) */}
+        {(project.service_type === 'project_joki' || project.service_type === 'tugas_ringan') && (
+          <section className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
+                    Form Akun Pengerjaan Joki
                   </span>
-                )}
-              </div>
-              <h2 className="text-[20px] font-medium text-white">
-                Email &amp; Password GitHub untuk Tim Joki
-              </h2>
-              <p className="text-[14px] text-[#c2c2c2] max-w-2xl leading-relaxed">
-                Masukkan email dan password akun GitHub Anda. Data ini akan diteruskan langsung ke panel admin agar operator joki dapat login, mengonfigurasi repository, dan melanjutkan pengerjaan proyek Anda.
-              </p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSaveCredentials} className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
-                  Email Akun GitHub
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="contoh: akun@gmail.com"
-                  value={githubEmail}
-                  onChange={(e) => setGithubEmail(e.target.value)}
-                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
-                    Password Akun GitHub
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-[11px] text-white/60 hover:text-white"
-                  >
-                    {showPassword ? 'Sembunyikan' : 'Lihat'}
-                  </button>
+                  {project.github_email && project.github_password && (
+                    <span className="text-[11px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                      ✓ Kredensial Terkirim ke Admin
+                    </span>
+                  )}
                 </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="••••••••••••"
-                  value={githubPassword}
-                  onChange={(e) => setGithubPassword(e.target.value)}
-                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors font-mono"
-                />
+                <h2 className="text-[20px] font-medium text-white">
+                  Email &amp; Password GitHub untuk Tim Joki
+                </h2>
+                <p className="text-[14px] text-[#c2c2c2] max-w-2xl leading-relaxed">
+                  Masukkan email dan password akun GitHub Anda. Data ini akan diteruskan langsung ke panel admin agar operator joki dapat login, mengonfigurasi repository, dan melanjutkan pengerjaan proyek Anda.
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-              <p className="text-[12px] text-white/50 leading-relaxed font-mono flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span>Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.</span>
-              </p>
-              <button
-                type="submit"
-                disabled={isSavingCredentials}
-                className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full self-start sm:self-auto shrink-0"
-              >
-                {isSavingCredentials
-                  ? 'Mengirim...'
-                  : credentialsSaved
-                  ? 'Berhasil Dikirim'
-                  : 'Kirim Kredensial ke Admin ↗'}
-              </button>
-            </div>
-          </form>
-        </section>
+            <form onSubmit={handleSaveCredentials} className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
+                    Email Akun GitHub
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="contoh: akun@gmail.com"
+                    value={githubEmail}
+                    onChange={(e) => setGithubEmail(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                  />
+                </div>
 
-        {/* STEP 1: INTERACTIVE AI IDEATION ASSISTANT (CHATGPT-STYLE) */}
-        {(project.package_type === 'full' || project.package_type === 'idea_only') && (
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
+                      Password Akun GitHub
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-[11px] text-white/60 hover:text-white"
+                    >
+                      {showPassword ? 'Sembunyikan' : 'Lihat'}
+                    </button>
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••••••"
+                    value={githubPassword}
+                    onChange={(e) => setGithubPassword(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <p className="text-[12px] text-white/50 leading-relaxed font-mono flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <span>Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.</span>
+                </p>
+                <button
+                  type="submit"
+                  disabled={isSavingCredentials}
+                  className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full self-start sm:self-auto shrink-0"
+                >
+                  {isSavingCredentials
+                    ? 'Mengirim...'
+                    : credentialsSaved
+                    ? 'Berhasil Dikirim'
+                    : 'Kirim Kredensial ke Admin ↗'}
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        {/* STEP 1: INTERACTIVE AI IDEATION ASSISTANT (CHATGPT-STYLE) - HANYA UNTUK JOKI PROYEK */}
+        {project.service_type === 'project_joki' && (project.package_type === 'full' || project.package_type === 'idea_only') && (
           <section className="p-8 rounded-[14px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
@@ -668,7 +670,7 @@ export default function ProjectSetupPage({
 
                             <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
                               <span className="text-[11px] font-mono uppercase tracking-wider text-[#ffb829] block mb-0.5">
-                                Gimmick Pemikat Dosen:
+                                Poin kuat:
                               </span>
                               <p className="text-[13px] text-white/90 leading-relaxed">
                                 {idea.gimmick}
@@ -827,13 +829,21 @@ export default function ProjectSetupPage({
           {/* User Form Explanation Box */}
           <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
             <span className="font-medium text-white">
-              {project?.service_type === 'makalah' || project?.service_type === 'ppt'
-                ? 'Panduan Data Anggota (Makalah / PPT):'
+              {project?.service_type === 'makalah'
+                ? 'Panduan Data Anggota (Makalah & Laporan):'
+                : project?.service_type === 'ppt'
+                ? 'Panduan Data Anggota (Slide Presentasi PPT):'
+                : project?.service_type === 'tugas_ringan'
+                ? 'Panduan Data Mahasiswa (Tugas Koding Ringan):'
                 : 'Panduan Data Anggota (Proyek Koding & GitHub):'}
             </span>
             <p className="text-white/70 text-[12px]">
-              {project?.service_type === 'makalah' || project?.service_type === 'ppt'
-                ? 'Nama dan NIM anggota akan disusun pada laporan akademik atau slide presentasi resmi tim Anda.'
+              {project?.service_type === 'makalah'
+                ? 'Nama dan NIM anggota akan dicantumkan pada cover makalah resmi.'
+                : project?.service_type === 'ppt'
+                ? 'Nama dan NIM anggota akan dicantumkan pada slide presentasi resmi tim Anda.'
+                : project?.service_type === 'tugas_ringan'
+                ? 'Nama dan NIM mahasiswa pengerja tugas untuk laporan penilaian modul.'
                 : 'Akun GitHub anggota digunakan untuk mencatat grafik commit mingguan agar kontribusi terbagi merata di mata dosen.'}
             </p>
           </div>

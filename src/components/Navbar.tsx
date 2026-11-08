@@ -112,15 +112,6 @@ export default function Navbar() {
                   : user.name.split(' ')[0]}
               </span>
 
-              {user.role === 'customer' && (
-                <Link
-                  href="/my-projects"
-                  className="hidden md:inline-flex text-[13px] text-white/80 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
-                >
-                  Proyek Saya
-                </Link>
-              )}
-
               <button
                 onClick={handleLogout}
                 title="Keluar"

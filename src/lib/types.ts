@@ -39,6 +39,8 @@ export interface Project {
   payment_proof_url?: string | null;
   payment_status: PaymentStatus;
   niche_input?: string | null;
+  doc_topic?: string | null;
+  doc_details?: string | null;
   generated_ideas?: IdeaItem[] | null;
   selected_idea?: IdeaItem | null;
   github_repo_url?: string | null;

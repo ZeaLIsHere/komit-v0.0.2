@@ -246,37 +246,52 @@ export default function ProjectDashboardPage({
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         {/* Setup Banner */}
-        {project.status === 'setup' && (
-          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
-                  Pembayaran Terverifikasi
-                </span>
-                {project.github_email && project.github_password ? (
-                  <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
-                    Akun GitHub Terkirim ke Admin
+        {project.status === 'setup' && (() => {
+          const needsGitHub = project.service_type === 'project_joki' || project.service_type === 'tugas_ringan';
+          return (
+            <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[11px] uppercase tracking-wider text-white font-medium">
+                    Pembayaran Terverifikasi
                   </span>
-                ) : (
-                  <span className="text-[10px] text-yellow-300 font-mono px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30">
-                    Email &amp; Password GitHub Diperlukan
-                  </span>
-                )}
+                  {needsGitHub ? (
+                    project.github_email && project.github_password ? (
+                      <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                        Akun GitHub Terkirim ke Admin
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-yellow-300 font-mono px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30">
+                        Email &amp; Password GitHub Diperlukan
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                      Siap Diproses
+                    </span>
+                  )}
+                </div>
+                <p className="text-[15px] text-[#ededed]">
+                  {needsGitHub ? (
+                    !project.github_email
+                      ? 'Kirimkan email & password GitHub Anda dan lengkapi data anggota agar admin dapat memulai pengerjaan proyek.'
+                      : 'Kredensial GitHub Anda telah dikirim ke admin. Anda dapat melanjutkan setup ide dan pembagian tugas anggota.'
+                  ) : (
+                    `Pembayaran Anda telah diverifikasi. Silakan periksa atau lengkapi data anggota kelompok untuk pengerjaan ${project.service_type === 'makalah' ? 'makalah resmi' : 'slide presentasi'}.`
+                  )}
+                </p>
               </div>
-              <p className="text-[15px] text-[#ededed]">
-                {!project.github_email
-                  ? 'Kirimkan email & password GitHub Anda dan lengkapi data anggota agar admin dapat memulai pengerjaan proyek.'
-                  : 'Kredensial GitHub Anda telah dikirim ke admin. Anda dapat melanjutkan setup ide dan pembagian tugas anggota.'}
-              </p>
+              <Link
+                href={`/project/${id}/setup`}
+                className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
+              >
+                {needsGitHub
+                  ? (!project.github_email ? 'Isi Kredensial GitHub ↗' : 'Lanjut Setup Proyek ↗')
+                  : 'Lengkapi Data Anggota ↗'}
+              </Link>
             </div>
-            <Link
-              href={`/project/${id}/setup`}
-              className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
-            >
-              {!project.github_email ? 'Isi Kredensial GitHub ↗' : 'Lanjut Setup Proyek ↗'}
-            </Link>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Completed Banner — shown when admin marks project completed */}
         {project.status === 'completed' && (
@@ -286,20 +301,14 @@ export default function ProjectDashboardPage({
                 Proyek Selesai &amp; Siap Sidang UAS
               </div>
               <p className="text-[15px] text-white">
-                Seluruh pengerjaan kode dan cicil commit telah tuntas. Unduh README atau buka Slide Presentasi untuk demo dosen.
+                Seluruh pengerjaan kode dan cicil commit telah tuntas diselesaikan oleh tim joki.
               </p>
             </div>
-            <Link
-              href={`/project/${id}/present`}
-              className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
-            >
-              Buka Slide Presentasi
-            </Link>
           </div>
         )}
 
-        {/* GitHub Credentials status for client awareness */}
-        {project.payment_status === 'paid' && project.status !== 'setup' && (
+        {/* GitHub Credentials status for client awareness (Hanya untuk Joki Proyek & Koding Ringan) */}
+        {project.payment_status === 'paid' && project.status !== 'setup' && (project.service_type === 'project_joki' || project.service_type === 'tugas_ringan') && (
           <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
             <div className="flex items-center gap-2.5">
               <svg className="w-4 h-4 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -334,39 +343,35 @@ export default function ProjectDashboardPage({
                 </span>
               </div>
               <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
-                {project.selected_idea?.title || 'Proyek Kelompok Sedang Berjalan'}
+                {project.doc_topic || project.selected_idea?.title || (project.service_type === 'makalah' ? 'Pengerjaan Makalah & Laporan' : project.service_type === 'ppt' ? 'Pembuatan Slide Presentasi PPT' : 'Pengerjaan Tugas Koding')}
               </h1>
               <p className="text-[15px] text-white/80 max-w-2xl leading-[1.5]">
-                {project.selected_idea?.description || 'Persiapan repository dan commit sprint kelompok sedang diproses.'}
+                {project.doc_details || project.selected_idea?.description || 'Persiapan dan pengerjaan dokumen sedang diproses oleh tim spesialis.'}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 shrink-0">
-              <Link
-                href={`/project/${id}/present`}
-                className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full transition-all"
-              >
-                Mode Presentasi UAS
-              </Link>
               <Link
                 href={`/project/${id}/setup`}
                 className="btn-hairline-ghost text-[13px] px-5 py-2.5 rounded-full transition-all"
               >
                 Ubah Setup
               </Link>
-              {project.github_repo_url ? (
-                <a
-                  href={project.github_repo_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-hairline-ghost text-[13px] px-5 py-2.5 rounded-full transition-all"
-                >
-                  GitHub Repo ↗
-                </a>
-              ) : (
-                <span className="text-[12px] text-white/60 px-4 py-2 bg-white/[0.05] rounded-full font-mono border border-white/10">
-                  Repo Sedang Dibuat
-                </span>
+              {project.service_type === 'project_joki' && (
+                project.github_repo_url ? (
+                  <a
+                    href={project.github_repo_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-hairline-ghost text-[13px] px-5 py-2.5 rounded-full transition-all"
+                  >
+                    GitHub Repo ↗
+                  </a>
+                ) : (
+                  <span className="text-[12px] text-white/60 px-4 py-2 bg-white/[0.05] rounded-full font-mono border border-white/10">
+                    Repo Sedang Dibuat
+                  </span>
+                )
               )}
             </div>
           </div>
@@ -388,11 +393,17 @@ export default function ProjectDashboardPage({
               </div>
             </div>
             <div className="p-3.5 rounded-[12px] bg-white/[0.05] border border-white/10 flex items-center gap-2.5">
-              <span className="text-white font-bold">●</span>
+              <span className="text-white font-bold">{project.status === 'completed' ? '✓' : '●'}</span>
               <div>
-                <div className="text-white font-medium text-[13px]">Cicil Commit</div>
+                <div className="text-white font-medium text-[13px]">
+                  {project.service_type === 'project_joki' ? 'Cicil Commit' : 'Status Pengerjaan'}
+                </div>
                 <div className="text-[11px] text-white/90 font-mono">
-                  {schedules.filter((s) => s.status === 'pushed').length}/{schedules.length} Selesai
+                  {project.service_type === 'project_joki'
+                    ? `${schedules.filter((s) => s.status === 'pushed').length}/${schedules.length} Selesai`
+                    : project.status === 'completed'
+                    ? 'Selesai Dikerjakan'
+                    : 'Sedang Dikerjakan'}
                 </div>
               </div>
             </div>
@@ -416,231 +427,285 @@ export default function ProjectDashboardPage({
           </div>
         )}
 
-        {/* Members Status Section */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[20px] font-medium text-white tracking-tight">
-              Status GitHub Anggota ({members.length} Orang)
-            </h2>
-            {!allConnected && (
-              <Link
-                href={`/join/${id}`}
-                className="text-[13px] text-white hover:underline font-medium"
-              >
-                Undang / Connect Anggota Lain ↗
-              </Link>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {members.map((m) => (
-              <div
-                key={m.id}
-                className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
-              >
-                <div>
-                  <div className="text-[16px] font-medium text-white">{m.name}</div>
-                  <div className="text-[12px] text-white/60 font-mono mt-1">
-                    NIM: {m.nim} • KOM {m.kom}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between border-t border-white/10 pt-3">
-                  <span className="text-[12px] font-mono text-white/80">
-                    @{m.github_username || 'unconnected'}
-                  </span>
-                  <span
-                    className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-mono ${
-                      m.is_connected
-                        ? 'bg-white text-[#161616] font-medium'
-                        : 'bg-white/[0.08] text-white/70 border border-white/15'
-                    }`}
+        {/* SEKSI KHUSUS JOKI PROYEK: STATUS GITHUB, HEATMAP & JADWAL COMMIT */}
+        {project.service_type === 'project_joki' ? (
+          <>
+            {/* Members Status Section */}
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[20px] font-medium text-white tracking-tight">
+                  Status GitHub Anggota ({members.length} Orang)
+                </h2>
+                {!allConnected && (
+                  <Link
+                    href={`/join/${id}`}
+                    className="text-[13px] text-white hover:underline font-medium"
                   >
-                    {m.is_connected ? 'Connected' : 'Pending'}
-                  </span>
-                </div>
+                    Undang / Connect Anggota Lain ↗
+                  </Link>
+                )}
               </div>
-            ))}
-          </div>
-        </section>
 
-        {/* GitHub Contribution Heatmap Grid */}
-        <section>
-          <CommitHeatmap schedules={schedules} members={members} />
-        </section>
-
-        {/* Commit Schedule & History (Cicil Commit) */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-[20px] font-medium text-white tracking-tight">
-                Antrean & Riwayat Cicil Commit GitHub
-              </h2>
-              <p className="text-[14px] text-white/70">
-                Commit didorong secara natural atas nama masing-masing anggota kelompok hingga batas UAS.
-              </p>
-            </div>
-            <span className="text-[14px] text-white font-mono">
-              {schedules.filter((s) => s.status === 'pushed').length} / {schedules.length} Selesai
-            </span>
-          </div>
-
-          <div className="border border-white/10 rounded-[14px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
-            {schedules.length === 0 ? (
-              <div className="p-8 text-center text-white/60 text-[14px] font-mono">
-                Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
-              </div>
-            ) : (
-              <div className="divide-y divide-white/10">
-                {schedules.map((s) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {members.map((m) => (
                   <div
-                    key={s.id}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[14px] hover:bg-white/[0.02] transition-colors"
+                    key={m.id}
+                    className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
                   >
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[12px] font-mono text-white bg-white/[0.08] border border-white/15 px-2.5 py-0.5 rounded-[6px]">
-                          @{s.github_username || 'member'}
-                        </span>
-                        <span className="text-[12px] text-white/60 font-mono">
-                          {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })}
-                        </span>
+                    <div>
+                      <div className="text-[16px] font-medium text-white">{m.name}</div>
+                      <div className="text-[12px] text-white/60 font-mono mt-1">
+                        NIM: {m.nim} • KOM {m.kom}
                       </div>
-                      <span className="text-white font-mono text-[13px]">{s.commit_message}</span>
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
-                      {s.commit_hash && (
-                        <span className="text-[11px] font-mono text-white/80 bg-white/[0.06] border border-white/10 px-2.5 py-0.5 rounded-[6px]">
-                          #{s.commit_hash}
-                        </span>
-                      )}
+                    <div className="flex items-center justify-between border-t border-white/10 pt-3">
+                      <span className="text-[12px] font-mono text-white/80">
+                        @{m.github_username || 'unconnected'}
+                      </span>
                       <span
-                        className={`text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full font-mono ${
-                          s.status === 'pushed'
+                        className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full font-mono ${
+                          m.is_connected
                             ? 'bg-white text-[#161616] font-medium'
-                            : 'bg-white/[0.08] text-white/80 border border-white/15'
+                            : 'bg-white/[0.08] text-white/70 border border-white/15'
                         }`}
                       >
-                        {s.status === 'pushed' ? 'Pushed' : 'Scheduled'}
+                        {m.is_connected ? 'Connected' : 'Pending'}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        </section>
+            </section>
 
-        {/* UAS Presentation Materials Section */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-[24px] font-medium text-white tracking-tight">
-            Bahan Presentasi & Panduan Tanya Jawab Dosen
-          </h2>
+            {/* GitHub Contribution Heatmap Grid */}
+            <section>
+              <CommitHeatmap schedules={schedules} members={members} />
+            </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Opsi 1: Free AI README */}
-            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
-              <div className="flex flex-col gap-2">
-                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
-                  Termasuk di Paket (Gratis)
+            {/* Commit Schedule & History (Cicil Commit) */}
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-[20px] font-medium text-white tracking-tight">
+                    Antrean &amp; Riwayat Cicil Commit GitHub
+                  </h2>
+                  <p className="text-[14px] text-white/70">
+                    Commit didorong secara natural atas nama masing-masing anggota kelompok hingga batas UAS.
+                  </p>
+                </div>
+                <span className="text-[14px] text-white font-mono">
+                  {schedules.filter((s) => s.status === 'pushed').length} / {schedules.length} Selesai
                 </span>
-                <h3 className="text-[22px] font-medium text-white leading-tight">
-                  Generate Bahan Presentasi (README)
-                </h3>
-                <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
-                  Menyusun pembagian tugas per anggota, penjelasan arsitektur kode, dan bocoran argumen jawaban saat dosen menguji.
-                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleGenerateReadme}
-                  disabled={isGeneratingReadme}
-                  className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full"
-                >
-                  {isGeneratingReadme ? 'Menyusun...' : 'Generate README'}
-                </button>
-                {readmeContent && (
-                  <button
-                    type="button"
-                    onClick={copyReadmeToClipboard}
-                    className="btn-hairline-ghost text-[13px] px-4 py-2 rounded-full transition-all"
-                  >
-                    {copiedReadme ? '✓ Disalin' : 'Salin Markdown'}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
-              <div className="flex flex-col gap-2">
-                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
-                  Add-on Opsional
-                </span>
-                <h3 className="text-[22px] font-medium text-white leading-tight">
-                  Slide Presentasi PPT Jadi
-                </h3>
-                <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
-                  Tidak sempat merangkum ke slide? Tim kami siapkan slide PowerPoint (.pptx/.pdf) siap pakai untuk demo kelompok Anda.
-                </p>
-              </div>
-
-              <div>
-                {project.ppt_addon_paid ? (
-                  <div className="flex items-center gap-3">
-                    <span className="text-[12px] text-white font-mono">✓ Add-on Aktif</span>
-                    {project.ppt_file_url ? (
-                      <a
-                        href={project.ppt_file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full inline-block"
-                      >
-                        Unduh Slide PPT ↗
-                      </a>
-                    ) : (
-                      <span className="text-[13px] text-[#686868]">Admin sedang menyiapkan file</span>
-                    )}
+              <div className="border border-white/10 rounded-[14px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
+                {schedules.length === 0 ? (
+                  <div className="p-8 text-center text-white/60 text-[14px] font-mono">
+                    Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => setShowPptModal(true)}
-                    className="btn-hairline-ghost text-white text-[13px] font-medium px-5 py-2.5 rounded-full transition-all"
-                  >
-                    Pesan Slide PPT (Rp 75.000)
-                  </button>
+                  <div className="divide-y divide-white/10">
+                    {schedules.map((s) => (
+                      <div
+                        key={s.id}
+                        className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[14px] hover:bg-white/[0.02] transition-colors"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-3">
+                            <span className="text-[12px] font-mono text-white bg-white/[0.08] border border-white/15 px-2.5 py-0.5 rounded-[6px]">
+                              @{s.github_username || 'member'}
+                            </span>
+                            <span className="text-[12px] text-white/60 font-mono">
+                              {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </div>
+                          <span className="text-white font-mono text-[13px]">{s.commit_message}</span>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
+                          {s.commit_hash && (
+                            <span className="text-[11px] font-mono text-white/80 bg-white/[0.06] border border-white/10 px-2.5 py-0.5 rounded-[6px]">
+                              #{s.commit_hash}
+                            </span>
+                          )}
+                          <span
+                            className={`text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full font-mono ${
+                              s.status === 'pushed'
+                                ? 'bg-white text-[#161616] font-medium'
+                                : 'bg-white/[0.08] text-white/80 border border-white/15'
+                            }`}
+                          >
+                            {s.status === 'pushed' ? 'Pushed' : 'Scheduled'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-            </div>
-          </div>
-
-          {readmeContent && (
-            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
-                <span className="text-[12px] font-mono text-white">
-                  README.md Output Preview
-                </span>
-                <button
-                  onClick={copyReadmeToClipboard}
-                  className="text-[12px] text-[#c2c2c2] hover:text-white"
-                >
-                  {copiedReadme ? '✓ Disalin ke clipboard' : 'Salin Semua'}
-                </button>
+            </section>
+          </>
+        ) : (
+          /* SEKSI UNTUK MAKALAH, PPT, DAN TUGAS RINGAN (NON-GIT) */
+          <div className="flex flex-col gap-6">
+            {project.doc_topic && (
+              <div className="p-6 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
+                    Spesifikasi Pesanan Klien
+                  </span>
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-white/80">
+                    {project.service_type === 'makalah' ? 'Makalah / Laporan' : 'Slide PPT'}
+                  </span>
+                </div>
+                <h3 className="text-[20px] font-medium text-white">{project.doc_topic}</h3>
+                {project.doc_details && (
+                  <p className="text-[14px] text-white/80 leading-relaxed whitespace-pre-line border-t border-white/10 pt-3">
+                    {project.doc_details}
+                  </p>
+                )}
               </div>
-              <pre className="text-[13px] font-mono text-[#c2c2c2] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto">
-                {readmeContent}
-              </pre>
+            )}
+
+            <section className="flex flex-col gap-4">
+              <h2 className="text-[20px] font-medium text-white tracking-tight">
+                Data Anggota Kelompok ({members.length} Orang)
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {members.map((m, idx) => (
+                  <div
+                    key={m.id || idx}
+                    className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-3"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[11px] font-mono uppercase text-white/50">
+                        {idx === 0 ? 'Ketua' : `Anggota ${idx + 1}`}
+                      </span>
+                      <div className="text-[16px] font-medium text-white">{m.name}</div>
+                    </div>
+                    <div className="border-t border-white/10 pt-3 flex items-center justify-between text-[12px] font-mono">
+                      <span className="text-white/60">NIM:</span>
+                      <span className="text-white font-medium">{m.nim && m.nim !== '-' ? m.nim : 'Tercatat'}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* UAS Presentation Materials Section (HANYA UNTUK LAYANAN KODING) */}
+        {(project.service_type === 'project_joki' || project.service_type === 'tugas_ringan') && (
+          <section className="flex flex-col gap-4">
+            <h2 className="text-[24px] font-medium text-white tracking-tight">
+              Bahan Presentasi &amp; Panduan Tanya Jawab Dosen
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Opsi 1: Free AI README */}
+              <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] uppercase tracking-wider text-white font-medium">
+                    Termasuk di Paket (Gratis)
+                  </span>
+                  <h3 className="text-[22px] font-medium text-white leading-tight">
+                    Generate Bahan Presentasi (README)
+                  </h3>
+                  <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
+                    Menyusun pembagian tugas per anggota, penjelasan arsitektur kode, dan bocoran argumen jawaban saat dosen menguji.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGenerateReadme}
+                    disabled={isGeneratingReadme}
+                    className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full"
+                  >
+                    {isGeneratingReadme ? 'Menyusun...' : 'Generate README'}
+                  </button>
+                  {readmeContent && (
+                    <button
+                      type="button"
+                      onClick={copyReadmeToClipboard}
+                      className="btn-hairline-ghost text-[13px] px-4 py-2 rounded-full transition-all"
+                    >
+                      {copiedReadme ? '✓ Disalin' : 'Salin Markdown'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Opsi 2: Add-on Slide PPT Jadi */}
+              <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] uppercase tracking-wider text-white font-medium">
+                    Add-on Opsional
+                  </span>
+                  <h3 className="text-[22px] font-medium text-white leading-tight">
+                    Slide Presentasi PPT Jadi
+                  </h3>
+                  <p className="text-[14px] text-[#c2c2c2] leading-[1.5]">
+                    Tidak sempat merangkum ke slide? Tim kami siapkan slide PowerPoint (.pptx/.pdf) siap pakai untuk demo kelompok Anda.
+                  </p>
+                </div>
+
+                <div>
+                  {project.ppt_addon_paid ? (
+                    <div className="flex items-center gap-3">
+                      <span className="text-[12px] text-white font-mono">✓ Add-on Aktif</span>
+                      {project.ppt_file_url ? (
+                        <a
+                          href={project.ppt_file_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full inline-block"
+                        >
+                          Unduh Slide PPT ↗
+                        </a>
+                      ) : (
+                        <span className="text-[13px] text-[#686868]">Admin sedang menyiapkan file</span>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowPptModal(true)}
+                      className="btn-hairline-ghost text-white text-[13px] font-medium px-5 py-2.5 rounded-full transition-all"
+                    >
+                      Pesan Slide PPT (Rp 75.000)
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-        </section>
+
+            {readmeContent && (
+              <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+                <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
+                  <span className="text-[12px] font-mono text-white">
+                    README.md Output Preview
+                  </span>
+                  <button
+                    onClick={copyReadmeToClipboard}
+                    className="text-[12px] text-[#c2c2c2] hover:text-white"
+                  >
+                    {copiedReadme ? '✓ Disalin ke clipboard' : 'Salin Semua'}
+                  </button>
+                </div>
+                <pre className="text-[13px] font-mono text-[#c2c2c2] whitespace-pre-wrap leading-relaxed max-h-[380px] overflow-y-auto">
+                  {readmeContent}
+                </pre>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Modal Buy PPT */}
         {showPptModal && (

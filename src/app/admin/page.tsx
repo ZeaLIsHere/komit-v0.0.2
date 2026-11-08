@@ -456,9 +456,15 @@ export default function AdminPage() {
                                 <span className="text-[#ededed] capitalize font-medium text-[13px]">
                                   {p.service_type.replace('_', ' ')}
                                 </span>
-                                <span className="text-[11px] text-[#8e8e8e] font-mono">
-                                  Paket {p.package_type} • {p.member_count} org
-                                </span>
+                                {p.doc_topic ? (
+                                  <span className="text-[11px] text-white/90 font-medium truncate max-w-[180px]" title={p.doc_topic}>
+                                    Topik: {p.doc_topic}
+                                  </span>
+                                ) : (
+                                  <span className="text-[11px] text-[#8e8e8e] font-mono">
+                                    Paket {p.package_type} • {p.member_count} org
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="py-4 px-5 font-mono text-[#ededed] font-medium tabular-nums text-[13px]">
@@ -542,10 +548,10 @@ export default function AdminPage() {
                                 </div>
                               ) : (
                                 <Link
-                                  href={`/project/${p.id}`}
+                                  href={`/admin/project/${p.id}`}
                                   className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#c2c2c2] hover:text-white px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 transition-all"
                                 >
-                                  <span>Dashboard</span>
+                                  <span>Kelola Proyek</span>
                                   <span className="text-[10px]">↗</span>
                                 </Link>
                               )}

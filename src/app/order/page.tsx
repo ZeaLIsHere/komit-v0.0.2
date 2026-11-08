@@ -36,6 +36,8 @@ export default function OrderPage() {
   const [githubEmail, setGithubEmail] = useState<string>('');
   const [githubPassword, setGithubPassword] = useState<string>('');
   const [showGithubPassword, setShowGithubPassword] = useState<boolean>(false);
+  const [docTopic, setDocTopic] = useState<string>('');
+  const [docDetails, setDocDetails] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -200,6 +202,7 @@ export default function OrderPage() {
   };
 
   const totalPrice = calculateTotal();
+  const needsGitHub = serviceType === 'project_joki' || serviceType === 'tugas_ringan';
   const isDoc = serviceType === 'makalah' || serviceType === 'ppt';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -216,8 +219,7 @@ export default function OrderPage() {
       return;
     }
 
-    // Validasi data setiap anggota & akun GitHub
-    const isDoc = serviceType === 'makalah' || serviceType === 'ppt';
+    // Validasi data setiap anggota (NIM untuk makalah/ppt/tugas, GitHub untuk project_joki)
     for (let i = 0; i < members.length; i++) {
       const m = members[i];
       if (!m.name.trim()) {
@@ -240,11 +242,23 @@ export default function OrderPage() {
       }
     }
 
-    // Validasi akun GitHub tim joki
-    if (!githubEmail.trim() || !githubPassword.trim()) {
-      setErrorMsg('Email dan password akun GitHub wajib diisi agar operator joki dapat memulai pengerjaan!');
-      alert('Tolong masukkan email dan password akun GitHub Anda untuk tim joki!');
-      return;
+    // Validasi akun GitHub tim joki HANYA jika memesan Joki Proyek atau Koding Ringan
+    if (needsGitHub) {
+      if (!githubEmail.trim() || !githubPassword.trim()) {
+        setErrorMsg('Email dan password akun GitHub wajib diisi agar operator joki dapat memulai pengerjaan repository!');
+        alert('Tolong masukkan email dan password akun GitHub Anda untuk tim joki!');
+        return;
+      }
+    }
+
+    // Validasi Topik untuk Makalah & PPT
+    if (serviceType === 'makalah' || serviceType === 'ppt') {
+      if (!docTopic.trim()) {
+        const typeName = serviceType === 'makalah' ? 'makalah' : 'slide PPT';
+        setErrorMsg(`Topik atau judul ${typeName} wajib diisi!`);
+        alert(`Tolong masukkan topik atau judul ${typeName} terlebih dahulu!`);
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -257,8 +271,10 @@ export default function OrderPage() {
         body: JSON.stringify({
           buyer_name: buyerName,
           buyer_whatsapp: buyerWhatsapp,
-          github_email: githubEmail.trim(),
-          github_password: githubPassword.trim(),
+          github_email: needsGitHub ? githubEmail.trim() : null,
+          github_password: needsGitHub ? githubPassword.trim() : null,
+          doc_topic: isDoc ? docTopic.trim() : null,
+          doc_details: isDoc ? docDetails.trim() : null,
           service_type: serviceType,
           package_type: packageType,
           member_count: memberCount,
@@ -392,6 +408,67 @@ export default function OrderPage() {
             </div>
           )}
 
+          {/* Form Khusus Makalah & Slide PPT: Topik dan Detail Pengerjaan */}
+          {(serviceType === 'makalah' || serviceType === 'ppt') && (
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                    Spesifikasi Pengerjaan
+                  </span>
+                  <span className="text-[10px] text-white/80 font-mono px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/10">
+                    {serviceType === 'makalah' ? 'Makalah / Laporan' : 'Slide PPT'}
+                  </span>
+                </div>
+                <h2 className="text-[18px] font-medium text-white">
+                  {serviceType === 'makalah' ? 'Topik &amp; Detail Makalah' : 'Topik &amp; Detail Slide PPT'}
+                </h2>
+                <p className="text-[12px] text-white/60">
+                  {serviceType === 'makalah'
+                    ? 'Tuliskan topik bahasan makalah dan instruksi khusus (format kampus, referensi, dsb).'
+                    : 'Tuliskan judul/topik presentasi dan catatan penting (jumlah slide, poin kunci pengujian, dsb).'}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 pt-1">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.06em] text-white/70 font-mono">
+                    {serviceType === 'makalah' ? 'Topik / Judul Makalah' : 'Topik / Judul Presentasi PPT'}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder={
+                      serviceType === 'makalah'
+                        ? 'Contoh: Analisis Keamanan Jaringan Menggunakan Wireshark pada Protokol HTTPS'
+                        : 'Contoh: Demo Proyek Sistem Informasi Rumah Sakit Berbasis Cloud'
+                    }
+                    value={docTopic}
+                    onChange={(e) => setDocTopic(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 py-3 text-[14px] text-white outline-none transition-colors"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.06em] text-white/70 font-mono">
+                    Detail &amp; Catatan Khusus Pengerjaan
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={
+                      serviceType === 'makalah'
+                        ? 'Contoh: Format IEEE / APA, minimal 15 halaman, cantumkan 5 referensi jurnal terindeks, sertakan diagram Use Case dan ERD.'
+                        : 'Contoh: Minimal 12 slide, desain modern minimalist gelap, fokus pada arsitektur database dan cara kerja fitur utama.'
+                    }
+                    value={docDetails}
+                    onChange={(e) => setDocDetails(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[16px] p-4 text-[14px] text-white outline-none transition-colors leading-relaxed resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 3. Jumlah Anggota & Form Anggota Kelompok (Tersedia untuk semua kategori layanan) */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
             <div className="flex items-center justify-between">
@@ -464,13 +541,21 @@ export default function OrderPage() {
               {/* User Form Explanation Box */}
               <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
                 <span className="font-medium text-white">
-                  {isDoc
-                    ? 'Petunjuk Pengisian Anggota (Dokumen / Slide):'
-                    : 'Petunjuk Pengisian Anggota (Koding & GitHub):'}
+                  {serviceType === 'makalah'
+                    ? 'Petunjuk Pengisian Anggota (Makalah & Laporan):'
+                    : serviceType === 'ppt'
+                    ? 'Petunjuk Pengisian Anggota (Slide Presentasi PPT):'
+                    : serviceType === 'tugas_ringan'
+                    ? 'Petunjuk Pengisian Mahasiswa (Tugas Koding Ringan):'
+                    : 'Petunjuk Pengisian Anggota (Joki Proyek & GitHub):'}
                 </span>
                 <p className="text-white/70 text-[12px]">
-                  {isDoc
-                    ? 'Masukkan nama lengkap dan NIM tiap anggota. Data ini akan dicantumkan secara rapi pada cover makalah atau halaman identitas kelompok di slide PPT.'
+                  {serviceType === 'makalah'
+                    ? 'Masukkan nama lengkap dan NIM tiap anggota. Data ini akan dicantumkan secara rapi pada cover makalah resmi kampus.'
+                    : serviceType === 'ppt'
+                    ? 'Masukkan nama lengkap dan NIM tiap anggota kelompok untuk dicantumkan pada halaman identitas tim di slide presentasi UAS.'
+                    : serviceType === 'tugas_ringan'
+                    ? 'Masukkan nama lengkap dan NIM mahasiswa pengerja tugas modul.'
                     : 'Gunakan username GitHub asli setiap anggota. Sistem akan otomatis memverifikasi akun (tanda ✓ hijau). Kontribusi commit mingguan akan dicatat atas nama akun masing-masing.'}
                 </p>
               </div>
@@ -605,63 +690,65 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* 5. Kredensial Akun GitHub untuk Tim Joki */}
-          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
-                  Setup Repository
-                </span>
-                <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
-                  Terkirim ke Admin
-                </span>
+          {/* 5. Kredensial Akun GitHub untuk Tim Joki (HANYA UNTUK JOKI PROYEK & KODING RINGAN) */}
+          {needsGitHub && (
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                    Setup Repository
+                  </span>
+                  <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
+                    Terkirim ke Admin
+                  </span>
+                </div>
+                <h2 className="text-[18px] font-medium text-white">
+                  Akun GitHub untuk Pengerjaan Proyek
+                </h2>
+                <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
+                  Masukkan email atau username akun GitHub serta password Anda. Data ini akan diteruskan ke panel admin agar operator joki kami dapat langsung login, membuat repository, dan memproses cicil commit atas nama Anda.
+                </p>
               </div>
-              <h2 className="text-[18px] font-medium text-white">
-                Akun GitHub untuk Pengerjaan Proyek
-              </h2>
-              <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
-                Masukkan email atau username akun GitHub serta password Anda. Data ini akan diteruskan ke panel admin agar operator joki kami dapat langsung login, membuat repository, dan memproses cicil commit atas nama Anda.
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[12px] text-white/70">Email / Username GitHub</span>
+                  <input
+                    type="text"
+                    required
+                    placeholder="contoh: akun@gmail.com atau usergh"
+                    value={githubEmail}
+                    onChange={(e) => setGithubEmail(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] text-white/70">Password Akun GitHub</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowGithubPassword(!showGithubPassword)}
+                      className="text-[11px] text-white/60 hover:text-white"
+                    >
+                      {showGithubPassword ? 'Sembunyikan' : 'Lihat'}
+                    </button>
+                  </div>
+                  <input
+                    type={showGithubPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••••••"
+                    value={githubPassword}
+                    onChange={(e) => setGithubPassword(e.target.value)}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                  />
+                </div>
+              </div>
+              <p className="text-[11px] text-white/50 font-mono">
+                Data hanya diteruskan secara aman ke operator joki untuk inisialisasi git repository proyek.
               </p>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <div className="flex flex-col gap-1.5">
-                <span className="text-[12px] text-white/70">Email / Username GitHub</span>
-                <input
-                  type="text"
-                  required
-                  placeholder="contoh: akun@gmail.com atau usergh"
-                  value={githubEmail}
-                  onChange={(e) => setGithubEmail(e.target.value)}
-                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-white/70">Password Akun GitHub</span>
-                  <button
-                    type="button"
-                    onClick={() => setShowGithubPassword(!showGithubPassword)}
-                    className="text-[11px] text-white/60 hover:text-white"
-                  >
-                    {showGithubPassword ? 'Sembunyikan' : 'Lihat'}
-                  </button>
-                </div>
-                <input
-                  type={showGithubPassword ? 'text' : 'password'}
-                  required
-                  placeholder="••••••••••••"
-                  value={githubPassword}
-                  onChange={(e) => setGithubPassword(e.target.value)}
-                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
-                />
-              </div>
-            </div>
-            <p className="text-[11px] text-white/50 font-mono">
-              Data hanya diteruskan secara aman ke operator joki untuk inisialisasi git repository proyek.
-            </p>
-          </div>
+          )}
 
           {/* 6. Pembayaran QRIS Statis */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
