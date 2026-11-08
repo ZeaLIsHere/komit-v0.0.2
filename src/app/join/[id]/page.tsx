@@ -179,7 +179,7 @@ export default function JoinProjectPage({
                     setGithubStatus('idle');
                   }}
                   onBlur={(e) => checkGitHubAccount(e.target.value)}
-                  className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-10 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                  className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                     githubStatus === 'invalid'
                       ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                       : githubStatus === 'valid'
@@ -190,15 +190,15 @@ export default function JoinProjectPage({
 
                 <div className="absolute right-3.5 flex items-center pointer-events-none">
                   {githubStatus === 'checking' && (
-                    <div className="w-4 h-4 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                   )}
                   {githubStatus === 'valid' && (
-                    <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   )}
                   {githubStatus === 'invalid' && (
-                    <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   )}
@@ -206,8 +206,8 @@ export default function JoinProjectPage({
               </div>
 
               {githubStatus === 'invalid' && (
-                <span className="text-[11px] text-red-400 font-mono mt-0.5">
-                  tidak dapat menemukan akun
+                <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                  ✕ tidak dapat menemukan akun
                 </span>
               )}
             </div>
