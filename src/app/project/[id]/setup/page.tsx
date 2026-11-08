@@ -824,6 +824,23 @@ export default function ProjectSetupPage({
             </div>
           </div>
 
+          {/* User Form Explanation Box */}
+          <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex items-start gap-3 text-[13px] text-white/80">
+            <span className="text-[16px] shrink-0 mt-0.5">ℹ️</span>
+            <div className="flex flex-col gap-1 leading-relaxed">
+              <span className="font-medium text-white">
+                {project?.service_type === 'makalah' || project?.service_type === 'ppt'
+                  ? 'Panduan Data Anggota (Makalah / PPT):'
+                  : 'Panduan Data Anggota (Proyek Koding & GitHub):'}
+              </span>
+              <p className="text-white/70 text-[12px]">
+                {project?.service_type === 'makalah' || project?.service_type === 'ppt'
+                  ? 'Nama dan NIM anggota akan disusun pada laporan akademik atau slide presentasi resmi tim Anda.'
+                  : 'Pastikan username GitHub setiap anggota valid (ditandai ceklis hijau ✓) agar pembagian tugas di README dan jadwal cicil commit mingguan tercatat akurat di repository.'}
+              </p>
+            </div>
+          </div>
+
           <form onSubmit={handleSaveMembers} className="flex flex-col gap-4">
             {members.map((m, idx) => (
               <div
