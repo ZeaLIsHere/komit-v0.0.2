@@ -24,7 +24,7 @@ export default function OrderPage() {
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
-  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' }>({});
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' }>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -67,7 +67,7 @@ export default function OrderPage() {
   const checkGitHubAccount = async (index: number, username: string) => {
     const clean = username.trim().replace(/^@/, '');
     if (!clean) {
-      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+      setGithubStatus((prev) => ({ ...prev, [index]: 'empty' }));
       return;
     }
     setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
@@ -169,6 +169,7 @@ export default function OrderPage() {
     e.preventDefault();
     if (!buyerName.trim() || !buyerWhatsapp.trim()) {
       setErrorMsg('Nama pemesan dan nomor WhatsApp wajib diisi');
+      alert('Tolong lengkapi nama pemesan dan nomor WhatsApp terlebih dahulu!');
       return;
     }
 
@@ -176,6 +177,27 @@ export default function OrderPage() {
       alert('Tolong berikan bukti pembayaran terlebih dahulu sebelum melanjutkan!');
       setErrorMsg('Bukti pembayaran QRIS wajib dilampirkan sebelum mengirim pesanan.');
       return;
+    }
+
+    // Validasi data setiap anggota & akun GitHub
+    for (let i = 0; i < members.length; i++) {
+      const m = members[i];
+      if (!m.name.trim()) {
+        setErrorMsg(`Nama untuk Anggota ${i + 1} belum diisi!`);
+        alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
+        return;
+      }
+      if (!m.github_username.trim()) {
+        setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
+        setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi!`);
+        alert(`Tolong isi akun GitHub untuk Anggota ${i + 1} terlebih dahulu!`);
+        return;
+      }
+      if (githubStatus[i] === 'invalid') {
+        setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} (@${m.github_username}) tidak dapat ditemukan!`);
+        alert(`Akun GitHub @${m.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -193,7 +215,7 @@ export default function OrderPage() {
           member_count: memberCount,
           total_price: totalPrice,
           payment_proof_url: proofUrl,
-          members: serviceType === 'project_joki' ? members : undefined,
+          members: members,
         }),
       });
 
@@ -321,135 +343,154 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* 3. Jumlah Anggota Kelompok */}
-          {serviceType === 'project_joki' && (
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
-              <div className="flex items-center justify-between">
+          {/* 3. Jumlah Anggota & Form Anggota Kelompok (Tersedia untuk semua kategori layanan) */}
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+            <div className="flex items-center justify-between">
+              <div>
                 <h2 className="text-[18px] font-medium text-white">
-                  Jumlah Anggota Kelompok
+                  Jumlah Anggota
                 </h2>
-                <span className="text-[20px] font-medium text-white font-mono">
-                  {memberCount} Orang
+                <p className="text-[12px] text-white/60">
+                  {serviceType === 'project_joki'
+                    ? 'Tentukan kuota anggota kelompok yang berkontribusi dalam repository.'
+                    : `Tentukan jumlah anggota kelompok untuk pengerjaan ${serviceType.replace('_', ' ')}.`}
+                </p>
+              </div>
+              <span className="text-[20px] font-medium text-white font-mono">
+                {memberCount} Orang
+              </span>
+            </div>
+
+            {/* Slider Track with Exact Value Synchronization */}
+            <div className="relative flex flex-col gap-3 py-1">
+              <input
+                type="range"
+                min="1"
+                max="8"
+                step="1"
+                value={memberCount}
+                onChange={(e) => handleMemberCountChange(Number(e.target.value))}
+                className="w-full accent-white cursor-pointer relative z-10"
+              />
+
+              {/* Synchronized Exact Position Ticks (1 to 8) */}
+              <div className="relative w-full h-5 text-[11px] font-mono text-[#c2c2c2]">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                  const percent = ((num - 1) / 7) * 100;
+                  const isActive = memberCount === num;
+                  return (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handleMemberCountChange(num)}
+                      style={{ left: `${percent}%` }}
+                      className={`absolute -translate-x-1/2 transition-all ${
+                        isActive
+                          ? 'text-white font-bold text-[12px]'
+                          : 'text-[#686868] hover:text-white'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
+            <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
+                  Form Anggota Kelompok ({memberCount} Orang)
+                </span>
+                <span className="text-[11px] text-white/60">
+                  Verifikasi akun GitHub langsung otomatis
                 </span>
               </div>
 
-              {/* Slider Track with Exact Value Synchronization */}
-              <div className="relative flex flex-col gap-3 py-1">
-                <input
-                  type="range"
-                  min="1"
-                  max="8"
-                  step="1"
-                  value={memberCount}
-                  onChange={(e) => handleMemberCountChange(Number(e.target.value))}
-                  className="w-full accent-white cursor-pointer relative z-10"
-                />
+              <div className="flex flex-col gap-3 mt-1">
+                {members.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
+                  >
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
+                        {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                        value={m.name}
+                        onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                        className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                      />
+                    </div>
 
-                {/* Synchronized Exact Position Ticks (1 to 8) */}
-                <div className="relative w-full h-5 text-[11px] font-mono text-[#c2c2c2]">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
-                    const percent = ((num - 1) / 7) * 100;
-                    const isActive = memberCount === num;
-                    return (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => handleMemberCountChange(num)}
-                        style={{ left: `${percent}%` }}
-                        className={`absolute -translate-x-1/2 transition-all ${
-                          isActive
-                            ? 'text-white font-bold text-[12px]'
-                            : 'text-[#686868] hover:text-white'
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
-              <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
-                    Form Anggota Kelompok ({memberCount} Orang)
-                  </span>
-                  <span className="text-[11px] text-white/60">
-                    Hanya nama &amp; akun GitHub
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-3 mt-1">
-                  {members.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
-                    >
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
-                        </label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
+                        Akun GitHub
+                      </label>
+                      <div className="relative flex items-center">
                         <input
                           type="text"
                           required
-                          placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
-                          value={m.name}
-                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                          className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                          placeholder="username GitHub"
+                          value={m.github_username}
+                          onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
+                          onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
+                          className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                            githubStatus[idx] === 'invalid'
+                              ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
+                              : githubStatus[idx] === 'empty'
+                              ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
+                              : githubStatus[idx] === 'valid'
+                              ? 'border-[#59d499] focus:border-[#59d499]'
+                              : 'border-white/15 focus:border-white'
+                          }`}
                         />
-                      </div>
 
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          Akun GitHub
-                        </label>
-                        <div className="relative flex items-center">
-                          <input
-                            type="text"
-                            value={m.github_username}
-                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                            onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                            className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
-                              githubStatus[idx] === 'invalid'
-                                ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                                : githubStatus[idx] === 'valid'
-                                ? 'border-[#59d499] focus:border-[#59d499]'
-                                : 'border-white/15 focus:border-white'
-                            }`}
-                          />
-
-                          {/* Status Icon on Right Side */}
-                          <div className="absolute right-3 flex items-center pointer-events-none">
-                            {githubStatus[idx] === 'checking' && (
-                              <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
-                            )}
-                            {githubStatus[idx] === 'valid' && (
-                              <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                            {githubStatus[idx] === 'invalid' && (
-                              <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
+                        {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
+                        <div className="absolute right-3 flex items-center pointer-events-none">
+                          {githubStatus[idx] === 'checking' && (
+                            <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                          )}
+                          {githubStatus[idx] === 'valid' && (
+                            <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                          {githubStatus[idx] === 'invalid' && (
+                            <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          )}
                         </div>
-
-                        {/* Error Text below field */}
-                        {githubStatus[idx] === 'invalid' && (
-                          <span className="text-[11px] text-red-400 font-mono mt-0.5">
-                            tidak dapat menemukan akun
-                          </span>
-                        )}
                       </div>
+
+                      {/* Notification messages */}
+                      {githubStatus[idx] === 'invalid' && (
+                        <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ✕ tidak dapat menemukan akun
+                        </span>
+                      )}
+                      {githubStatus[idx] === 'empty' && (
+                        <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ⚠️ Akun GitHub belum diisi
+                        </span>
+                      )}
+                      {githubStatus[idx] === 'valid' && (
+                        <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ✓ Akun GitHub terverifikasi
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
+          </div>
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
