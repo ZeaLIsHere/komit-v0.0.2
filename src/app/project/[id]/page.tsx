@@ -244,7 +244,7 @@ export default function ProjectDashboardPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         {/* Setup Banner */}
         {project.status === 'setup' && (
           <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

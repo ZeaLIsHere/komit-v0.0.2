@@ -77,7 +77,7 @@ export default function MyProjectsPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-white/10 pb-6">
           <div className="flex flex-col gap-2">
             <span className="text-[11px] uppercase tracking-wider text-white/60 font-mono">

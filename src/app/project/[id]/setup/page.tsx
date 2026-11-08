@@ -358,7 +358,7 @@ export default function ProjectSetupPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
             <span className="text-[11px] uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full font-medium">
