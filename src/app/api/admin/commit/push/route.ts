@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
+import {
+  isFirebaseConfigured,
+  fsGetProjectMemberById,
+  fsUpdateCommitSchedule,
+} from '@/lib/firestore';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
-import { getProject, updateProject } from '@/lib/data';
+import { getProject } from '@/lib/data';
 
 export async function POST(req: Request) {
   try {
@@ -19,7 +24,15 @@ export async function POST(req: Request) {
     let memberName = 'Contributor';
     let memberEmail = 'contributor@github.com';
 
-    if (isSupabaseConfigured && supabaseAdmin) {
+    // 1. Ambil member dari Firebase Firestore
+    if (isFirebaseConfigured) {
+      const fsMember = await fsGetProjectMemberById(memberId);
+      if (fsMember) {
+        memberAccessToken = fsMember.github_access_token || null;
+        memberName = fsMember.name;
+        memberEmail = fsMember.github_email || `${fsMember.github_username}@users.noreply.github.com`;
+      }
+    } else if (isSupabaseConfigured && supabaseAdmin) {
       const { data: member } = await supabaseAdmin
         .from('project_members')
         .select('*')
@@ -87,7 +100,12 @@ export async function POST(req: Request) {
     }
 
     // Update commit_schedules record
-    if (isSupabaseConfigured && supabaseAdmin) {
+    if (isFirebaseConfigured) {
+      await fsUpdateCommitSchedule(scheduleId, {
+        status: 'pushed',
+        commit_hash: commitHash,
+      });
+    } else if (isSupabaseConfigured && supabaseAdmin) {
       await supabaseAdmin
         .from('commit_schedules')
         .update({

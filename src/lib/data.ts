@@ -324,6 +324,8 @@ export async function saveProjectMembers(
   // 1. Simpan ke Firestore
   if (isFirebaseConfigured) {
     try {
+      const { fsDeleteProjectMembers } = await import('./firestore');
+      await fsDeleteProjectMembers(projectId);
       for (const m of memberRecords) {
         await fsSaveProjectMember(m);
       }
