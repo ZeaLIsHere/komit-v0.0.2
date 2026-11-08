@@ -472,17 +472,17 @@ export default function OrderPage() {
                       {/* Notification messages */}
                       {githubStatus[idx] === 'invalid' && (
                         <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ✕ tidak dapat menemukan akun
+                          <span>tidak dapat menemukan akun</span>
                         </span>
                       )}
                       {githubStatus[idx] === 'empty' && (
                         <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ⚠️ Akun GitHub belum diisi
+                          <span>Akun GitHub belum diisi</span>
                         </span>
                       )}
                       {githubStatus[idx] === 'valid' && (
                         <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ✓ Akun GitHub terverifikasi
+                          <span>Akun GitHub terverifikasi</span>
                         </span>
                       )}
                     </div>
@@ -563,7 +563,10 @@ export default function OrderPage() {
 
                   <div className="flex flex-col sm:flex-row items-center gap-3">
                     <label className="cursor-pointer bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
-                      <span>📁 Pilih Gambar Bukti</span>
+                      <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span>Pilih Gambar Bukti</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -575,16 +578,19 @@ export default function OrderPage() {
                     <button
                       type="button"
                       onClick={handleQuickDemoFill}
-                      className="text-[12px] text-white/80 hover:text-white underline"
+                      className="text-[12px] text-white/80 hover:text-white underline font-mono"
                     >
-                      ⚡ Lampirkan Gambar Contoh
+                      Lampirkan Gambar Contoh
                     </button>
                   </div>
 
                   {proofPreview && (
-                    <div className="mt-2 flex items-center gap-3 p-2 bg-white/[0.06] rounded-[10px] border border-white/10">
-                      <span className="text-[11px] text-white font-medium">✓ Bukti bayar terlampir</span>
-                      <span className="text-[11px] text-white/70 truncate max-w-xs">{proofUrl.slice(0, 32)}...</span>
+                    <div className="mt-2 flex items-center gap-2.5 p-2.5 bg-white/[0.06] rounded-[10px] border border-white/10">
+                      <svg className="w-4 h-4 text-[#59d499] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="text-[11px] text-white font-medium">Bukti bayar terlampir</span>
+                      <span className="text-[11px] text-white/70 truncate max-w-xs font-mono">{proofUrl.slice(0, 32)}...</span>
                     </div>
                   )}
                 </div>

@@ -160,7 +160,7 @@ export default function ProjectDashboardPage({
             </h1>
             <p className="text-[15px] text-[#c2c2c2] leading-[1.5]">
               Tim Komit sedang memverifikasi bukti transfer QRIS kamu. Proses verifikasi biasanya selesai dalam{' '}
-              <strong className="text-white">1–3 jam</strong> pada hari kerja.
+              <strong className="text-white">1 sampai 3 jam</strong> pada hari kerja.
             </p>
           </div>
 
@@ -176,7 +176,7 @@ export default function ProjectDashboardPage({
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Layanan</div>
-                <div className="text-white capitalize">{project.service_type.replace('_', ' ')} — {project.package_type}</div>
+                <div className="text-white capitalize">{project.service_type.replace('_', ' ')} ({project.package_type})</div>
               </div>
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Total Tagihan</div>
@@ -255,11 +255,11 @@ export default function ProjectDashboardPage({
                 </span>
                 {project.github_email && project.github_password ? (
                   <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
-                    ✓ Akun GitHub Terkirim ke Admin
+                    Akun GitHub Terkirim ke Admin
                   </span>
                 ) : (
                   <span className="text-[10px] text-yellow-300 font-mono px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30">
-                    ⚠️ Email &amp; Password GitHub Diperlukan
+                    Email &amp; Password GitHub Diperlukan
                   </span>
                 )}
               </div>
@@ -283,7 +283,7 @@ export default function ProjectDashboardPage({
           <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-[#59d499] font-medium mb-1">
-                ✓ Proyek Selesai &amp; Siap Sidang UAS
+                Proyek Selesai &amp; Siap Sidang UAS
               </div>
               <p className="text-[15px] text-white">
                 Seluruh pengerjaan kode dan cicil commit telah tuntas. Unduh README atau buka Slide Presentasi untuk demo dosen.
@@ -293,7 +293,7 @@ export default function ProjectDashboardPage({
               href={`/project/${id}/present`}
               className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
-              Buka Slide Presentasi 🖥️
+              Buka Slide Presentasi
             </Link>
           </div>
         )}
@@ -302,7 +302,9 @@ export default function ProjectDashboardPage({
         {project.payment_status === 'paid' && project.status !== 'setup' && (
           <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
             <div className="flex items-center gap-2.5">
-              <span className="text-[16px]">🔐</span>
+              <svg className="w-4 h-4 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
               <div>
                 <span className="text-white font-medium">Akun GitHub untuk Admin:</span>{' '}
                 <span className="text-white/80 font-mono">
@@ -344,7 +346,7 @@ export default function ProjectDashboardPage({
                 href={`/project/${id}/present`}
                 className="btn-white-pill text-[13px] px-5 py-2.5 rounded-full transition-all"
               >
-                Mode Presentasi UAS 🖥️
+                Mode Presentasi UAS
               </Link>
               <Link
                 href={`/project/${id}/setup`}

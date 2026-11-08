@@ -440,8 +440,11 @@ export default function ProjectSetupPage({
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-              <p className="text-[12px] text-white/50 leading-relaxed font-mono">
-                🔒 Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.
+              <p className="text-[12px] text-white/50 leading-relaxed font-mono flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span>Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.</span>
               </p>
               <button
                 type="submit"
@@ -451,7 +454,7 @@ export default function ProjectSetupPage({
                 {isSavingCredentials
                   ? 'Mengirim...'
                   : credentialsSaved
-                  ? '✓ Berhasil Dikirim!'
+                  ? 'Berhasil Dikirim'
                   : 'Kirim Kredensial ke Admin ↗'}
               </button>
             </div>
@@ -473,7 +476,7 @@ export default function ProjectSetupPage({
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="text"
-                placeholder="Contoh: Pemrograman Web — Sistem Manajemen Lab Komputer"
+                placeholder="Contoh: Pemrograman Web, Sistem Manajemen Lab Komputer"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
                 className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
@@ -571,9 +574,9 @@ export default function ProjectSetupPage({
             <button
               type="button"
               onClick={handleQuickFillMembers}
-              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0"
+              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0 font-mono"
             >
-              ⚡ Isi Template Nama
+              Isi Template Nama
             </button>
           </div>
 
@@ -687,17 +690,17 @@ export default function ProjectSetupPage({
                   {/* Notification messages */}
                   {githubStatus[idx] === 'invalid' && (
                     <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                      ✕ tidak dapat menemukan akun
+                      <span>tidak dapat menemukan akun</span>
                     </span>
                   )}
                   {githubStatus[idx] === 'empty' && (
                     <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                      ⚠️ Akun GitHub belum diisi
+                      <span>Akun GitHub belum diisi</span>
                     </span>
                   )}
                   {githubStatus[idx] === 'valid' && (
                     <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                      ✓ Akun GitHub terverifikasi
+                      <span>Akun GitHub terverifikasi</span>
                     </span>
                   )}
                 </div>

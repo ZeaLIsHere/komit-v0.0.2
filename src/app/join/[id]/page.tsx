@@ -207,7 +207,7 @@ export default function JoinProjectPage({
 
               {githubStatus === 'invalid' && (
                 <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                  ✕ tidak dapat menemukan akun
+                  tidak dapat menemukan akun
                 </span>
               )}
             </div>

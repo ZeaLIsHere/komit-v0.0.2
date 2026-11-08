@@ -537,7 +537,7 @@ export default function AdminPage() {
                     >
                       {projects.map((p) => (
                         <option key={p.id} value={p.id} className="bg-[#161616]">
-                          {p.buyer_name} — {p.selected_idea?.title || p.package_type} ({p.id.slice(0, 6)})
+                          {p.buyer_name} ({p.selected_idea?.title || p.package_type}) ({p.id.slice(0, 6)})
                         </option>
                       ))}
                     </select>
@@ -756,7 +756,7 @@ export default function AdminPage() {
                       disabled={isRunningCron}
                       className="btn-white-pill text-[11px] px-4 py-1.5 rounded-full self-start sm:self-auto"
                     >
-                      {isRunningCron ? 'Mengeksekusi...' : 'Jalankan Auto-Push Sekarang ⚡'}
+                      {isRunningCron ? 'Mengeksekusi...' : 'Jalankan Auto-Push Sekarang'}
                     </button>
                   </div>
 

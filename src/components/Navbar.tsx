@@ -106,7 +106,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2.5">
               <span className="hidden sm:inline-block text-[12px] text-white/75 font-mono px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
                 {user.role === 'admin'
-                  ? '🛡️ Admin'
+                  ? 'Admin'
                   : user.githubUsername
                   ? `@${user.githubUsername}`
                   : user.name.split(' ')[0]}
@@ -123,9 +123,13 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className="text-[13px] text-white/70 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+                title="Keluar"
+                aria-label="Keluar"
+                className="p-1.5 text-white/70 hover:text-white hover:bg-white/[0.08] rounded-full transition-colors inline-flex items-center justify-center"
               >
-                Keluar
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
           ) : (

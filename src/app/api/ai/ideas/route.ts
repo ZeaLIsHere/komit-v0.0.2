@@ -54,21 +54,21 @@ export async function POST(req: Request) {
     const fallbackIdeas: IdeaItem[] = [
       {
         id: `idea-${Date.now()}-1`,
-        title: `${cleanNiche.split(' ')[0] || 'Smart'}Pulse — Dashboard & Real-Time Analytics`,
+        title: `${cleanNiche.split(' ')[0] || 'Smart'}Pulse Dashboard & Real-Time Analytics`,
         description: `Sistem manajemen komprehensif untuk ${cleanNiche} dengan visualisasi metrik performa dan audit log otomatis.`,
         gimmick: 'Visualisasi grafik interaktif real-time dengan WebSockets + Ekspor laporan rekapitulasi audit otomatis berformat PDF resmi kampus.',
         techStack: ['Next.js 15', 'Tailwind CSS', 'TypeScript', 'PostgreSQL', 'Chart.js'],
       },
       {
         id: `idea-${Date.now()}-2`,
-        title: `${cleanNiche.split(' ')[0] || 'Auto'}Track — AI Automated Assistant & Tracker`,
+        title: `${cleanNiche.split(' ')[0] || 'Auto'}Track Automated Assistant & Tracker`,
         description: `Platform automasi cerdas yang memecahkan bottleneck pada ${cleanNiche} menggunakan machine learning sederhana dan OCR.`,
         gimmick: 'Simulasi deteksi anomali data otomatis + Fitur mode demo presentasi cepat untuk dosen dengan satu tombol pengisian data uji (test fixture).',
         techStack: ['FastAPI / Python', 'React', 'Tailwind CSS', 'SQLite', 'Scikit-Learn'],
       },
       {
         id: `idea-${Date.now()}-3`,
-        title: `${cleanNiche.split(' ')[0] || 'Nexus'}Collab — Role-Based Workflow System`,
+        title: `${cleanNiche.split(' ')[0] || 'Nexus'}Collab Role-Based Workflow System`,
         description: `Sistem multi-tenant untuk kolaborasi terstruktur pada ranah ${cleanNiche} dilengkapi approval flow bertingkat.`,
         gimmick: 'Matrix hak akses hierarkis (Superadmin, Reviewer, User) + Notifikasi webhook instan dan integrasi signature digital hash verifier.',
         techStack: ['Next.js 15', 'Node.js', 'Prisma / Supabase', 'Tailwind CSS v4'],
