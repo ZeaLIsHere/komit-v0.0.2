@@ -105,7 +105,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2.5">
               <span className="hidden sm:inline-block text-[12px] text-white/75 font-mono px-3 py-1 rounded-full bg-white/[0.05] border border-white/10">
                 {user.role === 'admin'
-                  ? '🛡️ Admin'
+                  ? 'Admin'
                   : user.githubUsername
                   ? `@${user.githubUsername}`
                   : user.name.split(' ')[0]}

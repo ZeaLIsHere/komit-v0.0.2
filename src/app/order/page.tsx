@@ -13,11 +13,11 @@ export default function OrderPage() {
   const [serviceType, setServiceType] = useState<ServiceType>('project_joki');
   const [packageType, setPackageType] = useState<PackageType>('full');
   const [memberCount, setMemberCount] = useState<number>(4);
-  const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([
-    { name: '', github_username: '' },
-    { name: '', github_username: '' },
-    { name: '', github_username: '' },
-    { name: '', github_username: '' },
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string }>>([
+    { name: '', github_username: '', nim: '' },
+    { name: '', github_username: '', nim: '' },
+    { name: '', github_username: '', nim: '' },
+    { name: '', github_username: '', nim: '' },
   ]);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
@@ -93,6 +93,7 @@ export default function OrderPage() {
         const added = Array.from({ length: validCount - prev.length }, () => ({
           name: '',
           github_username: '',
+          nim: '',
         }));
         return [...prev, ...added];
       }
@@ -100,7 +101,7 @@ export default function OrderPage() {
     });
   };
 
-  const handleMemberChange = (index: number, field: 'name' | 'github_username', value: string) => {
+  const handleMemberChange = (index: number, field: 'name' | 'github_username' | 'nim', value: string) => {
     setMembers((prev) => {
       const copy = [...prev];
       copy[index] = { ...copy[index], [field]: value };
@@ -117,7 +118,7 @@ export default function OrderPage() {
   const handleBuyerNameChange = (val: string) => {
     setBuyerName(val);
     setMembers((prev) => {
-      if (prev.length === 0) return [{ name: val, github_username: '' }];
+      if (prev.length === 0) return [{ name: val, github_username: '', nim: '' }];
       const copy = [...prev];
       copy[0] = { ...copy[0], name: val };
       return copy;
@@ -164,6 +165,7 @@ export default function OrderPage() {
   };
 
   const totalPrice = calculateTotal();
+  const isDoc = serviceType === 'makalah' || serviceType === 'ppt';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,6 +182,7 @@ export default function OrderPage() {
     }
 
     // Validasi data setiap anggota & akun GitHub
+    const isDoc = serviceType === 'makalah' || serviceType === 'ppt';
     for (let i = 0; i < members.length; i++) {
       const m = members[i];
       if (!m.name.trim()) {
@@ -187,16 +190,18 @@ export default function OrderPage() {
         alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
         return;
       }
-      if (!m.github_username.trim()) {
-        setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
-        setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi!`);
-        alert(`Tolong isi akun GitHub untuk Anggota ${i + 1} terlebih dahulu!`);
-        return;
-      }
-      if (githubStatus[i] === 'invalid') {
-        setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} (@${m.github_username}) tidak dapat ditemukan!`);
-        alert(`Akun GitHub @${m.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
-        return;
+      if (!isDoc) {
+        if (!m.github_username?.trim()) {
+          setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
+          setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi!`);
+          alert(`Tolong isi akun GitHub untuk Anggota ${i + 1} terlebih dahulu!`);
+          return;
+        }
+        if (githubStatus[i] === 'invalid') {
+          setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} (@${m.github_username}) tidak dapat ditemukan!`);
+          alert(`Akun GitHub @${m.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
+          return;
+        }
       }
     }
 
@@ -401,10 +406,14 @@ export default function OrderPage() {
             <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
-                  Form Anggota Kelompok ({memberCount} Orang)
+                  {isDoc
+                    ? `Data Anggota & NIM (${memberCount} Orang)`
+                    : `Data Anggota & Akun GitHub (${memberCount} Orang)`}
                 </span>
                 <span className="text-[11px] text-white/60">
-                  Verifikasi akun GitHub langsung otomatis
+                  {isDoc
+                    ? 'Hanya nama lengkap & NIM anggota'
+                    : 'Verifikasi akun GitHub langsung otomatis'}
                 </span>
               </div>
 
@@ -428,64 +437,79 @@ export default function OrderPage() {
                       />
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                        Akun GitHub
-                      </label>
-                      <div className="relative flex items-center">
+                    {isDoc ? (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
+                          NIM (Nomor Induk Mahasiswa)
+                        </label>
                         <input
                           type="text"
-                          required
-                          placeholder="username GitHub"
-                          value={m.github_username}
-                          onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                          onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                          className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
-                            githubStatus[idx] === 'invalid'
-                              ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                              : githubStatus[idx] === 'empty'
-                              ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
-                              : githubStatus[idx] === 'valid'
-                              ? 'border-[#59d499] focus:border-[#59d499]'
-                              : 'border-white/15 focus:border-white'
-                          }`}
+                          placeholder="Contoh: 211401001"
+                          value={m.nim || ''}
+                          onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
+                          className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
                         />
-
-                        {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
-                        <div className="absolute right-3 flex items-center pointer-events-none">
-                          {githubStatus[idx] === 'checking' && (
-                            <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
-                          )}
-                          {githubStatus[idx] === 'valid' && (
-                            <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                          {githubStatus[idx] === 'invalid' && (
-                            <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </div>
                       </div>
+                    ) : (
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
+                          Akun GitHub
+                        </label>
+                        <div className="relative flex items-center">
+                          <input
+                            type="text"
+                            required
+                            placeholder="username GitHub"
+                            value={m.github_username}
+                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
+                            onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
+                            className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                              githubStatus[idx] === 'invalid'
+                                ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
+                                : githubStatus[idx] === 'empty'
+                                ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
+                                : githubStatus[idx] === 'valid'
+                                ? 'border-[#59d499] focus:border-[#59d499]'
+                                : 'border-white/15 focus:border-white'
+                            }`}
+                          />
 
-                      {/* Notification messages */}
-                      {githubStatus[idx] === 'invalid' && (
-                        <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ✕ tidak dapat menemukan akun
-                        </span>
-                      )}
-                      {githubStatus[idx] === 'empty' && (
-                        <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ⚠️ Akun GitHub belum diisi
-                        </span>
-                      )}
-                      {githubStatus[idx] === 'valid' && (
-                        <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                          ✓ Akun GitHub terverifikasi
-                        </span>
-                      )}
-                    </div>
+                          {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
+                          <div className="absolute right-3.5 flex items-center pointer-events-none">
+                            {githubStatus[idx] === 'checking' && (
+                              <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                            )}
+                            {githubStatus[idx] === 'valid' && (
+                              <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                            {githubStatus[idx] === 'invalid' && (
+                              <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Notification messages */}
+                        {githubStatus[idx] === 'invalid' && (
+                          <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ✕ tidak dapat menemukan akun
+                          </span>
+                        )}
+                        {githubStatus[idx] === 'empty' && (
+                          <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ⚠️ Akun GitHub belum diisi
+                          </span>
+                        )}
+                        {githubStatus[idx] === 'valid' && (
+                          <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ✓ Akun GitHub terverifikasi
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
