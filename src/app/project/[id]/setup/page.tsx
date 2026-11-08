@@ -19,7 +19,7 @@ export default function ProjectSetupPage({
   const [memberCount, setMemberCount] = useState<number>(4);
   const [members, setMembers] = useState<Array<{ name: string; github_username: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
-  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' }>({});
+  const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -59,7 +59,7 @@ export default function ProjectSetupPage({
   const checkGitHubAccount = async (index: number, username: string) => {
     const clean = username.trim().replace(/^@/, '');
     if (!clean) {
-      setGithubStatus((prev) => ({ ...prev, [index]: 'idle' }));
+      setGithubStatus((prev) => ({ ...prev, [index]: 'empty' }));
       return;
     }
     setGithubStatus((prev) => ({ ...prev, [index]: 'checking' }));
@@ -248,6 +248,25 @@ export default function ProjectSetupPage({
 
   const handleSaveMembers = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi data setiap anggota & akun GitHub
+    for (let i = 0; i < members.length; i++) {
+      const m = members[i];
+      if (!m.name.trim()) {
+        alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
+        return;
+      }
+      if (!m.github_username.trim()) {
+        setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
+        alert(`Tolong isi akun GitHub untuk Anggota ${i + 1} terlebih dahulu!`);
+        return;
+      }
+      if (githubStatus[i] === 'invalid') {
+        alert(`Akun GitHub @${m.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
+        return;
+      }
+    }
+
     setIsSavingMembers(true);
     try {
       const [mRes] = await Promise.all([
@@ -631,40 +650,54 @@ export default function ProjectSetupPage({
                   <div className="relative flex items-center">
                     <input
                       type="text"
+                      required
+                      placeholder="username GitHub"
                       value={m.github_username}
                       onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                       onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                      className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                      className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
                         githubStatus[idx] === 'invalid'
                           ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
+                          : githubStatus[idx] === 'empty'
+                          ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
                           : githubStatus[idx] === 'valid'
                           ? 'border-[#59d499] focus:border-[#59d499]'
                           : 'border-white/15 focus:border-white'
                       }`}
                     />
 
-                    {/* Status Icon on Right Side */}
-                    <div className="absolute right-3 flex items-center pointer-events-none">
+                    {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
+                    <div className="absolute right-3.5 flex items-center pointer-events-none">
                       {githubStatus[idx] === 'checking' && (
-                        <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                       )}
                       {githubStatus[idx] === 'valid' && (
-                        <svg className="w-4 h-4 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                        <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       )}
                       {githubStatus[idx] === 'invalid' && (
-                        <svg className="w-4 h-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       )}
                     </div>
                   </div>
 
-                  {/* Error Text below field */}
+                  {/* Notification messages */}
                   {githubStatus[idx] === 'invalid' && (
-                    <span className="text-[11px] text-red-400 font-mono mt-0.5">
-                      tidak dapat menemukan akun
+                    <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                      ✕ tidak dapat menemukan akun
+                    </span>
+                  )}
+                  {githubStatus[idx] === 'empty' && (
+                    <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                      ⚠️ Akun GitHub belum diisi
+                    </span>
+                  )}
+                  {githubStatus[idx] === 'valid' && (
+                    <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
+                      ✓ Akun GitHub terverifikasi
                     </span>
                   )}
                 </div>
