@@ -164,7 +164,7 @@ export default function ProjectDashboardPage({
             </p>
           </div>
 
-          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-4 text-[14px]">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#686868] mb-1">Pemesan</div>
@@ -247,7 +247,7 @@ export default function ProjectDashboardPage({
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         {/* Setup Banner */}
         {project.status === 'setup' && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
@@ -280,7 +280,7 @@ export default function ProjectDashboardPage({
 
         {/* Completed Banner — shown when admin marks project completed */}
         {project.status === 'completed' && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-[#59d499]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="text-[11px] uppercase tracking-wider text-[#59d499] font-medium mb-1">
                 Proyek Selesai &amp; Siap Sidang UAS
@@ -322,7 +322,7 @@ export default function ProjectDashboardPage({
         )}
 
         {/* Top Header / Project Overview */}
-        <div className="p-8 sm:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+        <div className="p-8 sm:p-10 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -401,7 +401,7 @@ export default function ProjectDashboardPage({
 
         {/* Gimmick Banner */}
         {project.selected_idea?.gimmick && (
-          <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <span className="text-[13px] text-white font-medium block mb-1">
                 Gimmick Pemikat Nilai Dosen
@@ -436,7 +436,7 @@ export default function ProjectDashboardPage({
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
+                className="p-6 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-4"
               >
                 <div>
                   <div className="text-[16px] font-medium text-white">{m.name}</div>
@@ -485,7 +485,7 @@ export default function ProjectDashboardPage({
             </span>
           </div>
 
-          <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
+          <div className="border border-white/10 rounded-[14px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
             {schedules.length === 0 ? (
               <div className="p-8 text-center text-white/60 text-[14px] font-mono">
                 Belum ada antrean commit. Tim joki akan segera menambahkan jadwal sprint mingguan.
@@ -544,7 +544,7 @@ export default function ProjectDashboardPage({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Opsi 1: Free AI README */}
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Termasuk di Paket (Gratis)
@@ -579,7 +579,7 @@ export default function ProjectDashboardPage({
             </div>
 
             {/* Opsi 2: Add-on Slide PPT Jadi */}
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col justify-between gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-[11px] uppercase tracking-wider text-white font-medium">
                   Add-on Opsional
@@ -623,7 +623,7 @@ export default function ProjectDashboardPage({
           </div>
 
           {readmeContent && (
-            <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
               <div className="flex items-center justify-between border-b border-[#e5e5e5]/10 pb-3">
                 <span className="text-[12px] font-mono text-white">
                   README.md Output Preview
@@ -645,7 +645,7 @@ export default function ProjectDashboardPage({
         {/* Modal Buy PPT */}
         {showPptModal && (
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-white/[0.06] backdrop-blur-2xl border border-white/15 rounded-[24px] p-8 flex flex-col gap-6 shadow-2xl">
+            <div className="max-w-md w-full bg-white/[0.06] backdrop-blur-2xl border border-white/15 rounded-[14px] p-8 flex flex-col gap-6 shadow-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-[20px] font-medium text-white">Pesan Slide PPT Jadi</h3>
                 <button
