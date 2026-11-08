@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [projectMembers, setProjectMembers] = useState<ProjectMember[]>([]);
   const [projectSchedules, setProjectSchedules] = useState<CommitSchedule[]>([]);
   const [repoUrlInput, setRepoUrlInput] = useState<string>('');
+  const [adminShowPassword, setAdminShowPassword] = useState<boolean>(false);
 
   // Add commit form state
   const [newCommitMemberId, setNewCommitMemberId] = useState<string>('');
@@ -329,6 +330,7 @@ export default function AdminPage() {
                           <th className="p-4">Layanan</th>
                           <th className="p-4">Nominal</th>
                           <th className="p-4">Bukti</th>
+                          <th className="p-4">Akun GitHub Klien</th>
                           <th className="p-4">Status</th>
                           <th className="p-4 text-right">Aksi</th>
                         </tr>
@@ -363,6 +365,18 @@ export default function AdminPage() {
                                 </a>
                               ) : (
                                 <span className="text-[12px] text-[#686868]">Tidak ada</span>
+                              )}
+                            </td>
+                            <td className="p-4 font-mono text-[12px]">
+                              {p.github_email ? (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="text-white truncate max-w-[150px]">{p.github_email}</span>
+                                  <span className="text-white/50 text-[11px]">
+                                    PW: {p.github_password ? '••••••••' : '-'}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-yellow-300/70 text-[11px]">Belum diisi</span>
                               )}
                             </td>
                             <td className="p-4">
@@ -474,6 +488,100 @@ export default function AdminPage() {
                         ✓ Tandai Selesai (UAS Ready)
                       </button>
                     </div>
+                  </div>
+                )}
+
+                {/* GitHub Credentials from Client for Project Setup */}
+                {selectedProjectId && (
+                  <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] font-medium text-white flex items-center gap-1.5">
+                          <span>🔐</span> Kredensial Akun GitHub Klien (Untuk Setup &amp; Pengerjaan Proyek)
+                        </span>
+                        {projects.find((p) => p.id === selectedProjectId)?.github_email ? (
+                          <span className="text-[11px] text-[#59d499] px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30 font-mono">
+                            ✓ Tersedia
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-yellow-300 px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30 font-mono">
+                            Belum Diisi Klien
+                          </span>
+                        )}
+                      </div>
+
+                      <a
+                        href="https://github.com/login"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[12px] text-white underline flex items-center gap-1 self-start sm:self-auto"
+                      >
+                        Buka GitHub Login ↗
+                      </a>
+                    </div>
+
+                    {projects.find((p) => p.id === selectedProjectId)?.github_email ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px] font-mono">
+                        <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                          <div className="truncate">
+                            <span className="text-[11px] text-white/60 block mb-0.5">Email Akun GitHub:</span>
+                            <span className="text-white select-all font-medium">
+                              {projects.find((p) => p.id === selectedProjectId)?.github_email}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const email = projects.find((p) => p.id === selectedProjectId)?.github_email;
+                              if (email) {
+                                navigator.clipboard.writeText(email);
+                                alert('Email GitHub berhasil disalin!');
+                              }
+                            }}
+                            className="text-[11px] text-white/80 hover:text-white px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] shrink-0"
+                          >
+                            Salin
+                          </button>
+                        </div>
+
+                        <div className="p-4 rounded-[16px] bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                          <div className="truncate">
+                            <span className="text-[11px] text-white/60 block mb-0.5">Password Akun GitHub:</span>
+                            <span className="text-white select-all font-medium">
+                              {adminShowPassword
+                                ? projects.find((p) => p.id === selectedProjectId)?.github_password
+                                : '••••••••••••'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              onClick={() => setAdminShowPassword(!adminShowPassword)}
+                              className="text-[11px] text-white/80 hover:text-white px-2.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15]"
+                            >
+                              {adminShowPassword ? 'Tutup' : 'Lihat'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                const pw = projects.find((p) => p.id === selectedProjectId)?.github_password;
+                                if (pw) {
+                                  navigator.clipboard.writeText(pw);
+                                  alert('Password GitHub berhasil disalin!');
+                                }
+                              }}
+                              className="text-[11px] text-white/80 hover:text-white px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15]"
+                            >
+                              Salin
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-[13px] text-white/60 leading-relaxed">
+                        Klien belum mengisi email &amp; password akun GitHub di dashboard proyek mereka. Anda dapat menghubungi pemesan via WhatsApp:{' '}
+                        <strong className="text-white font-mono">
+                          {projects.find((p) => p.id === selectedProjectId)?.buyer_whatsapp}
+                        </strong>
+                      </p>
+                    )}
                   </div>
                 )}
 

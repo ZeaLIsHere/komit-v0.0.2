@@ -29,6 +29,13 @@ export default function ProjectSetupPage({
   const [generatedIdeas, setGeneratedIdeas] = useState<IdeaItem[]>([]);
   const [selectedIdea, setSelectedIdea] = useState<IdeaItem | null>(null);
 
+  // GitHub credentials for admin state
+  const [githubEmail, setGithubEmail] = useState<string>('');
+  const [githubPassword, setGithubPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isSavingCredentials, setIsSavingCredentials] = useState<boolean>(false);
+  const [credentialsSaved, setCredentialsSaved] = useState<boolean>(false);
+
   // Member form submission state
   const [isSavingMembers, setIsSavingMembers] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -103,6 +110,12 @@ export default function ProjectSetupPage({
         if (data.project.niche_input) {
           setNiche(data.project.niche_input);
         }
+        if (data.project.github_email) {
+          setGithubEmail(data.project.github_email);
+        }
+        if (data.project.github_password) {
+          setGithubPassword(data.project.github_password);
+        }
 
         const mRes = await fetch(`/api/projects/${id}/members`);
         if (mRes.ok) {
@@ -134,6 +147,37 @@ export default function ProjectSetupPage({
 
     loadData();
   }, [id]);
+
+  const handleSaveCredentials = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!githubEmail.trim() || !githubPassword.trim()) {
+      alert('Email GitHub dan Password akun wajib diisi');
+      return;
+    }
+
+    setIsSavingCredentials(true);
+    try {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          github_email: githubEmail.trim(),
+          github_password: githubPassword.trim(),
+        }),
+      });
+
+      if (!res.ok) throw new Error('Gagal menyimpan kredensial GitHub');
+      const data = await res.json();
+      setProject(data.project);
+      setCredentialsSaved(true);
+      setTimeout(() => setCredentialsSaved(false), 3000);
+      alert('Data akun GitHub berhasil dikirim ke panel admin!');
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Gagal mengirim kredensial');
+    } finally {
+      setIsSavingCredentials(false);
+    }
+  };
 
   const handleSimulatePaymentApprove = async () => {
     try {
@@ -312,6 +356,88 @@ export default function ProjectSetupPage({
             Pilih rekomendasi ide aplikasi dari AI, isi data anggota kelompok, dan bagikan tautan koneksi GitHub sebelum pengerjaan sprint dimulai.
           </p>
         </div>
+
+        {/* SECTION: GITHUB CREDENTIALS FOR ADMIN SETUP */}
+        <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
+                  Form Akun Pengerjaan Joki
+                </span>
+                {project.github_email && project.github_password && (
+                  <span className="text-[11px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                    ✓ Kredensial Terkirim ke Admin
+                  </span>
+                )}
+              </div>
+              <h2 className="text-[20px] font-medium text-white">
+                Email &amp; Password GitHub untuk Tim Joki
+              </h2>
+              <p className="text-[14px] text-[#c2c2c2] max-w-2xl leading-relaxed">
+                Masukkan email dan password akun GitHub Anda. Data ini akan diteruskan langsung ke panel admin agar operator joki dapat login, mengonfigurasi repository, dan melanjutkan pengerjaan proyek Anda.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveCredentials} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
+                  Email Akun GitHub
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="contoh: akun@gmail.com"
+                  value={githubEmail}
+                  onChange={(e) => setGithubEmail(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-medium">
+                    Password Akun GitHub
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[11px] text-white/60 hover:text-white"
+                  >
+                    {showPassword ? 'Sembunyikan' : 'Lihat'}
+                  </button>
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••••••"
+                  value={githubPassword}
+                  onChange={(e) => setGithubPassword(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <p className="text-[12px] text-white/50 leading-relaxed font-mono">
+                🔒 Data hanya terlihat oleh tim admin terautentikasi untuk kebutuhan setup repository.
+              </p>
+              <button
+                type="submit"
+                disabled={isSavingCredentials}
+                className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full self-start sm:self-auto shrink-0"
+              >
+                {isSavingCredentials
+                  ? 'Mengirim...'
+                  : credentialsSaved
+                  ? '✓ Berhasil Dikirim!'
+                  : 'Kirim Kredensial ke Admin ↗'}
+              </button>
+            </div>
+          </form>
+        </section>
 
         {/* STEP 1: AI IDEATION */}
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
