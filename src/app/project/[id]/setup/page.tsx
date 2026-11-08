@@ -297,14 +297,6 @@ export default function ProjectSetupPage({
 
       <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] uppercase tracking-wider text-[#161616] bg-white px-2.5 py-0.5 rounded-full font-medium">
-              Pembayaran Terverifikasi
-            </span>
-            <span className="text-[12px] text-[#686868] font-mono">
-              ID: {project.id.slice(0, 8)}
-            </span>
-          </div>
           <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Setup Proyek & Data Kelompok
           </h1>
@@ -331,82 +323,91 @@ export default function ProjectSetupPage({
                 placeholder="Contoh: Pemrograman Web — Sistem Manajemen Lab Komputer"
                 value={niche}
                 onChange={(e) => setNiche(e.target.value)}
-                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
+                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-6 py-3.5 text-[14px] text-white outline-none transition-colors"
               />
               <button
                 type="button"
                 onClick={handleGenerateIdeas}
                 disabled={isGeneratingIdeas}
-                className="btn-white-pill text-[13px] px-6 py-3 rounded-full transition-all shrink-0"
+                className="btn-white-pill text-[13px] px-7 py-3.5 rounded-full transition-all shrink-0"
               >
                 {isGeneratingIdeas ? 'Menghasilkan...' : 'Generate 3 Ide AI'}
               </button>
             </div>
 
             {selectedIdea && (
-              <div className="p-6 rounded-[16px] bg-white/[0.04] border border-white flex flex-col gap-3">
+              <div className="p-7 rounded-[24px] bg-white/[0.06] backdrop-blur-xl border border-white flex flex-col gap-4 shadow-[0_8px_30px_rgba(255,255,255,0.08)]">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-white">
-                    Ide Terpilih & Terkunci
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#161616] bg-white px-3 py-1 rounded-full font-medium">
+                    ✓ Ide Terpilih &amp; Terkunci
                   </span>
-                  <span className="text-[11px] text-[#686868] font-mono">Tersimpan</span>
+                  <span className="text-[12px] text-white/60 font-mono">Tersimpan</span>
                 </div>
-                <h3 className="text-[22px] font-medium text-white">{selectedIdea.title}</h3>
-                <p className="text-[14px] text-[#c2c2c2]">{selectedIdea.description}</p>
-                <div className="p-4 rounded-[10px] bg-white/[0.05] border border-white/10 text-[13px]">
-                  <span className="text-[11px] text-white uppercase tracking-wider block mb-1">
+                <h3 className="text-[24px] font-medium text-white leading-tight">{selectedIdea.title}</h3>
+                <p className="text-[15px] text-white/80 leading-relaxed">{selectedIdea.description}</p>
+                
+                <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
+                  <span className="text-[11px] text-[#ffb829] font-mono uppercase tracking-wider block">
                     Gimmick Pemikat Dosen:
                   </span>
-                  <span className="text-[#ededed]">{selectedIdea.gimmick}</span>
+                  <p className="text-[14px] text-white/90 leading-relaxed">{selectedIdea.gimmick}</p>
                 </div>
               </div>
             )}
 
             {generatedIdeas.length > 0 && (
-              <div className="grid grid-cols-1 gap-4">
-                {generatedIdeas.map((idea) => (
-                  <div
-                    key={idea.id}
-                    className={`p-6 rounded-[16px] border transition-all flex flex-col gap-4 ${
-                      selectedIdea?.id === idea.id
-                        ? 'bg-[#1f1f1f] border-white'
-                        : 'bg-[#0a0a0a] border-[#e5e5e5]/10 hover:border-[#e5e5e5]/25'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="text-[18px] font-medium text-white">{idea.title}</h4>
-                        <p className="text-[14px] text-[#c2c2c2] mt-1">{idea.description}</p>
+              <div className="grid grid-cols-1 gap-5">
+                {generatedIdeas.map((idea) => {
+                  const isSelected = selectedIdea?.id === idea.id;
+                  return (
+                    <div
+                      key={idea.id}
+                      className={`p-7 rounded-[24px] backdrop-blur-xl border transition-all flex flex-col gap-5 ${
+                        isSelected
+                          ? 'bg-white/[0.07] border-white shadow-[0_8px_30px_rgba(255,255,255,0.06)]'
+                          : 'bg-white/[0.03] border-white/10 hover:border-white/25 hover:bg-white/[0.05]'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col gap-1.5 flex-1">
+                          <h4 className="text-[20px] font-medium text-white leading-snug">{idea.title}</h4>
+                          <p className="text-[14px] text-white/75 leading-relaxed">{idea.description}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleSelectIdea(idea)}
+                          className={`text-[13px] font-medium px-5 py-2.5 rounded-full shrink-0 transition-all ${
+                            isSelected
+                              ? 'btn-white-pill shadow-[0_0_20px_rgba(255,255,255,0.2)]'
+                              : 'bg-white/[0.08] hover:bg-white/[0.15] border border-white/20 text-white hover:border-white'
+                          }`}
+                        >
+                          {isSelected ? '✓ Terkunci' : 'Kunci Ide Ini ↗'}
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectIdea(idea)}
-                        className={`text-[12px] font-medium px-4 py-2 rounded-full shrink-0 transition-all ${
-                          selectedIdea?.id === idea.id
-                            ? 'bg-white text-[#161616]'
-                            : 'border border-[#e5e5e5]/20 text-white hover:border-white'
-                        }`}
-                      >
-                        {selectedIdea?.id === idea.id ? 'Terkunci' : 'Kunci Ide Ini'}
-                      </button>
-                    </div>
 
-                    <div className="p-3.5 rounded-[10px] bg-[#161616]">
-                      <span className="text-[11px] uppercase tracking-wider text-white block mb-1">
-                        Gimmick Dosen:
-                      </span>
-                      <p className="text-[13px] text-[#ededed]">{idea.gimmick}</p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {idea.techStack?.map((t) => (
-                        <span key={t} className="text-[11px] font-mono text-[#c2c2c2] px-2.5 py-1 rounded-[6px] bg-[#161616] border border-[#e5e5e5]/10">
-                          {t}
+                      {/* Gimmick Panel */}
+                      <div className="border-l-2 border-[#ffb829] bg-white/[0.03] p-4 rounded-r-[14px] flex flex-col gap-1">
+                        <span className="text-[11px] uppercase tracking-wider text-[#ffb829] font-mono">
+                          Gimmick Dosen:
                         </span>
-                      ))}
+                        <p className="text-[14px] text-white/90 leading-relaxed">{idea.gimmick}</p>
+                      </div>
+
+                      {/* Tech Stack Chips */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-white/10">
+                        {idea.techStack?.map((t) => (
+                          <span
+                            key={t}
+                            className="text-[12px] font-mono text-white/80 px-3.5 py-1 rounded-full bg-white/[0.05] border border-white/10"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </section>
@@ -494,7 +495,7 @@ export default function ProjectSetupPage({
                     placeholder={idx === 0 ? 'Nama Lengkap Ketua' : `Nama Anggota ${idx + 1}`}
                     value={m.name}
                     onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 py-3 text-[14px] text-white outline-none transition-colors"
                   />
                 </div>
 
@@ -508,7 +509,7 @@ export default function ProjectSetupPage({
                       value={m.github_username}
                       onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                       onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                      className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-9 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                      className={`w-full bg-white/[0.04] border rounded-full px-5 pr-11 py-3 text-[14px] font-mono text-white outline-none transition-colors ${
                         githubStatus[idx] === 'invalid'
                           ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                           : githubStatus[idx] === 'valid'
@@ -518,7 +519,7 @@ export default function ProjectSetupPage({
                     />
 
                     {/* Status Icon on Right Side */}
-                    <div className="absolute right-3 flex items-center pointer-events-none">
+                    <div className="absolute right-4 flex items-center pointer-events-none">
                       {githubStatus[idx] === 'checking' && (
                         <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                       )}
