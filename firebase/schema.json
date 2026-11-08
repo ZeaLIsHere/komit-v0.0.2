@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KomitV2FirestoreSchema",
+  "description": "Firestore Database Schema & Entity Specification for Komit-V2",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": ["id", "email", "name", "role", "created_at", "updated_at"],
+      "properties": {
+        "id": { "type": "string", "description": "Firebase Auth UID (Primary Key)" },
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "whatsapp": { "type": "string" },
+        "github_username": { "type": "string" },
+        "photo_url": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "required": [
+        "id",
+        "buyer_name",
+        "buyer_whatsapp",
+        "service_type",
+        "package_type",
+        "member_count",
+        "total_price",
+        "payment_status",
+        "status",
+        "ppt_addon_paid",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "id": { "type": "string", "description": "Project Document ID (Primary Key)" },
+        "customer_id": { "type": ["string", "null"], "description": "Foreign Key to users.id" },
+        "buyer_name": { "type": "string" },
+        "buyer_email": { "type": ["string", "null"] },
+        "buyer_whatsapp": { "type": "string" },
+        "service_type": { "type": "string", "enum": ["project_joki", "makalah", "ppt", "tugas_ringan"] },
+        "package_type": { "type": "string", "enum": ["full", "code_only", "idea_only"] },
+        "member_count": { "type": "integer", "minimum": 1, "maximum": 8 },
+        "total_price": { "type": "integer" },
+        "payment_proof_url": { "type": ["string", "null"] },
+        "payment_status": { "type": "string", "enum": ["pending", "paid", "rejected"] },
+        "payment_verified_at": { "type": ["string", "null"] },
+        "payment_verified_by": { "type": ["string", "null"] },
+        "niche_input": { "type": ["string", "null"] },
+        "generated_ideas": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "description", "gimmick", "techStack"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "gimmick": { "type": "string" },
+              "techStack": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "selected_idea": {
+          "type": ["object", "null"],
+          "properties": {
+            "id": { "type": "string" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "gimmick": { "type": "string" },
+            "techStack": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "github_repo_url": { "type": ["string", "null"] },
+        "github_email": { "type": ["string", "null"] },
+        "github_password": { "type": ["string", "null"] },
+        "readme_content": { "type": ["string", "null"] },
+        "ppt_addon_paid": { "type": "boolean" },
+        "ppt_proof_url": { "type": ["string", "null"] },
+        "ppt_file_url": { "type": ["string", "null"] },
+        "status": { "type": "string", "enum": ["waiting_payment", "setup", "in_progress", "completed"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "ProjectMember": {
+      "type": "object",
+      "required": ["id", "project_id", "name", "nim", "kom", "is_connected", "created_at", "updated_at"],
+      "properties": {
+        "id": { "type": "string", "description": "Member Document ID (Primary Key)" },
+        "project_id": { "type": "string", "description": "Foreign Key to projects.id" },
+        "name": { "type": "string" },
+        "nim": { "type": "string" },
+        "kom": { "type": "string" },
+        "github_username": { "type": ["string", "null"] },
+        "github_email": { "type": ["string", "null"] },
+        "is_connected": { "type": "boolean" },
+        "connected_at": { "type": ["string", "null"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "MemberSecret": {
+      "type": "object",
+      "description": "Server-Only credentials collection: member_secrets. Never accessible to client SDK.",
+      "required": ["id", "project_id", "github_access_token", "updated_at"],
+      "properties": {
+        "id": { "type": "string", "description": "Primary Key (1:1 with project_members.id)" },
+        "project_id": { "type": "string", "description": "Foreign Key to projects.id" },
+        "github_access_token": { "type": "string" },
+        "token_type": { "type": "string" },
+        "scope": { "type": "string" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "CommitSchedule": {
+      "type": "object",
+      "required": ["id", "project_id", "member_id", "commit_message", "scheduled_at", "status", "created_at"],
+      "properties": {
+        "id": { "type": "string", "description": "Schedule Document ID (Primary Key)" },
+        "project_id": { "type": "string", "description": "Foreign Key to projects.id" },
+        "member_id": { "type": "string", "description": "Foreign Key to project_members.id" },
+        "member_name": { "type": "string" },
+        "github_username": { "type": "string" },
+        "commit_message": { "type": "string" },
+        "scheduled_at": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["scheduled", "pushed", "failed"] },
+        "commit_hash": { "type": ["string", "null"] },
+        "error_message": { "type": ["string", "null"] },
+        "pushed_at": { "type": ["string", "null"] },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

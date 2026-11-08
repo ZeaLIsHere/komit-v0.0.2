@@ -1,4 +1,9 @@
 import { NextResponse } from 'next/server';
+import {
+  isFirebaseConfigured,
+  fsGetDueCommitSchedules,
+  fsUpdateCommitSchedule,
+} from '@/lib/firestore';
 import { supabaseAdmin, isSupabaseConfigured } from '@/lib/supabase';
 import { getAllProjects, getCommitSchedules } from '@/lib/data';
 
@@ -21,8 +26,24 @@ export async function POST(req: Request) {
 
     const pushedResults: Array<{ scheduleId: string; commitHash: string; message: string }> = [];
 
-    if (isSupabaseConfigured && supabaseAdmin) {
-      // Query all due schedules
+    // 1. Prioritas: Firebase Firestore
+    if (isFirebaseConfigured) {
+      const dueSchedules = await fsGetDueCommitSchedules(forceNow);
+      for (const s of dueSchedules) {
+        const commitHash = Math.random().toString(16).substring(2, 9);
+        await fsUpdateCommitSchedule(s.id, {
+          status: 'pushed',
+          commit_hash: commitHash,
+        });
+
+        pushedResults.push({
+          scheduleId: s.id,
+          commitHash,
+          message: s.commit_message,
+        });
+      }
+    } else if (isSupabaseConfigured && supabaseAdmin) {
+      // 2. Supabase legacy
       let query = supabaseAdmin
         .from('commit_schedules')
         .select('*')

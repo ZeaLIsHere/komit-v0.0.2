@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -16,6 +16,9 @@ export default function AdminPage() {
   const [projectMembers, setProjectMembers] = useState<ProjectMember[]>([]);
   const [projectSchedules, setProjectSchedules] = useState<CommitSchedule[]>([]);
   const [repoUrlInput, setRepoUrlInput] = useState<string>('');
+  const [adminShowPassword, setAdminShowPassword] = useState<boolean>(false);
+  const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+  const [copiedPassword, setCopiedPassword] = useState<boolean>(false);
 
   // Add commit form state
   const [newCommitMemberId, setNewCommitMemberId] = useState<string>('');
@@ -26,6 +29,18 @@ export default function AdminPage() {
   const [isPushingCommit, setIsPushingCommit] = useState<string | null>(null);
   const [isRunningCron, setIsRunningCron] = useState<boolean>(false);
 
+  // Upload PPT state
+  const [pptFileUrlInput, setPptFileUrlInput] = useState<{ [projectId: string]: string }>({});
+
+  // Summary Metrics
+  const stats = useMemo(() => {
+    const total = projects.length;
+    const pendingPayment = projects.filter((p) => p.payment_status === 'pending').length;
+    const inProgress = projects.filter((p) => p.status === 'in_progress').length;
+    const withCredentials = projects.filter((p) => Boolean(p.github_email && p.github_password)).length;
+    return { total, pendingPayment, inProgress, withCredentials };
+  }, [projects]);
+
   // Trigger batch cron auto-push
   const handleRunCronAutoPush = async () => {
     setIsRunningCron(true);
@@ -33,7 +48,7 @@ export default function AdminPage() {
       const res = await fetch('/api/cron/push-commits?force=true', { method: 'POST' });
       const data = await res.json();
       if (res.ok) {
-        alert(`Auto-Push selesai! ${data.totalPushed} commit berhasil didorong ke antrean.`);
+        alert(`Auto-Push selesai: ${data.totalPushed} commit berhasil dipush.`);
         if (selectedProjectId) {
           const sRes = await fetch(`/api/projects/${selectedProjectId}/schedules`);
           const sData = await sRes.json();
@@ -46,9 +61,6 @@ export default function AdminPage() {
       setIsRunningCron(false);
     }
   };
-
-  // Upload PPT state
-  const [pptFileUrlInput, setPptFileUrlInput] = useState<{ [projectId: string]: string }>({});
 
   useEffect(() => {
     loadAllProjects();
@@ -116,7 +128,6 @@ export default function AdminPage() {
       });
       if (res.ok) {
         await loadAllProjects();
-        alert(`Status pembayaran berhasil diubah menjadi ${newStatus}`);
       }
     } catch {
       alert('Gagal memperbarui status pembayaran');
@@ -149,7 +160,6 @@ export default function AdminPage() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (res.ok) {
-        alert(`Status proyek diubah menjadi: ${newStatus}`);
         loadAllProjects();
       }
     } catch {
@@ -180,7 +190,6 @@ export default function AdminPage() {
         const sData = await sRes.json();
         setProjectSchedules(sData.schedules || []);
         setNewCommitMessage('');
-        alert('Jadwal commit berhasil ditambahkan!');
       }
     } catch {
       alert('Gagal menambahkan jadwal');
@@ -206,7 +215,7 @@ export default function AdminPage() {
         const sRes = await fetch(`/api/projects/${selectedProjectId}/schedules`);
         const sData = await sRes.json();
         setProjectSchedules(sData.schedules || []);
-        alert(`Berhasil di-push! Hash: #${data.commitHash}`);
+        alert(`Commit berhasil di-push: #${data.commitHash}`);
       } else {
         throw new Error(data.error || 'Gagal push commit');
       }
@@ -231,7 +240,7 @@ export default function AdminPage() {
         body: JSON.stringify({ ppt_file_url: fileUrl }),
       });
       if (res.ok) {
-        alert('File PPT berhasil ditautkan ke proyek!');
+        alert('File PPT berhasil ditautkan ke proyek');
         loadAllProjects();
       }
     } catch {
@@ -239,36 +248,53 @@ export default function AdminPage() {
     }
   };
 
+  const selectedProject = projects.find((p) => p.id === selectedProjectId);
+
   return (
-    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans bg-[#0a0a0a]">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#e5e5e5]/10 pb-6">
-          <div>
-            <h1 className="text-[32px] sm:text-[40px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
-              Admin &amp; Tim Joki Komit
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 py-16 flex flex-col gap-8">
+        {/* Header Title & Segmented Control */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/10 pb-6">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-white/50 font-mono">
+              Panel Operator & Joki
+            </span>
+            <h1 className="text-[32px] sm:text-[38px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
+              Admin Workspace
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {/* Tab Navigation in Pill Container */}
-            <div className="flex items-center gap-1.5 p-1 bg-[#161616] rounded-full border border-[#e5e5e5]/10">
+            <div className="flex items-center gap-1 p-1 bg-white/[0.04] backdrop-blur-xl rounded-full border border-white/10">
               <button
                 onClick={() => setActiveTab('payments')}
-                className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all flex items-center gap-1.5 ${
                   activeTab === 'payments'
-                    ? 'bg-white text-[#161616]'
+                    ? 'bg-white text-[#161616] shadow-[0_2px_10px_rgba(0,0,0,0.3)]'
                     : 'text-[#c2c2c2] hover:text-white'
                 }`}
               >
-                Verifikasi QRIS
+                <span>Verifikasi QRIS</span>
+                {stats.pendingPayment > 0 && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      activeTab === 'payments'
+                        ? 'bg-[#161616] text-white'
+                        : 'bg-[#ffb829] text-[#161616] font-bold'
+                    }`}
+                  >
+                    {stats.pendingPayment}
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => setActiveTab('scheduler')}
                 className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all ${
                   activeTab === 'scheduler'
-                    ? 'bg-white text-[#161616]'
+                    ? 'bg-white text-[#161616] shadow-[0_2px_10px_rgba(0,0,0,0.3)]'
                     : 'text-[#c2c2c2] hover:text-white'
                 }`}
               >
@@ -278,7 +304,7 @@ export default function AdminPage() {
                 onClick={() => setActiveTab('ppt')}
                 className={`px-4 py-2 rounded-full text-[12px] font-medium transition-all ${
                   activeTab === 'ppt'
-                    ? 'bg-white text-[#161616]'
+                    ? 'bg-white text-[#161616] shadow-[0_2px_10px_rgba(0,0,0,0.3)]'
                     : 'text-[#c2c2c2] hover:text-white'
                 }`}
               >
@@ -291,15 +317,45 @@ export default function AdminPage() {
                 await fetch('/api/admin/logout', { method: 'POST' });
                 window.location.href = '/admin/login';
               }}
-              className="text-[12px] text-[#c2c2c2] hover:text-white border border-[#e5e5e5]/15 px-4 py-2 rounded-full bg-[#161616] transition-colors"
+              className="text-[12px] text-white/70 hover:text-white border border-white/10 px-4 py-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] transition-colors"
             >
               Keluar
             </button>
           </div>
         </div>
 
+        {/* Executive Summary Stats Bar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col gap-1">
+            <span className="text-[11px] uppercase tracking-wider text-white/50 font-mono">Total Pesanan</span>
+            <span className="text-[26px] font-medium text-white font-mono">{stats.total}</span>
+          </div>
+
+          <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col gap-1">
+            <span className="text-[11px] uppercase tracking-wider text-white/50 font-mono">Menunggu Verifikasi</span>
+            <div className="flex items-center gap-2">
+              <span className={`text-[26px] font-medium font-mono ${stats.pendingPayment > 0 ? 'text-[#ffb829]' : 'text-white'}`}>
+                {stats.pendingPayment}
+              </span>
+              {stats.pendingPayment > 0 && (
+                <span className="w-2 h-2 rounded-full bg-[#ffb829] animate-pulse" />
+              )}
+            </div>
+          </div>
+
+          <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col gap-1">
+            <span className="text-[11px] uppercase tracking-wider text-white/50 font-mono">Sedang Berjalan</span>
+            <span className="text-[26px] font-medium text-white font-mono">{stats.inProgress}</span>
+          </div>
+
+          <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col gap-1">
+            <span className="text-[11px] uppercase tracking-wider text-white/50 font-mono">Kredensial GitHub Siap</span>
+            <span className="text-[26px] font-medium text-[#59d499] font-mono">{stats.withCredentials}</span>
+          </div>
+        </div>
+
         {loading ? (
-          <div className="py-20 text-center text-[#686868] font-mono text-[14px]">
+          <div className="py-20 text-center text-[#686868] font-mono text-[13px] rounded-[24px] border border-white/10 bg-white/[0.02]">
             Memuat data internal operator...
           </div>
         ) : (
@@ -308,37 +364,38 @@ export default function AdminPage() {
             {activeTab === 'payments' && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-[20px] font-medium text-white tracking-tight">
-                    Antrean Pembayaran Masuk ({projects.length})
+                  <h2 className="text-[18px] font-medium text-white tracking-tight">
+                    Antrean Pembayaran ({projects.length})
                   </h2>
                   <button
                     onClick={loadAllProjects}
-                    className="text-[12px] text-[#c2c2c2] hover:text-white border border-[#e5e5e5]/10 px-4 py-1.5 rounded-full bg-[#161616]"
+                    className="text-[12px] text-white/80 hover:text-white border border-white/10 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
                   >
                     Refresh Data
                   </button>
                 </div>
 
-                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.03] backdrop-blur-xl">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-[14px]">
-                      <thead className="bg-white/[0.05] text-white/70 text-[12px] border-b border-white/10">
+                    <table className="w-full text-left text-[13px]">
+                      <thead className="bg-white/[0.03] text-white/60 text-[11px] uppercase tracking-wider font-mono border-b border-white/10">
                         <tr>
-                          <th className="p-4">Tanggal & ID</th>
-                          <th className="p-4">Pemesan</th>
-                          <th className="p-4">Layanan</th>
-                          <th className="p-4">Nominal</th>
-                          <th className="p-4">Bukti</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4 text-right">Aksi</th>
+                          <th className="p-4 font-normal">Tanggal & ID</th>
+                          <th className="p-4 font-normal">Pemesan</th>
+                          <th className="p-4 font-normal">Layanan & Paket</th>
+                          <th className="p-4 font-normal">Nominal</th>
+                          <th className="p-4 font-normal">Bukti QRIS</th>
+                          <th className="p-4 font-normal">Akun GitHub Klien</th>
+                          <th className="p-4 font-normal">Status</th>
+                          <th className="p-4 text-right font-normal">Aksi</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#e5e5e5]/10">
+                      <tbody className="divide-y divide-white/10">
                         {projects.map((p) => (
                           <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
                             <td className="p-4 font-mono text-[12px] text-[#c2c2c2]">
                               <div>{new Date(p.created_at).toLocaleDateString('id-ID')}</div>
-                              <div className="text-[10px] text-[#686868]">{p.id.slice(0, 8)}</div>
+                              <div className="text-[10px] text-white/40">{p.id.slice(0, 8)}</div>
                             </td>
                             <td className="p-4">
                               <div className="font-medium text-white">{p.buyer_name}</div>
@@ -346,7 +403,7 @@ export default function AdminPage() {
                             </td>
                             <td className="p-4">
                               <div className="text-white capitalize">{p.service_type.replace('_', ' ')}</div>
-                              <div className="text-[12px] text-[#686868]">{p.package_type} • {p.member_count} org</div>
+                              <div className="text-[12px] text-white/50">{p.package_type} • {p.member_count} org</div>
                             </td>
                             <td className="p-4 font-mono text-white font-medium">
                               Rp {p.total_price.toLocaleString('id-ID')}
@@ -357,12 +414,24 @@ export default function AdminPage() {
                                   href={p.payment_proof_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-[12px] text-white underline"
+                                  className="text-[12px] text-white/80 hover:text-white underline inline-flex items-center gap-1"
                                 >
-                                  Lihat Bukti
+                                  Lihat Bukti ↗
                                 </a>
                               ) : (
                                 <span className="text-[12px] text-[#686868]">Tidak ada</span>
+                              )}
+                            </td>
+                            <td className="p-4 font-mono text-[12px]">
+                              {p.github_email ? (
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="text-white truncate max-w-[150px]">{p.github_email}</span>
+                                  <span className="text-white/40 text-[11px]">
+                                    PW: {p.github_password ? '••••••••' : '-'}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-yellow-300/70 text-[11px] font-mono">Belum diisi</span>
                               )}
                             </td>
                             <td className="p-4">
@@ -371,8 +440,8 @@ export default function AdminPage() {
                                   p.payment_status === 'paid'
                                     ? 'bg-white text-[#161616] font-medium'
                                     : p.payment_status === 'rejected'
-                                    ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                                    : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
+                                    ? 'bg-red-500/15 text-red-300 border border-red-500/30 font-mono'
+                                    : 'bg-[#ffb829]/15 text-[#ffb829] border border-[#ffb829]/30 font-mono'
                                 }`}
                               >
                                 {p.payment_status}
@@ -389,7 +458,7 @@ export default function AdminPage() {
                                   </button>
                                   <button
                                     onClick={() => handlePaymentStatus(p.id, 'rejected')}
-                                    className="bg-[#0a0a0a] hover:bg-red-950/40 text-red-300 text-[11px] px-3.5 py-1.5 rounded-full border border-[#e5e5e5]/10 transition-all"
+                                    className="bg-white/[0.04] hover:bg-red-950/40 text-red-300 text-[11px] px-3.5 py-1.5 rounded-full border border-white/10 transition-all"
                                   >
                                     Reject
                                   </button>
@@ -397,9 +466,9 @@ export default function AdminPage() {
                               ) : (
                                 <Link
                                   href={`/project/${p.id}`}
-                                  className="text-[12px] text-white hover:underline"
+                                  className="text-[12px] text-white/70 hover:text-white underline font-mono"
                                 >
-                                  Dashboard →
+                                  Dashboard ↗
                                 </Link>
                               )}
                             </td>
@@ -415,14 +484,14 @@ export default function AdminPage() {
             {/* TAB 2: COMMIT SCHEDULER & GITHUB PUSH */}
             {activeTab === 'scheduler' && (
               <div className="flex flex-col gap-6">
-                {/* Project Selector */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
+                {/* Project Selector & Repo URL */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/10">
                   <div className="flex items-center gap-3">
-                    <span className="text-[13px] text-white">Pilih Proyek:</span>
+                    <span className="text-[12px] uppercase tracking-wider text-white/60 font-mono">Proyek:</span>
                     <select
                       value={selectedProjectId}
                       onChange={(e) => setSelectedProjectId(e.target.value)}
-                      className="bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[14px] outline-none"
+                      className="bg-[#161616] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2 text-[13px] outline-none"
                     >
                       {projects.map((p) => (
                         <option key={p.id} value={p.id} className="bg-[#161616]">
@@ -438,11 +507,11 @@ export default function AdminPage() {
                       placeholder="https://github.com/org/repo-uas"
                       value={repoUrlInput}
                       onChange={(e) => setRepoUrlInput(e.target.value)}
-                      className="flex-1 bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[13px] font-mono outline-none"
+                      className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2 text-[13px] font-mono outline-none"
                     />
                     <button
                       onClick={handleSaveRepoUrl}
-                      className="bg-[#1f1f1f] hover:bg-[#282828] text-white border border-[#e5e5e5]/15 text-[12px] px-4 py-2 rounded-full transition-all shrink-0"
+                      className="btn-white-pill text-[12px] px-4 py-2 rounded-full shrink-0"
                     >
                       Simpan Repo
                     </button>
@@ -451,45 +520,143 @@ export default function AdminPage() {
 
                 {/* Quick Status Control */}
                 {selectedProjectId && (
-                  <div className="p-4 rounded-[16px] bg-white/[0.04] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-[13px]">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[#c2c2c2]">Status Pengerjaan:</span>
-                      <span className="font-mono text-white capitalize bg-white/[0.08] border border-white/10 px-2.5 py-1 rounded-[6px]">
-                        {projects.find((p) => p.id === selectedProjectId)?.status || 'waiting_payment'}
+                  <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-wrap items-center justify-between gap-4 text-[13px]">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-white/60 text-[12px] font-mono uppercase tracking-wider">Tahap Proyek:</span>
+                      <span className="font-mono text-white capitalize bg-white/[0.08] border border-white/10 px-3 py-1 rounded-[6px]">
+                        {selectedProject?.status || 'waiting_payment'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-[12px] text-[#c2c2c2]">Ubah Tahap:</span>
                       <button
                         onClick={() => handleUpdateProjectStatus('in_progress')}
-                        className="bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 text-white px-3.5 py-1.5 rounded-full text-[12px] transition-colors"
+                        className="bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white px-4 py-1.5 rounded-full text-[12px] transition-colors"
                       >
-                        ⚡ Tandai In-Progress
+                        Tandai In-Progress
                       </button>
                       <button
                         onClick={() => handleUpdateProjectStatus('completed')}
-                        className="btn-white-pill text-[12px] px-3.5 py-1.5 rounded-full"
+                        className="btn-white-pill text-[12px] px-4 py-1.5 rounded-full"
                       >
-                        ✓ Tandai Selesai (UAS Ready)
+                        Tandai Selesai (UAS Ready)
                       </button>
                     </div>
+                  </div>
+                )}
+
+                {/* GitHub Credentials from Client Card */}
+                {selectedProjectId && (
+                  <div className="p-6 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span className="text-[13px] font-medium text-white">
+                          Kredensial Akun GitHub Klien (Setup & Pengerjaan)
+                        </span>
+                        {selectedProject?.github_email ? (
+                          <span className="text-[11px] text-[#59d499] px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30 font-mono">
+                            ✓ Tersedia
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-yellow-300 px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30 font-mono">
+                            Belum Diisi Klien
+                          </span>
+                        )}
+                      </div>
+
+                      <a
+                        href="https://github.com/login"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[12px] text-white/80 hover:text-white underline inline-flex items-center gap-1 self-start sm:self-auto font-mono"
+                      >
+                        Buka GitHub Login ↗
+                      </a>
+                    </div>
+
+                    {selectedProject?.github_email ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px] font-mono">
+                        <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex items-center justify-between gap-3">
+                          <div className="truncate">
+                            <span className="text-[11px] text-white/50 block mb-0.5">Email Akun:</span>
+                            <span className="text-white select-all font-medium">
+                              {selectedProject.github_email}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (selectedProject.github_email) {
+                                navigator.clipboard.writeText(selectedProject.github_email);
+                                setCopiedEmail(true);
+                                setTimeout(() => setCopiedEmail(false), 2000);
+                              }
+                            }}
+                            className="text-[11px] text-white/80 hover:text-white px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] shrink-0 transition-colors"
+                          >
+                            {copiedEmail ? 'Tersalin!' : 'Salin'}
+                          </button>
+                        </div>
+
+                        <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex items-center justify-between gap-3">
+                          <div className="truncate">
+                            <span className="text-[11px] text-white/50 block mb-0.5">Password:</span>
+                            <span className="text-white select-all font-medium">
+                              {adminShowPassword
+                                ? selectedProject.github_password
+                                : '••••••••••••'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              onClick={() => setAdminShowPassword(!adminShowPassword)}
+                              className="text-[11px] text-white/80 hover:text-white px-2.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] transition-colors"
+                            >
+                              {adminShowPassword ? 'Tutup' : 'Lihat'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (selectedProject.github_password) {
+                                  navigator.clipboard.writeText(selectedProject.github_password);
+                                  setCopiedPassword(true);
+                                  setTimeout(() => setCopiedPassword(false), 2000);
+                                }
+                              }}
+                              className="text-[11px] text-white/80 hover:text-white px-3 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.15] transition-colors"
+                            >
+                              {copiedPassword ? 'Tersalin!' : 'Salin'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-[13px] text-white/60 leading-relaxed font-sans">
+                        Klien belum mengisi email &amp; password akun GitHub. Anda dapat menghubungi pemesan via WhatsApp:{' '}
+                        <strong className="text-white font-mono">
+                          {selectedProject?.buyer_whatsapp}
+                        </strong>
+                      </p>
+                    )}
                   </div>
                 )}
 
                 {/* Form Add Commit Schedule */}
                 <form
                   onSubmit={handleAddSchedule}
-                  className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4"
+                  className="p-8 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col gap-5"
                 >
-                  <h3 className="text-[17px] font-medium text-white">Tambah Jadwal Commit Baru</h3>
+                  <h3 className="text-[16px] font-medium text-white">Tambah Jadwal Commit Baru</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[12px] text-[#c2c2c2]">Anggota Pengirim</span>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase tracking-wider text-white/60 font-mono">
+                        Anggota Pengirim
+                      </label>
                       <select
                         value={newCommitMemberId}
                         onChange={(e) => setNewCommitMemberId(e.target.value)}
-                        className="bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[13px] outline-none"
+                        className="bg-[#161616] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none"
                       >
                         {projectMembers.map((m) => (
                           <option key={m.id} value={m.id} className="bg-[#161616]">
@@ -499,26 +666,30 @@ export default function AdminPage() {
                       </select>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[12px] text-[#c2c2c2]">Pesan Commit (Atomic)</span>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase tracking-wider text-white/60 font-mono">
+                        Pesan Commit (Imperative)
+                      </label>
                       <input
                         type="text"
                         required
                         placeholder="feat: implement transaction query controller"
                         value={newCommitMessage}
                         onChange={(e) => setNewCommitMessage(e.target.value)}
-                        className="bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[13px] font-mono outline-none"
+                        className="bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none"
                       />
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[12px] text-[#c2c2c2]">Jadwal Tanggal & Jam</span>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase tracking-wider text-white/60 font-mono">
+                        Jadwal Eksekusi
+                      </label>
                       <input
                         type="datetime-local"
                         required
                         value={newCommitDate}
                         onChange={(e) => setNewCommitDate(e.target.value)}
-                        className="bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[13px] outline-none"
+                        className="bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none"
                       />
                     </div>
                   </div>
@@ -532,9 +703,9 @@ export default function AdminPage() {
                 </form>
 
                 {/* Schedules Table */}
-                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.04] backdrop-blur-xl">
-                  <div className="p-4 bg-white/[0.05] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <span className="text-[14px] font-medium text-white">
+                <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.03] backdrop-blur-xl">
+                  <div className="p-4 bg-white/[0.03] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span className="text-[13px] font-medium text-white font-mono">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})
                     </span>
                     <button
@@ -542,26 +713,26 @@ export default function AdminPage() {
                       disabled={isRunningCron}
                       className="btn-white-pill text-[11px] px-4 py-1.5 rounded-full self-start sm:self-auto"
                     >
-                      {isRunningCron ? 'Mengeksekusi...' : '⚡ Jalankan Auto-Push Sekarang'}
+                      {isRunningCron ? 'Mengeksekusi...' : 'Jalankan Auto-Push Sekarang ⚡'}
                     </button>
                   </div>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-[14px]">
-                      <thead className="bg-[#0a0a0a] text-[#686868] text-[12px] border-b border-[#e5e5e5]/10">
+                    <table className="w-full text-left text-[13px]">
+                      <thead className="bg-white/[0.02] text-white/50 text-[11px] uppercase tracking-wider font-mono border-b border-white/10">
                         <tr>
-                          <th className="p-4">Anggota</th>
-                          <th className="p-4">Pesan Commit</th>
-                          <th className="p-4">Jadwal</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4 text-right">Eksekusi Push</th>
+                          <th className="p-4 font-normal">Anggota</th>
+                          <th className="p-4 font-normal">Pesan Commit</th>
+                          <th className="p-4 font-normal">Jadwal</th>
+                          <th className="p-4 font-normal">Status</th>
+                          <th className="p-4 text-right font-normal">Eksekusi Push</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#e5e5e5]/10">
+                      <tbody className="divide-y divide-white/10">
                         {projectSchedules.map((s) => {
                           const member = projectMembers.find((m) => m.id === s.member_id);
                           return (
-                            <tr key={s.id} className="hover:bg-white/[0.02]">
+                            <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
                               <td className="p-4">
                                 <div className="text-white font-medium">{member?.name || s.member_name || 'Anggota'}</div>
                                 <div className="text-[12px] text-[#686868] font-mono">
@@ -578,13 +749,13 @@ export default function AdminPage() {
                                     className={`text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full ${
                                       s.status === 'pushed'
                                         ? 'bg-white text-[#161616] font-medium'
-                                        : 'bg-[#0a0a0a] text-[#686868] border border-[#e5e5e5]/10'
+                                        : 'bg-white/[0.04] text-white/60 border border-white/10 font-mono'
                                     }`}
                                   >
                                     {s.status}
                                   </span>
                                   {s.commit_hash && (
-                                    <span className="text-[11px] font-mono text-[#ededed] bg-[#0a0a0a] border border-[#e5e5e5]/10 px-2 py-0.5 rounded-[6px]">
+                                    <span className="text-[11px] font-mono text-white/90 bg-white/[0.06] border border-white/10 px-2 py-0.5 rounded-[6px]">
                                       #{s.commit_hash}
                                     </span>
                                   )}
@@ -600,12 +771,19 @@ export default function AdminPage() {
                                     {isPushingCommit === s.id ? 'Pushing...' : 'Push Sekarang ↗'}
                                   </button>
                                 ) : (
-                                  <span className="text-[12px] text-white font-mono">✓ Pushed</span>
+                                  <span className="text-[12px] text-[#59d499] font-mono">✓ Pushed</span>
                                 )}
                               </td>
                             </tr>
                           );
                         })}
+                        {projectSchedules.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="p-8 text-center text-[#686868] font-mono text-[13px]">
+                              Belum ada jadwal commit untuk proyek ini.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -616,7 +794,7 @@ export default function AdminPage() {
             {/* TAB 3: UPLOAD PPT */}
             {activeTab === 'ppt' && (
               <div className="flex flex-col gap-4">
-                <h2 className="text-[20px] font-medium text-white tracking-tight">
+                <h2 className="text-[18px] font-medium text-white tracking-tight">
                   Unggah Slide Presentasi untuk Add-on
                 </h2>
 
@@ -626,13 +804,13 @@ export default function AdminPage() {
                     .map((p) => (
                       <div
                         key={p.id}
-                        className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6"
+                        className="p-8 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6"
                       >
                         <div className="flex flex-col gap-1">
-                          <div className="text-[16px] font-medium text-white">
+                          <div className="text-[15px] font-medium text-white">
                             {p.buyer_name} ({p.buyer_whatsapp})
                           </div>
-                          <div className="text-[13px] text-[#c2c2c2]">
+                          <div className="text-[13px] text-[#c2c2c2] font-mono">
                             Proyek: {p.selected_idea?.title || p.package_type} • ID: {p.id.slice(0, 8)}
                           </div>
                           {p.ppt_file_url && (
@@ -640,9 +818,9 @@ export default function AdminPage() {
                               href={p.ppt_file_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[12px] text-white underline mt-1"
+                              className="text-[12px] text-white/80 hover:text-white underline mt-1 font-mono inline-flex items-center gap-1"
                             >
-                              File aktif: {p.ppt_file_url}
+                              File aktif: {p.ppt_file_url} ↗
                             </a>
                           )}
                         </div>
@@ -650,16 +828,16 @@ export default function AdminPage() {
                         <div className="flex items-center gap-3 w-full md:max-w-md">
                           <input
                             type="text"
-                            placeholder="URL File PPTX / PDF (Google Drive / Supabase)"
+                            placeholder="URL File PPTX / PDF (Firebase Storage / Drive)"
                             value={pptFileUrlInput[p.id] || ''}
                             onChange={(e) =>
                               setPptFileUrlInput({ ...pptFileUrlInput, [p.id]: e.target.value })
                             }
-                            className="flex-1 bg-[#0a0a0a] border border-[#e5e5e5]/15 text-white rounded-[10px] px-3 py-2 text-[13px] outline-none font-mono"
+                            className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none font-mono"
                           />
                           <button
                             onClick={() => handleSavePptFile(p.id)}
-                            className="btn-white-pill text-[12px] px-5 py-2 rounded-full shrink-0"
+                            className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full shrink-0"
                           >
                             Tautkan File
                           </button>
@@ -668,7 +846,7 @@ export default function AdminPage() {
                     ))}
 
                   {projects.filter((p) => p.ppt_addon_paid).length === 0 && (
-                    <div className="p-8 text-center text-[#686868] text-[14px] font-mono border border-[#e5e5e5]/10 rounded-[24px] bg-[#161616]">
+                    <div className="p-8 text-center text-[#686868] text-[13px] font-mono border border-white/10 rounded-[24px] bg-white/[0.02]">
                       Belum ada proyek yang mengaktifkan add-on Slide PPT.
                     </div>
                   )}

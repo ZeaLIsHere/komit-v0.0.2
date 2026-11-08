@@ -4,6 +4,7 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  deleteDoc,
   collection,
   query,
   where,
@@ -126,6 +127,30 @@ export async function fsSaveProjectMember(member: ProjectMember): Promise<Projec
   return member;
 }
 
+export async function fsGetProjectMemberById(memberId: string): Promise<ProjectMember | null> {
+  try {
+    const docRef = doc(db, MEMBERS_COL, memberId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return null;
+    return snap.data() as ProjectMember;
+  } catch (error) {
+    console.warn('Firestore fsGetProjectMemberById error:', error);
+    return null;
+  }
+}
+
+export async function fsDeleteProjectMembers(projectId: string): Promise<void> {
+  try {
+    const colRef = collection(db, MEMBERS_COL);
+    const q = query(colRef, where('project_id', '==', projectId));
+    const snap = await getDocs(q);
+    const deletes = snap.docs.map((d: any) => deleteDoc(d.ref));
+    await Promise.all(deletes);
+  } catch (error) {
+    console.warn('Firestore fsDeleteProjectMembers error:', error);
+  }
+}
+
 export async function fsUpdateProjectMember(
   memberId: string,
   updates: Partial<ProjectMember>
@@ -164,6 +189,37 @@ export async function fsSaveCommitSchedule(schedule: CommitSchedule): Promise<Co
   const docRef = doc(db, SCHEDULES_COL, schedule.id);
   await setDoc(docRef, sanitizeForFirestore(schedule as unknown as Record<string, unknown>));
   return schedule;
+}
+
+export async function fsUpdateCommitSchedule(
+  scheduleId: string,
+  updates: Partial<CommitSchedule>
+): Promise<CommitSchedule | null> {
+  try {
+    const docRef = doc(db, SCHEDULES_COL, scheduleId);
+    await updateDoc(docRef, sanitizeForFirestore(updates as unknown as Record<string, unknown>));
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return null;
+    return snap.data() as CommitSchedule;
+  } catch (error) {
+    console.warn('Firestore fsUpdateCommitSchedule error:', error);
+    return null;
+  }
+}
+
+export async function fsGetDueCommitSchedules(forceNow = false): Promise<CommitSchedule[]> {
+  try {
+    const colRef = collection(db, SCHEDULES_COL);
+    const q = query(colRef, where('status', '==', 'scheduled'));
+    const snap = await getDocs(q);
+    const all = snap.docs.map((d: any) => d.data() as CommitSchedule);
+    if (forceNow) return all;
+    const now = new Date();
+    return all.filter((s: CommitSchedule) => new Date(s.scheduled_at) <= now);
+  } catch (error) {
+    console.warn('Firestore fsGetDueCommitSchedules error:', error);
+    return [];
+  }
 }
 
 // ---------------------------------------------------------------------------

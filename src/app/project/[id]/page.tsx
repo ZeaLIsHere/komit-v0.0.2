@@ -249,18 +249,31 @@ export default function ProjectDashboardPage({
         {project.status === 'setup' && (
           <div className="p-6 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-white font-medium mb-1">
-                Pembayaran Terverifikasi
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[11px] uppercase tracking-wider text-white font-medium">
+                  Pembayaran Terverifikasi
+                </span>
+                {project.github_email && project.github_password ? (
+                  <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                    ✓ Akun GitHub Terkirim ke Admin
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-yellow-300 font-mono px-2 py-0.5 rounded-full bg-yellow-500/15 border border-yellow-500/30">
+                    ⚠️ Email &amp; Password GitHub Diperlukan
+                  </span>
+                )}
               </div>
               <p className="text-[15px] text-[#ededed]">
-                Lanjutkan setup proyek: pilih ide AI, isi data anggota, dan bagikan link undangan GitHub.
+                {!project.github_email
+                  ? 'Kirimkan email & password GitHub Anda dan lengkapi data anggota agar admin dapat memulai pengerjaan proyek.'
+                  : 'Kredensial GitHub Anda telah dikirim ke admin. Anda dapat melanjutkan setup ide dan pembagian tugas anggota.'}
               </p>
             </div>
             <Link
               href={`/project/${id}/setup`}
               className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
-              Lanjut Setup Proyek ↗
+              {!project.github_email ? 'Isi Kredensial GitHub ↗' : 'Lanjut Setup Proyek ↗'}
             </Link>
           </div>
         )}
@@ -281,6 +294,27 @@ export default function ProjectDashboardPage({
               className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full shrink-0"
             >
               Buka Slide Presentasi 🖥️
+            </Link>
+          </div>
+        )}
+
+        {/* GitHub Credentials status for client awareness */}
+        {project.payment_status === 'paid' && project.status !== 'setup' && (
+          <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
+            <div className="flex items-center gap-2.5">
+              <span className="text-[16px]">🔐</span>
+              <div>
+                <span className="text-white font-medium">Akun GitHub untuk Admin:</span>{' '}
+                <span className="text-white/80 font-mono">
+                  {project.github_email ? `${project.github_email} (Terkirim ke Admin)` : 'Belum diisi'}
+                </span>
+              </div>
+            </div>
+            <Link
+              href={`/project/${id}/setup`}
+              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto"
+            >
+              {project.github_email ? 'Perbarui Kredensial' : 'Kirim Email & Password GitHub ↗'}
             </Link>
           </div>
         )}

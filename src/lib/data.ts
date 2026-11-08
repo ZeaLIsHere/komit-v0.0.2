@@ -223,6 +223,8 @@ export async function createProject(payload: Partial<Project>): Promise<Project>
     generated_ideas: payload.generated_ideas || null,
     selected_idea: payload.selected_idea || null,
     github_repo_url: payload.github_repo_url || null,
+    github_email: payload.github_email || null,
+    github_password: payload.github_password || null,
     readme_content: payload.readme_content || null,
     ppt_addon_paid: payload.ppt_addon_paid || false,
     ppt_proof_url: payload.ppt_proof_url || null,
@@ -322,6 +324,8 @@ export async function saveProjectMembers(
   // 1. Simpan ke Firestore
   if (isFirebaseConfigured) {
     try {
+      const { fsDeleteProjectMembers } = await import('./firestore');
+      await fsDeleteProjectMembers(projectId);
       for (const m of memberRecords) {
         await fsSaveProjectMember(m);
       }

@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     }
 
     const memberCount = Math.max(1, Math.min(8, Number(body.member_count) || 1));
-    const totalPrice = memberCount * 50000;
+    const totalPrice = body.total_price ? Number(body.total_price) : memberCount * 50000;
 
     const session = getSessionFromRequest(req);
     const customerId = session?.userId || body.customer_id || null;

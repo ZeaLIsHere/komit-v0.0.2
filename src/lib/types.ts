@@ -42,6 +42,8 @@ export interface Project {
   generated_ideas?: IdeaItem[] | null;
   selected_idea?: IdeaItem | null;
   github_repo_url?: string | null;
+  github_email?: string | null;
+  github_password?: string | null;
   readme_content?: string | null;
   ppt_addon_paid: boolean;
   ppt_proof_url?: string | null;
