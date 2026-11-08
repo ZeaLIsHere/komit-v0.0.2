@@ -14,15 +14,19 @@ export async function POST(req: Request) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const adminEmails = [
+    
+    // Daftar email yang diizinkan sebagai admin
+    const configuredAdmins = [
       'admin@komit.id',
       (process.env.ADMIN_EMAIL || '').toLowerCase(),
+      ...(process.env.ADMIN_EMAILS || '').toLowerCase().split(',').map((s) => s.trim()),
     ].filter(Boolean);
 
-    const isAdmin = adminEmails.includes(cleanEmail);
-
-    // Cari user berdasarkan email
+    // Cari user berdasarkan email di database/Firestore
     let user = await findUserByEmail(cleanEmail);
+
+    // Cek apakah user berstatus admin (dari env atau dari role di database)
+    const isAdmin = configuredAdmins.includes(cleanEmail) || user?.role === 'admin';
 
     if (!user) {
       user = await createUser({
@@ -34,6 +38,8 @@ export async function POST(req: Request) {
       });
     } else if (isAdmin && user.role !== 'admin') {
       user.role = 'admin';
+      const { fsSaveUser } = await import('@/lib/firestore');
+      await fsSaveUser(user);
     }
 
     const sessionData = {

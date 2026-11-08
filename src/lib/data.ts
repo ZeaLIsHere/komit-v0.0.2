@@ -1,4 +1,21 @@
 import { supabaseAdmin, isSupabaseConfigured } from './supabase';
+import {
+  isFirebaseConfigured,
+  fsGetProjectById,
+  fsGetAllProjects,
+  fsSaveProject,
+  fsUpdateProject,
+  fsGetUserProjects,
+  fsGetProjectMembers,
+  fsSaveProjectMember,
+  fsUpdateProjectMember,
+  fsGetCommitSchedules,
+  fsSaveCommitSchedule,
+  fsFindUserByEmail,
+  fsFindUserByGitHubUsername,
+  fsFindUserById,
+  fsSaveUser,
+} from './firestore';
 import { Project, ProjectMember, CommitSchedule, User } from './types';
 
 // ponytail: in-memory mock store when Supabase env variables not configured -> Supabase PostgreSQL
@@ -143,6 +160,13 @@ const mockSchedules: Map<string, CommitSchedule[]> = new Map([
 ]);
 
 export async function getProject(id: string): Promise<Project | null> {
+  // 1. Coba Firestore jika Firebase terkonfigurasi
+  if (isFirebaseConfigured) {
+    const fsProject = await fsGetProjectById(id);
+    if (fsProject) return fsProject;
+  }
+
+  // 2. Coba Supabase jika terkonfigurasi
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('projects')
@@ -152,10 +176,19 @@ export async function getProject(id: string): Promise<Project | null> {
     if (error || !data) return null;
     return data as Project;
   }
+
+  // 3. Fallback mock store
   return mockProjects.get(id) || null;
 }
 
 export async function getAllProjects(): Promise<Project[]> {
+  // 1. Coba Firestore jika Firebase terkonfigurasi
+  if (isFirebaseConfigured) {
+    const fsProjects = await fsGetAllProjects();
+    if (fsProjects.length > 0) return fsProjects;
+  }
+
+  // 2. Coba Supabase jika terkonfigurasi
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('projects')
@@ -164,6 +197,8 @@ export async function getAllProjects(): Promise<Project[]> {
     if (error || !data) return [];
     return data as Project[];
   }
+
+  // 3. Fallback mock store
   return Array.from(mockProjects.values()).sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
@@ -195,6 +230,17 @@ export async function createProject(payload: Partial<Project>): Promise<Project>
     status: payload.status || 'waiting_payment',
   };
 
+  // 1. Simpan ke Firestore jika Firebase terkonfigurasi
+  if (isFirebaseConfigured) {
+    try {
+      await fsSaveProject(project);
+      return project;
+    } catch (err) {
+      console.warn('Gagal menyimpan project ke Firestore, fallback:', err);
+    }
+  }
+
+  // 2. Simpan ke Supabase jika terkonfigurasi
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('projects')
@@ -210,6 +256,13 @@ export async function createProject(payload: Partial<Project>): Promise<Project>
 }
 
 export async function updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
+  // 1. Update ke Firestore jika Firebase terkonfigurasi
+  if (isFirebaseConfigured) {
+    const updated = await fsUpdateProject(id, updates);
+    if (updated) return updated;
+  }
+
+  // 2. Update ke Supabase jika terkonfigurasi
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('projects')
@@ -229,8 +282,14 @@ export async function updateProject(id: string, updates: Partial<Project>): Prom
 }
 
 export async function getProjectMembers(projectId: string): Promise<ProjectMember[]> {
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsMembers = await fsGetProjectMembers(projectId);
+    if (fsMembers.length > 0) return fsMembers;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
-    // Note: Do not select github_access_token to keep it server-only
     const { data, error } = await supabaseAdmin
       .from('project_members')
       .select('id, created_at, project_id, name, nim, kom, github_username, github_email, is_connected')
@@ -239,6 +298,7 @@ export async function getProjectMembers(projectId: string): Promise<ProjectMembe
     if (error || !data) return [];
     return data as ProjectMember[];
   }
+
   return mockMembers.get(projectId) || [];
 }
 
@@ -259,8 +319,20 @@ export async function saveProjectMembers(
     is_connected: false,
   }));
 
+  // 1. Simpan ke Firestore
+  if (isFirebaseConfigured) {
+    try {
+      for (const m of memberRecords) {
+        await fsSaveProjectMember(m);
+      }
+      return memberRecords;
+    } catch (err) {
+      console.warn('Gagal menyimpan project members ke Firestore:', err);
+    }
+  }
+
+  // 2. Simpan ke Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
-    // Delete existing members for this project first
     await supabaseAdmin.from('project_members').delete().eq('project_id', projectId);
     const { data, error } = await supabaseAdmin
       .from('project_members')
@@ -268,62 +340,10 @@ export async function saveProjectMembers(
       .select('id, created_at, project_id, name, nim, kom, github_username, github_email, is_connected');
     if (error) throw new Error(error.message);
 
-    // Auto-generate initial commit schedule roadmap if none exists
-    const { data: existingSchedules } = await supabaseAdmin
-      .from('commit_schedules')
-      .select('id')
-      .eq('project_id', projectId);
-
-    if (!existingSchedules || existingSchedules.length === 0) {
-      const commitMessages = [
-        'feat: initialize project scaffolding and routing structure',
-        'feat: implement authentication flow and middleware guards',
-        'feat: build core business logic and database queries',
-        'refactor: optimize response payload and error handling',
-        'docs: finalize api documentation and demo seeders for uas',
-      ];
-      const newSchedules = memberRecords.map((m, idx) => ({
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        project_id: projectId,
-        member_id: m.id,
-        commit_message: commitMessages[idx % commitMessages.length],
-        scheduled_at: new Date(Date.now() + 86400000 * (idx + 1) * 3).toISOString(),
-        status: idx === 0 ? 'pushed' : 'scheduled',
-        commit_hash: idx === 0 ? Math.random().toString(16).substring(2, 9) : null,
-      }));
-      await supabaseAdmin.from('commit_schedules').insert(newSchedules);
-    }
-
     return data as ProjectMember[];
   }
 
   mockMembers.set(projectId, memberRecords);
-
-  // Auto-scaffold initial schedules in mock store if none exist
-  if (!mockSchedules.has(projectId) || mockSchedules.get(projectId)!.length === 0) {
-    const commitMessages = [
-      'feat: initialize project scaffolding and routing structure',
-      'feat: implement authentication flow and middleware guards',
-      'feat: build core business logic and database queries',
-      'refactor: optimize response payload and error handling',
-      'docs: finalize api documentation and demo seeders for uas',
-    ];
-    const newMockSchedules: CommitSchedule[] = memberRecords.map((m, idx) => ({
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
-      project_id: projectId,
-      member_id: m.id,
-      member_name: m.name,
-      github_username: m.github_username || `contributor-${idx + 1}`,
-      commit_message: commitMessages[idx % commitMessages.length],
-      scheduled_at: new Date(Date.now() + 86400000 * (idx + 1) * 3).toISOString(),
-      status: idx === 0 ? 'pushed' : 'scheduled',
-      commit_hash: idx === 0 ? Math.random().toString(16).substring(2, 9) : undefined,
-    }));
-    mockSchedules.set(projectId, newMockSchedules);
-  }
-
   return memberRecords;
 }
 
@@ -331,6 +351,13 @@ export async function updateProjectMember(
   memberId: string,
   updates: Partial<ProjectMember>
 ): Promise<ProjectMember | null> {
+  // 1. Update ke Firestore
+  if (isFirebaseConfigured) {
+    const updated = await fsUpdateProjectMember(memberId, updates);
+    if (updated) return updated;
+  }
+
+  // 2. Update ke Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('project_members')
@@ -355,6 +382,13 @@ export async function updateProjectMember(
 }
 
 export async function getCommitSchedules(projectId: string): Promise<CommitSchedule[]> {
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsSchedules = await fsGetCommitSchedules(projectId);
+    if (fsSchedules.length > 0) return fsSchedules;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('commit_schedules')
@@ -375,6 +409,7 @@ export async function getCommitSchedules(projectId: string): Promise<CommitSched
       commit_hash: item.commit_hash,
     })) as CommitSchedule[];
   }
+
   return mockSchedules.get(projectId) || [];
 }
 
@@ -392,6 +427,17 @@ export async function createCommitSchedule(
     commit_hash: schedule.commit_hash || null,
   };
 
+  // 1. Simpan ke Firestore
+  if (isFirebaseConfigured) {
+    try {
+      await fsSaveCommitSchedule(newSchedule);
+      return newSchedule;
+    } catch (err) {
+      console.warn('Gagal menyimpan commit schedule ke Firestore:', err);
+    }
+  }
+
+  // 2. Simpan ke Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from('commit_schedules')
@@ -411,6 +457,14 @@ export async function createCommitSchedule(
 // User & Role Management
 export async function findUserByEmail(email: string): Promise<User | null> {
   const normalized = email.trim().toLowerCase();
+
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsUser = await fsFindUserByEmail(normalized);
+    if (fsUser) return fsUser;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data } = await supabaseAdmin
@@ -420,9 +474,11 @@ export async function findUserByEmail(email: string): Promise<User | null> {
         .maybeSingle();
       if (data) return data as User;
     } catch {
-      // Fallback to in-memory mock store
+      // Fallback
     }
   }
+
+  // 3. Fallback mock store
   for (const user of mockUsers.values()) {
     if (user.email.toLowerCase() === normalized) {
       return user;
@@ -433,6 +489,14 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 
 export async function findUserByGitHubUsername(username: string): Promise<User | null> {
   const normalized = username.trim().toLowerCase();
+
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsUser = await fsFindUserByGitHubUsername(normalized);
+    if (fsUser) return fsUser;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data } = await supabaseAdmin
@@ -442,9 +506,11 @@ export async function findUserByGitHubUsername(username: string): Promise<User |
         .maybeSingle();
       if (data) return data as User;
     } catch {
-      // Fallback to in-memory mock store
+      // Fallback
     }
   }
+
+  // 3. Fallback mock store
   for (const user of mockUsers.values()) {
     if (user.github_username && user.github_username.toLowerCase() === normalized) {
       return user;
@@ -454,6 +520,13 @@ export async function findUserByGitHubUsername(username: string): Promise<User |
 }
 
 export async function findUserById(id: string): Promise<User | null> {
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsUser = await fsFindUserById(id);
+    if (fsUser) return fsUser;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data } = await supabaseAdmin
@@ -463,9 +536,10 @@ export async function findUserById(id: string): Promise<User | null> {
         .maybeSingle();
       if (data) return data as User;
     } catch {
-      // Fallback to in-memory mock store
+      // Fallback
     }
   }
+
   return mockUsers.get(id) || null;
 }
 
@@ -482,6 +556,17 @@ export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Prom
     created_at: new Date().toISOString(),
   };
 
+  // 1. Simpan ke Firestore
+  if (isFirebaseConfigured) {
+    try {
+      await fsSaveUser(newUser);
+      return newUser;
+    } catch (err) {
+      console.warn('Gagal menyimpan user ke Firestore:', err);
+    }
+  }
+
+  // 2. Simpan ke Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data, error } = await supabaseAdmin
@@ -493,7 +578,7 @@ export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Prom
         return data as User;
       }
     } catch {
-      // Fallback to in-memory mock store
+      // Fallback
     }
   }
 
@@ -503,6 +588,14 @@ export async function createUser(payload: Omit<User, 'id' | 'created_at'>): Prom
 
 export async function getUserProjects(customerIdOrEmail: string): Promise<Project[]> {
   const normalized = customerIdOrEmail.trim().toLowerCase();
+
+  // 1. Coba Firestore
+  if (isFirebaseConfigured) {
+    const fsProjects = await fsGetUserProjects(customerIdOrEmail);
+    if (fsProjects.length > 0) return fsProjects;
+  }
+
+  // 2. Coba Supabase
   if (isSupabaseConfigured && supabaseAdmin) {
     try {
       const { data, error } = await supabaseAdmin
@@ -515,6 +608,7 @@ export async function getUserProjects(customerIdOrEmail: string): Promise<Projec
       // Fallback
     }
   }
+
   const all = await getAllProjects();
   return all.filter(
     (p) =>
