@@ -535,6 +535,25 @@ export default function OrderPage() {
                             )}
                           </div>
                         </div>
+
+                        {/* Notification messages */}
+                        {githubStatus[idx] === 'invalid' && (
+                          <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ✕ tidak dapat menemukan akun
+                          </span>
+                        )}
+                        {githubStatus[idx] === 'empty' && (
+                          <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ⚠️ Akun GitHub belum diisi
+                          </span>
+                        )}
+                        {githubStatus[idx] === 'valid' && (
+                          <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
+                            ✓ Akun GitHub terverifikasi
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
