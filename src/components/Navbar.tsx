@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { triggerParticleCollapse } from '@/lib/particles';
 
 interface UserSession {
   userId: string;
@@ -131,6 +132,8 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
+                onMouseEnter={() => triggerParticleCollapse(true)}
+                onMouseLeave={() => triggerParticleCollapse(false)}
                 className="btn-white-pill text-[13px] px-5 py-2 rounded-full"
               >
                 Masuk

@@ -1,8 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroConstellation from '@/components/HeroConstellation';
 import ScrollReveal from '@/components/ScrollReveal';
+import { triggerParticleCollapse } from '@/lib/particles';
 
 export default function HomePage() {
   return (
@@ -28,6 +31,8 @@ export default function HomePage() {
           <div className="relative z-10 flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               href="/order"
+              onMouseEnter={() => triggerParticleCollapse(true)}
+              onMouseLeave={() => triggerParticleCollapse(false)}
               className="btn-white-pill text-[14px] px-7 py-3.5 rounded-full"
             >
               Mulai Pesan Proyek
