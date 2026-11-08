@@ -55,47 +55,53 @@ Kamu WAJIB mengembalikan respon berupa JSON murni dengan struktur:
 }
 Hasilkan tepat 3 ide baru yang selaras dengan permintaan terbaru pengguna. Jangan gunakan markdown formatting di luar JSON.`;
 
-    // 1. Try Groq API (High Speed LPU / DeepSeek R1 Distill / Llama 3.3 70B)
+    // 1. Try Groq API (High Speed LPU / GPT-OSS 120B / Qwen / Llama)
     if (groqKey && groqKey !== 'your-groq-api-key') {
-      try {
-        const groqMessages = [
-          { role: 'system', content: systemPrompt },
-          ...messages.slice(-6),
-        ];
-        if (messages.length === 0) {
-          groqMessages.push({ role: 'user', content: `Niche / Topik: ${latestUserPrompt}` });
-        }
+      const groqModels = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile'];
+      const groqMessages = [
+        { role: 'system', content: systemPrompt },
+        ...messages.slice(-6),
+      ];
+      if (messages.length === 0) {
+        groqMessages.push({ role: 'user', content: `Niche / Topik: ${latestUserPrompt}` });
+      }
 
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${groqKey}`,
-          },
-          body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages: groqMessages,
-            response_format: { type: 'json_object' },
-            temperature: 0.7,
-            max_tokens: 1500,
-          }),
-        });
+      for (const model of groqModels) {
+        try {
+          const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${groqKey}`,
+            },
+            body: JSON.stringify({
+              model,
+              messages: groqMessages,
+              response_format: { type: 'json_object' },
+              temperature: 0.7,
+              max_tokens: 1800,
+            }),
+          });
 
-        if (groqRes.ok) {
-          const result = await groqRes.json();
-          const parsed = JSON.parse(result.choices[0].message.content);
-          if (parsed && Array.isArray(parsed.ideas) && parsed.ideas.length > 0) {
-            return NextResponse.json({
-              reply: parsed.reply || 'Berikut 3 rekomendasi ide terkurasi untuk topik Anda:',
-              ideas: parsed.ideas.map((item: IdeaItem, idx: number) => ({
-                ...item,
-                id: `idea-${Date.now()}-${idx + 1}`,
-              })),
-            });
+          if (groqRes.ok) {
+            const result = await groqRes.json();
+            const rawContent = result.choices[0].message.content;
+            const parsed = JSON.parse(rawContent);
+            const ideasList = Array.isArray(parsed) ? parsed : parsed.ideas || Object.values(parsed).find(Array.isArray);
+
+            if (Array.isArray(ideasList) && ideasList.length > 0) {
+              return NextResponse.json({
+                reply: parsed.reply || 'Berikut 3 rekomendasi ide terkurasi untuk topik Anda:',
+                ideas: ideasList.map((item: IdeaItem, idx: number) => ({
+                  ...item,
+                  id: `idea-${Date.now()}-${idx + 1}`,
+                })),
+              });
+            }
           }
+        } catch (err) {
+          console.warn(`Groq model ${model} attempt failed, trying next model:`, err);
         }
-      } catch (err) {
-        console.warn('Groq API call failed, attempting other providers:', err);
       }
     }
 
