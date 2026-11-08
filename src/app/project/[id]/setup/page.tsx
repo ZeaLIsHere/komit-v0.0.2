@@ -28,6 +28,15 @@ export default function ProjectSetupPage({
   const [isGeneratingIdeas, setIsGeneratingIdeas] = useState<boolean>(false);
   const [generatedIdeas, setGeneratedIdeas] = useState<IdeaItem[]>([]);
   const [selectedIdea, setSelectedIdea] = useState<IdeaItem | null>(null);
+  const [chatMessages, setChatMessages] = useState<
+    Array<{
+      id: string;
+      role: 'user' | 'assistant';
+      content: string;
+      ideas?: IdeaItem[];
+    }>
+  >([]);
+  const [chatInput, setChatInput] = useState<string>('');
 
   // GitHub credentials for admin state
   const [githubEmail, setGithubEmail] = useState<string>('');
@@ -109,6 +118,25 @@ export default function ProjectSetupPage({
         }
         if (data.project.niche_input) {
           setNiche(data.project.niche_input);
+        }
+        if (data.project.generated_ideas && data.project.generated_ideas.length > 0) {
+          setGeneratedIdeas(data.project.generated_ideas);
+          setChatMessages([
+            {
+              id: 'init-1',
+              role: 'assistant',
+              content: `Halo! Saya konsultan AI Komit. Berdasarkan topik "${data.project.niche_input || 'yang Anda pilih'}", berikut 3 rekomendasi ide yang telah dirancang:`,
+              ideas: data.project.generated_ideas,
+            },
+          ]);
+        } else {
+          setChatMessages([
+            {
+              id: 'init-0',
+              role: 'assistant',
+              content: 'Halo! Saya konsultan AI Komit. Ceritakan topik mata kuliah atau ide awal aplikasi yang kamu inginkan. Kamu bisa bebas berdiskusi atau meminta ganti ide seperti "Saya kurang suka, tolong ganti dengan ide lain" kapan saja.',
+            },
+          ]);
         }
         if (data.project.github_email) {
           setGithubEmail(data.project.github_email);
@@ -195,24 +223,63 @@ export default function ProjectSetupPage({
     }
   };
 
-  const handleGenerateIdeas = async () => {
-    if (!niche.trim()) {
-      alert('Masukkan topik mata kuliah terlebih dahulu');
-      return;
-    }
+  const handleSendChat = async (overridePrompt?: string) => {
+    const text = (overridePrompt || chatInput || niche).trim();
+    if (!text || isGeneratingIdeas) return;
 
+    const userMessage = {
+      id: `user-${Date.now()}`,
+      role: 'user' as const,
+      content: text,
+    };
+
+    const nextMessages = [...chatMessages, userMessage];
+    setChatMessages(nextMessages);
+    setChatInput('');
     setIsGeneratingIdeas(true);
+
     try {
+      const apiMessages = nextMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
       const res = await fetch('/api/ai/ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ niche, service_type: project?.service_type }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          prompt: text,
+          niche: niche || text,
+          service_type: project?.service_type,
+        }),
       });
+
       const data = await res.json();
       if (res.ok && data.ideas) {
         setGeneratedIdeas(data.ideas);
+        if (!niche) setNiche(text);
+
+        const botMessage = {
+          id: `bot-${Date.now()}`,
+          role: 'assistant' as const,
+          content: data.reply || 'Berikut 3 rekomendasi ide yang telah diperbarui sesuai arahan Anda:',
+          ideas: data.ideas,
+        };
+
+        setChatMessages((prev) => [...prev, botMessage]);
+
+        // Auto sync generated ideas to project
+        await fetch(`/api/projects/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            niche_input: niche || text,
+            generated_ideas: data.ideas,
+          }),
+        });
       } else {
-        throw new Error(data.error || 'Gagal generate ide');
+        throw new Error(data.error || 'Gagal memproses ide dari AI');
       }
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Gagal memanggil AI');
@@ -232,6 +299,7 @@ export default function ProjectSetupPage({
           niche_input: niche,
         }),
       });
+      alert(`Ide "${idea.title}" berhasil dipilih dan dikunci untuk proyek ini!`);
     } catch (err) {
       console.error('Failed to lock idea:', err);
     }
@@ -461,102 +529,200 @@ export default function ProjectSetupPage({
           </form>
         </section>
 
-        {/* STEP 1: AI IDEATION */}
+        {/* STEP 1: INTERACTIVE AI IDEATION ASSISTANT (CHATGPT-STYLE) */}
         {(project.package_type === 'full' || project.package_type === 'idea_only') && (
-          <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
+          <section className="p-8 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <h2 className="text-[20px] font-medium text-white">
-                Rekomendasi Ide AI & Gimmick Dosen
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                  Interactive AI Ideation
+                </span>
+                <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
+                  DeepSeek &amp; Groq LPU Ready
+                </span>
+              </div>
+              <h2 className="text-[22px] font-medium text-white">
+                Konsultan Ide AI &amp; Gimmick Dosen
               </h2>
-              <p className="text-[14px] text-[#c2c2c2]">
-                Ketik topik mata kuliah atau niche, AI akan menyajikan 3 opsi proyek berdaya saing tinggi.
+              <p className="text-[14px] text-[#c2c2c2] max-w-3xl leading-relaxed">
+                Diskusikan topik proyek Anda layaknya berkonsultasi dengan ChatGPT. Anda dapat meminta ide baru, mengganti opsi yang kurang disukai, atau memfokuskan tech stack kapan saja.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                placeholder="Contoh: Pemrograman Web, Sistem Manajemen Lab Komputer"
-                value={niche}
-                onChange={(e) => setNiche(e.target.value)}
-                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-3 text-[14px] text-white outline-none"
-              />
-              <button
-                type="button"
-                onClick={handleGenerateIdeas}
-                disabled={isGeneratingIdeas}
-                className="btn-white-pill text-[13px] px-6 py-3 rounded-full transition-all shrink-0"
-              >
-                {isGeneratingIdeas ? 'Menghasilkan...' : 'Generate 3 Ide AI'}
-              </button>
-            </div>
-
+            {/* Active Selected / Locked Idea Banner */}
             {selectedIdea && (
-              <div className="p-6 rounded-[16px] bg-white/[0.04] border border-white flex flex-col gap-3">
+              <div className="p-6 rounded-[20px] bg-white/[0.05] border border-white/30 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-white">
-                    Ide Terpilih & Terkunci
-                  </span>
-                  <span className="text-[11px] text-[#686868] font-mono">Tersimpan</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#59d499]" />
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-[#59d499] font-medium">
+                      Ide Terpilih &amp; Terkunci untuk Proyek
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#686868] font-mono">Tersimpan di Proyek</span>
                 </div>
-                <h3 className="text-[22px] font-medium text-white">{selectedIdea.title}</h3>
-                <p className="text-[14px] text-[#c2c2c2]">{selectedIdea.description}</p>
-                <div className="p-4 rounded-[10px] bg-white/[0.05] border border-white/10 text-[13px]">
-                  <span className="text-[11px] text-white uppercase tracking-wider block mb-1">
+                <h3 className="text-[20px] sm:text-[22px] font-medium text-white">{selectedIdea.title}</h3>
+                <p className="text-[14px] text-[#c2c2c2] leading-relaxed">{selectedIdea.description}</p>
+                <div className="p-4 rounded-[12px] bg-[#161616] border border-white/10 text-[13px] flex flex-col gap-1">
+                  <span className="text-[11px] font-mono text-white/70 uppercase tracking-wider">
                     Gimmick Pemikat Dosen:
                   </span>
-                  <span className="text-[#ededed]">{selectedIdea.gimmick}</span>
+                  <p className="text-[#ededed] font-sans">{selectedIdea.gimmick}</p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {selectedIdea.techStack?.map((t) => (
+                    <span
+                      key={t}
+                      className="text-[11px] font-mono text-white/80 px-2.5 py-1 rounded-[6px] bg-white/[0.06] border border-white/10"
+                    >
+                      {t}
+                    </span>
+                  ))}
                 </div>
               </div>
             )}
 
-            {generatedIdeas.length > 0 && (
-              <div className="grid grid-cols-1 gap-4">
-                {generatedIdeas.map((idea) => (
+            {/* Interactive Chat Feed Container */}
+            <div className="flex flex-col gap-5 p-4 sm:p-6 rounded-[20px] bg-[#0d0d0d] border border-white/10 min-h-[300px]">
+              {chatMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex flex-col gap-3 ${
+                    msg.role === 'user' ? 'items-end' : 'items-start'
+                  }`}
+                >
+                  {/* Message Bubble */}
                   <div
-                    key={idea.id}
-                    className={`p-6 rounded-[16px] border transition-all flex flex-col gap-4 ${
-                      selectedIdea?.id === idea.id
-                        ? 'bg-[#1f1f1f] border-white'
-                        : 'bg-[#0a0a0a] border-[#e5e5e5]/10 hover:border-[#e5e5e5]/25'
+                    className={`max-w-[85%] sm:max-w-xl text-[14px] leading-relaxed rounded-[18px] p-4 ${
+                      msg.role === 'user'
+                        ? 'bg-white text-[#161616] font-medium rounded-tr-sm shadow-sm'
+                        : 'bg-white/[0.04] text-[#ededed] border border-white/10 rounded-tl-sm'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="text-[18px] font-medium text-white">{idea.title}</h4>
-                        <p className="text-[14px] text-[#c2c2c2] mt-1">{idea.description}</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectIdea(idea)}
-                        className={`text-[12px] font-medium px-4 py-2 rounded-full shrink-0 transition-all ${
-                          selectedIdea?.id === idea.id
-                            ? 'bg-white text-[#161616]'
-                            : 'border border-[#e5e5e5]/20 text-white hover:border-white'
-                        }`}
-                      >
-                        {selectedIdea?.id === idea.id ? 'Terkunci' : 'Kunci Ide Ini'}
-                      </button>
-                    </div>
-
-                    <div className="p-3.5 rounded-[10px] bg-[#161616]">
-                      <span className="text-[11px] uppercase tracking-wider text-white block mb-1">
-                        Gimmick Dosen:
-                      </span>
-                      <p className="text-[13px] text-[#ededed]">{idea.gimmick}</p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {idea.techStack?.map((t) => (
-                        <span key={t} className="text-[11px] font-mono text-[#c2c2c2] px-2.5 py-1 rounded-[6px] bg-[#161616] border border-[#e5e5e5]/10">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
+                    <p>{msg.content}</p>
                   </div>
+
+                  {/* If assistant returned ideas, render the interactive cards under the bubble */}
+                  {msg.role === 'assistant' && msg.ideas && msg.ideas.length > 0 && (
+                    <div className="w-full grid grid-cols-1 gap-4 mt-2">
+                      {msg.ideas.map((idea) => {
+                        const isSelected = selectedIdea?.id === idea.id;
+                        return (
+                          <div
+                            key={idea.id}
+                            className={`p-6 rounded-[18px] border transition-all flex flex-col gap-4 ${
+                              isSelected
+                                ? 'bg-white/[0.08] border-white shadow-[0_0_24px_rgba(255,255,255,0.06)]'
+                                : 'bg-white/[0.02] border-white/10 hover:border-white/25'
+                            }`}
+                          >
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                              <div className="flex flex-col gap-1">
+                                <h4 className="text-[18px] font-medium text-white">{idea.title}</h4>
+                                <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
+                                  {idea.description}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleSelectIdea(idea)}
+                                className={`text-[12px] font-medium px-4 py-2 rounded-full shrink-0 transition-all ${
+                                  isSelected
+                                    ? 'bg-white text-[#161616]'
+                                    : 'bg-white/[0.06] hover:bg-white text-white hover:text-[#161616] border border-white/20'
+                                }`}
+                              >
+                                {isSelected ? '✓ Terkunci untuk Proyek' : 'Pilih & Kunci Ide Ini ↗'}
+                              </button>
+                            </div>
+
+                            <div className="p-3.5 rounded-[12px] bg-[#161616] border border-white/[0.06]">
+                              <span className="text-[11px] font-mono uppercase tracking-wider text-white/70 block mb-1">
+                                Gimmick Pemikat Dosen:
+                              </span>
+                              <p className="text-[13px] text-[#ededed] leading-relaxed">
+                                {idea.gimmick}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                              {idea.techStack?.map((t) => (
+                                <span
+                                  key={t}
+                                  className="text-[11px] font-mono text-[#c2c2c2] px-2.5 py-1 rounded-[6px] bg-white/[0.03] border border-white/10"
+                                >
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Typing indicator */}
+              {isGeneratingIdeas && (
+                <div className="flex items-center gap-2.5 p-3.5 bg-white/[0.03] border border-white/10 rounded-[16px] w-fit text-[13px] text-white/70 font-mono">
+                  <div className="w-2 h-2 rounded-full bg-white animate-ping" />
+                  <span>Konsultan AI sedang menganalisis &amp; merancang ide proyek...</span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">
+                Pintasan Konsultasi Cepat:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: '🔄 Buatkan 3 Ide Lain', prompt: 'Saya kurang suka, tolong buatkan 3 ide baru yang berbeda dari sebelumnya' },
+                  { label: '📱 Fokuskan ke Mobile App', prompt: 'Tolong fokuskan rekomendasinya ke aplikasi mobile Flutter atau React Native' },
+                  { label: '🌐 Fokuskan ke Web Fullstack', prompt: 'Tolong fokuskan rekomendasinya ke web application fullstack modern' },
+                  { label: '🤖 Tambahkan Fitur AI & ML', prompt: 'Tolong tambahkan fitur kecerdasan buatan (AI/ML) atau deteksi cerdas pada ide' },
+                  { label: '⚡ Opsi Lebih Simpel', prompt: 'Tolong berikan ide alternatif yang arsitekturnya lebih ringkas dan cepat dikerjakan' },
+                ].map((chip, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    disabled={isGeneratingIdeas}
+                    onClick={() => handleSendChat(chip.prompt)}
+                    className="text-[12px] text-white/80 hover:text-white px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 transition-all font-mono"
+                  >
+                    {chip.label}
+                  </button>
                 ))}
               </div>
-            )}
+            </div>
+
+            {/* Prompt Bar Input */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendChat();
+              }}
+              className="flex flex-col sm:flex-row gap-2.5"
+            >
+              <input
+                type="text"
+                placeholder="Ketik topik atau permintaan khusus (misal: 'Saya kurang suka, ganti dengan ide berbasis IoT' atau 'Buatkan opsi untuk e-commerce')..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                disabled={isGeneratingIdeas}
+                className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white rounded-[12px] px-4 py-3 text-[14px] text-white outline-none transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={isGeneratingIdeas || !chatInput.trim()}
+                className="btn-white-pill text-[13px] px-7 py-3 rounded-full transition-all shrink-0 flex items-center justify-center gap-1.5 font-medium disabled:opacity-40"
+              >
+                <span>{isGeneratingIdeas ? 'Merancang...' : 'Kirim'}</span>
+                <span>↗</span>
+              </button>
+            </form>
           </section>
         )}
 

@@ -25,6 +25,9 @@ export default function OrderPage() {
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' }>({});
+  const [githubEmail, setGithubEmail] = useState<string>('');
+  const [githubPassword, setGithubPassword] = useState<string>('');
+  const [showGithubPassword, setShowGithubPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -200,6 +203,13 @@ export default function OrderPage() {
       }
     }
 
+    // Validasi akun GitHub tim joki
+    if (!githubEmail.trim() || !githubPassword.trim()) {
+      setErrorMsg('Email dan password akun GitHub wajib diisi agar operator joki dapat memulai pengerjaan!');
+      alert('Tolong masukkan email dan password akun GitHub Anda untuk tim joki!');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
 
@@ -210,6 +220,8 @@ export default function OrderPage() {
         body: JSON.stringify({
           buyer_name: buyerName,
           buyer_whatsapp: buyerWhatsapp,
+          github_email: githubEmail.trim(),
+          github_password: githubPassword.trim(),
           service_type: serviceType,
           package_type: packageType,
           member_count: memberCount,
@@ -523,7 +535,65 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* 5. Pembayaran QRIS Statis */}
+          {/* 5. Kredensial Akun GitHub untuk Tim Joki */}
+          <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
+                  Setup Repository
+                </span>
+                <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
+                  Terkirim ke Admin
+                </span>
+              </div>
+              <h2 className="text-[18px] font-medium text-white">
+                Akun GitHub untuk Pengerjaan Proyek
+              </h2>
+              <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
+                Masukkan email atau username akun GitHub serta password Anda. Data ini akan diteruskan ke panel admin agar operator joki kami dapat langsung login, membuat repository, dan memproses cicil commit atas nama Anda.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[12px] text-white/70">Email / Username GitHub</span>
+                <input
+                  type="text"
+                  required
+                  placeholder="contoh: akun@gmail.com atau usergh"
+                  value={githubEmail}
+                  onChange={(e) => setGithubEmail(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-white/70">Password Akun GitHub</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowGithubPassword(!showGithubPassword)}
+                    className="text-[11px] text-white/60 hover:text-white"
+                  >
+                    {showGithubPassword ? 'Sembunyikan' : 'Lihat'}
+                  </button>
+                </div>
+                <input
+                  type={showGithubPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••••••"
+                  value={githubPassword}
+                  onChange={(e) => setGithubPassword(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
+                />
+              </div>
+            </div>
+            <p className="text-[11px] text-white/50 font-mono">
+              Data hanya diteruskan secara aman ke operator joki untuk inisialisasi git repository proyek.
+            </p>
+          </div>
+
+          {/* 6. Pembayaran QRIS Statis */}
           <div className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] font-medium text-white">
