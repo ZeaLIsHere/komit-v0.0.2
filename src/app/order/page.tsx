@@ -417,6 +417,23 @@ export default function OrderPage() {
                 </span>
               </div>
 
+              {/* User Form Explanation Box */}
+              <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex items-start gap-3 text-[13px] text-white/80">
+                <span className="text-[16px] shrink-0 mt-0.5">ℹ️</span>
+                <div className="flex flex-col gap-1 leading-relaxed">
+                  <span className="font-medium text-white">
+                    {isDoc
+                      ? 'Petunjuk Pengisian Anggota (Dokumen / Slide):'
+                      : 'Petunjuk Pengisian Anggota (Koding & GitHub):'}
+                  </span>
+                  <p className="text-white/70 text-[12px]">
+                    {isDoc
+                      ? 'Masukkan nama lengkap dan NIM tiap anggota. Data ini akan dicantumkan secara rapi pada cover makalah atau halaman identitas kelompok di slide PPT.'
+                      : 'Gunakan username GitHub asli setiap anggota. Sistem akan otomatis memverifikasi akun (tanda ✓ hijau). Kontribusi commit mingguan akan dicatat atas nama akun masing-masing.'}
+                  </p>
+                </div>
+              </div>
+
               <div className="flex flex-col gap-3 mt-1">
                 {members.map((m, idx) => (
                   <div
