@@ -144,18 +144,23 @@ body {
   border-radius: 24px;
 }
 
-/* Subtle dark scrollbar */
+/* Subtle frosted glass scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f1f1f;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2b2b2b;
+  background: rgba(255, 255, 255, 0.35);
 }
