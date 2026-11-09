@@ -428,14 +428,14 @@ export default function AdminPage() {
                     <table className="w-full text-left text-[13px]">
                       <thead className="bg-white/[0.08] text-white text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/15">
                         <tr>
-                          <th className="py-4 px-5 font-semibold text-white">Tanggal &amp; ID</th>
-                          <th className="py-4 px-5 font-semibold text-white">Pemesan</th>
-                          <th className="py-4 px-5 font-semibold text-white">Layanan &amp; Paket</th>
-                          <th className="py-4 px-5 font-semibold text-white">Nominal</th>
-                          <th className="py-4 px-5 font-semibold text-white">Bukti QRIS</th>
-                          <th className="py-4 px-5 font-semibold text-white">Akun GitHub Klien</th>
-                          <th className="py-4 px-5 font-semibold text-white">Status</th>
-                          <th className="py-4 px-5 text-right font-semibold text-white">Aksi</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Tanggal &amp; ID</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Pemesan</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Layanan &amp; Paket</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Nominal</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Bukti QRIS</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Akun GitHub Klien</th>
+                          <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Status</th>
+                          <th className="py-4 px-5 text-right font-semibold text-white whitespace-nowrap min-w-[130px]">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.06]">
@@ -487,7 +487,7 @@ export default function AdminPage() {
                             <td className="py-4 px-5 font-mono text-white font-semibold tabular-nums text-[13px]">
                               Rp {p.total_price.toLocaleString('id-ID')}
                             </td>
-                            <td className="py-4 px-5">
+                            <td className="py-4 px-5 whitespace-nowrap">
                               {p.payment_proof_url ? (
                                 <button
                                   type="button"
@@ -499,7 +499,7 @@ export default function AdminPage() {
                                       serviceType: p.service_type,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 text-[11px] font-mono text-white transition-all cursor-pointer font-medium"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 text-[11px] font-mono text-white transition-all cursor-pointer font-medium whitespace-nowrap"
                                 >
                                   <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -552,18 +552,18 @@ export default function AdminPage() {
                                 </span>
                               )}
                             </td>
-                            <td className="py-4 px-5 text-right">
+                            <td className="py-4 px-5 text-right whitespace-nowrap">
                               {p.payment_status === 'pending' ? (
                                 <div className="flex items-center justify-end gap-2">
                                   <button
                                     onClick={() => handlePaymentStatus(p.id, 'paid')}
-                                    className="btn-white-pill text-[11px] px-3.5 py-1.5 rounded-full font-medium"
+                                    className="btn-white-pill text-[11px] px-3.5 py-1.5 rounded-full font-medium whitespace-nowrap cursor-pointer"
                                   >
                                     Approve
                                   </button>
                                   <button
                                     onClick={() => handlePaymentStatus(p.id, 'rejected')}
-                                    className="bg-transparent hover:bg-red-500/10 text-red-400 text-[11px] px-3 py-1.5 rounded-full border border-red-500/25 transition-all"
+                                    className="bg-transparent hover:bg-red-500/10 text-red-400 text-[11px] px-3 py-1.5 rounded-full border border-red-500/25 transition-all whitespace-nowrap cursor-pointer"
                                   >
                                     Reject
                                   </button>
@@ -571,10 +571,10 @@ export default function AdminPage() {
                               ) : (
                                 <Link
                                   href={`/admin/project/${p.id}`}
-                                  className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white hover:text-white px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 transition-all font-medium"
+                                  className="inline-flex items-center justify-center gap-1.5 text-[12px] font-sans font-medium text-white hover:text-white px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 transition-all whitespace-nowrap"
                                 >
                                   <span>Kelola Proyek</span>
-                                  <span className="text-[10px]">↗</span>
+                                  <span className="text-[11px]">↗</span>
                                 </Link>
                               )}
                             </td>
