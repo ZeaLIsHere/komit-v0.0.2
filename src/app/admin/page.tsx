@@ -75,7 +75,7 @@ export default function AdminPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-24 flex flex-col gap-9">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-10 pt-28 sm:pt-32 pb-24 flex flex-col gap-9">
         {/* Header Title */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.08] pb-6">
           <div className="flex flex-col gap-1.5">
@@ -182,20 +182,19 @@ export default function AdminPage() {
                 <table className="w-full text-left text-[13px]">
                   <thead className="bg-white/[0.08] text-white text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/15">
                     <tr>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Tanggal &amp; ID</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Pemesan</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Layanan &amp; Paket</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Nominal</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Bukti QRIS</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Akun GitHub Klien</th>
-                      <th className="py-4 px-5 font-semibold text-white whitespace-nowrap">Status</th>
-                      <th className="py-4 px-5 text-right font-semibold text-white whitespace-nowrap min-w-[130px]">Aksi</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Tanggal &amp; ID</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Pemesan</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Layanan &amp; Paket</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Nominal</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Bukti QRIS</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 font-semibold text-white whitespace-nowrap">Status</th>
+                      <th className="py-3.5 px-3.5 sm:px-4 text-right font-semibold text-white whitespace-nowrap min-w-[130px]">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.06]">
                     {projects.map((p) => (
                       <tr key={p.id} className="hover:bg-white/[0.025] transition-colors duration-150">
-                        <td className="py-4 px-5 font-mono text-[12px]">
+                        <td className="py-3.5 px-3.5 sm:px-4 font-mono text-[12px]">
                           <div className="text-white font-medium">
                             {new Date(p.created_at).toLocaleDateString('id-ID', {
                               day: 'numeric',
@@ -207,8 +206,8 @@ export default function AdminPage() {
                             #{p.id.slice(0, 8)}
                           </span>
                         </td>
-                        <td className="py-4 px-5">
-                          <div className="flex items-center gap-3">
+                        <td className="py-3.5 px-3.5 sm:px-4">
+                          <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center font-mono text-[12px] font-medium text-white shrink-0">
                               {p.buyer_name ? p.buyer_name.charAt(0).toUpperCase() : 'U'}
                             </div>
@@ -222,13 +221,23 @@ export default function AdminPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-5">
+                        <td className="py-3.5 px-3.5 sm:px-4">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-white capitalize font-medium text-[13px]">
-                              {p.service_type.replace('_', ' ')}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-white capitalize font-medium text-[13px]">
+                                {p.service_type.replace('_', ' ')}
+                              </span>
+                              {p.github_email && (
+                                <span
+                                  className="text-[10px] font-mono text-[#59d499] px-1.5 py-0.2 rounded-full bg-[#59d499]/15 border border-[#59d499]/30"
+                                  title={`Akun GitHub: ${p.github_email}`}
+                                >
+                                  GH ✓
+                                </span>
+                              )}
+                            </div>
                             {p.doc_topic ? (
-                              <span className="text-[11px] text-white font-medium truncate max-w-[180px]" title={p.doc_topic}>
+                              <span className="text-[11px] text-white font-medium truncate max-w-[200px]" title={p.doc_topic}>
                                 Topik: {p.doc_topic}
                               </span>
                             ) : (
@@ -238,10 +247,10 @@ export default function AdminPage() {
                             )}
                           </div>
                         </td>
-                        <td className="py-4 px-5 font-mono text-white font-semibold tabular-nums text-[13px]">
+                        <td className="py-3.5 px-3.5 sm:px-4 font-mono text-white font-semibold tabular-nums text-[13px]">
                           Rp {p.total_price.toLocaleString('id-ID')}
                         </td>
-                        <td className="py-4 px-5 whitespace-nowrap">
+                        <td className="py-3.5 px-3.5 sm:px-4 whitespace-nowrap">
                           {p.payment_proof_url ? (
                             <button
                               type="button"
@@ -265,28 +274,7 @@ export default function AdminPage() {
                             <span className="text-[11px] text-white/50 font-mono">Tidak ada</span>
                           )}
                         </td>
-                        <td className="py-4 px-5 font-mono text-[12px]">
-                          {p.github_email ? (
-                            <div className="flex flex-col gap-0.5">
-                              <div className="flex items-center gap-1">
-                                <svg className="w-3.5 h-3.5 text-[#59d499]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span className="text-white truncate max-w-[140px]" title={p.github_email}>
-                                  {p.github_email}
-                                </span>
-                              </div>
-                              <span className="text-white/75 text-[10px] pl-4.5">
-                                PW: {p.github_password ? '••••••••' : '-'}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-white/75 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/15">
-                              Belum diisi
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-4 px-5">
+                        <td className="py-3.5 px-3.5 sm:px-4 whitespace-nowrap">
                           {p.payment_status === 'paid' && (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30 text-[11px] font-mono uppercase tracking-wider font-medium">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#59d499]" />
@@ -306,7 +294,7 @@ export default function AdminPage() {
                             </span>
                           )}
                         </td>
-                        <td className="py-4 px-5 text-right whitespace-nowrap">
+                        <td className="py-3.5 px-3.5 sm:px-4 text-right whitespace-nowrap">
                           {p.payment_status === 'pending' ? (
                             <div className="flex items-center justify-end gap-2">
                               <button
