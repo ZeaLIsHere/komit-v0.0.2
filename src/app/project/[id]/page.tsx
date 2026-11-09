@@ -553,6 +553,49 @@ export default function ProjectDashboardPage({
         ) : (
           /* SEKSI UNTUK MAKALAH, PPT, DAN TUGAS RINGAN (NON-GIT) */
           <div className="flex flex-col gap-6">
+            {/* Card File Hasil Pengerjaan dari Tim Joki */}
+            <div className="p-7 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
+                    Hasil Pengerjaan Tim Komit
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-medium ${
+                      project.doc_file_url || project.ppt_file_url
+                        ? 'bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30'
+                        : 'bg-[#ffb829]/15 text-[#ffb829] border border-[#ffb829]/30'
+                    }`}
+                  >
+                    {project.doc_file_url || project.ppt_file_url ? '✓ Siap Diunduh' : 'Sedang Dikerjakan'}
+                  </span>
+                </div>
+                <h3 className="text-[20px] font-medium text-white">
+                  {project.service_type === 'makalah' ? 'Dokumen Makalah Resmi' : 'Slide Presentasi PPT'}
+                </h3>
+                <p className="text-[14px] text-white/80 leading-relaxed max-w-xl">
+                  {project.doc_file_url || project.ppt_file_url
+                    ? 'File hasil pengerjaan telah diselesaikan oleh tim joki dan siap Anda unduh untuk tugas kuliah kelompok Anda.'
+                    : 'Tim kami sedang menyusun materi, format dokumen, dan sitasi sesuai pesanan Anda. File akan otomatis muncul di sini setelah selesai.'}
+                </p>
+              </div>
+
+              {project.doc_file_url || project.ppt_file_url ? (
+                <a
+                  href={project.doc_file_url || project.ppt_file_url || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-white-pill text-[13px] px-6 py-3 rounded-full shrink-0 inline-flex items-center justify-center font-medium shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  Unduh {project.service_type === 'makalah' ? 'Makalah' : 'Slide PPT'} ↗
+                </a>
+              ) : (
+                <div className="text-[12px] font-mono text-white/70 bg-white/[0.04] border border-white/10 px-4 py-2.5 rounded-full shrink-0 text-center">
+                  Menunggu Selesai
+                </div>
+              )}
+            </div>
+
             {project.doc_topic && (
               <div className="p-6 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
                 <div className="flex items-center gap-2">

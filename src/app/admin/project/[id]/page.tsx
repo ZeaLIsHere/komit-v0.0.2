@@ -30,6 +30,10 @@ export default function AdminProjectDetailPage({
   const [isGeneratingTopic, setIsGeneratingTopic] = useState<boolean>(false);
   const [copiedTopic, setCopiedTopic] = useState<boolean>(false);
 
+  // Deliverable file (PPT/Makalah) state
+  const [docFileUrlInput, setDocFileUrlInput] = useState<string>('');
+  const [isSavingDocFile, setIsSavingDocFile] = useState<boolean>(false);
+
   // Payment proof preview modal
   const [showProofModal, setShowProofModal] = useState<boolean>(false);
 
@@ -53,6 +57,7 @@ export default function AdminProjectDetailPage({
       const pData = await pRes.json();
       setProject(pData.project);
       setRepoUrlInput(pData.project.github_repo_url || '');
+      setDocFileUrlInput(pData.project.doc_file_url || pData.project.ppt_file_url || '');
       if (pData.project.readme_content) {
         setTopicMarkdown(pData.project.readme_content);
       }
@@ -162,6 +167,42 @@ export default function AdminProjectDetailPage({
       }
     } catch {
       alert('Gagal menyimpan URL repository');
+    }
+  };
+
+  const handleSaveDocFile = async (markCompleted: boolean = false) => {
+    if (!docFileUrlInput.trim()) {
+      alert('Masukkan link / URL file hasil pengerjaan (Google Drive / PDF / PPTX / Docx)');
+      return;
+    }
+    setIsSavingDocFile(true);
+    try {
+      const updatePayload: Record<string, unknown> = {
+        doc_file_url: docFileUrlInput.trim(),
+        ppt_file_url: docFileUrlInput.trim(),
+      };
+      if (markCompleted) {
+        updatePayload.status = 'completed';
+      }
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatePayload),
+      });
+      if (res.ok) {
+        alert(
+          markCompleted
+            ? 'Hasil pengerjaan berhasil dikirim & status proyek ditandai SELESAI!'
+            : 'Link file hasil pengerjaan berhasil disimpan!'
+        );
+        await loadData();
+      } else {
+        alert('Gagal menyimpan file hasil pengerjaan');
+      }
+    } catch {
+      alert('Terjadi kesalahan jaringan saat menyimpan file');
+    } finally {
+      setIsSavingDocFile(false);
     }
   };
 
@@ -558,6 +599,72 @@ export default function AdminProjectDetailPage({
                   </div>
                 </div>
               )}
+
+              {/* Card Pengiriman File Deliverable (Makalah / PPT) */}
+              <div className="p-6 rounded-[20px] bg-white/[0.04] border border-white/10 flex flex-col gap-4 mt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#59d499]" />
+                    <h3 className="text-[16px] font-medium text-white">
+                      Kirim Hasil Pengerjaan {project.service_type === 'makalah' ? 'Makalah / Dokumen' : 'Slide PPT'}
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-mono text-white/60 uppercase">
+                    Akses Klien di Dashboard
+                  </span>
+                </div>
+
+                <p className="text-[13px] text-white/80 leading-relaxed">
+                  Masukkan URL file yang siap diunduh oleh klien (Google Drive publik, Dropbox, direct link PDF/PPTX/Docx). Klien dapat langsung mengunduhnya dari dashboard proyek mereka.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/... atau https://..."
+                    value={docFileUrlInput}
+                    onChange={(e) => setDocFileUrlInput(e.target.value)}
+                    className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[12px] px-4 py-2.5 text-[13px] font-mono outline-none transition-colors"
+                  />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleSaveDocFile(false)}
+                      disabled={isSavingDocFile}
+                      className="btn-hairline-ghost text-[12px] px-4 py-2.5 rounded-full text-white transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      {isSavingDocFile ? 'Menyimpan...' : 'Simpan Link'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSaveDocFile(true)}
+                      disabled={isSavingDocFile}
+                      className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full font-medium transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      Kirim &amp; Selesaikan
+                    </button>
+                  </div>
+                </div>
+
+                {(project.doc_file_url || project.ppt_file_url) && (
+                  <div className="flex items-center justify-between p-3.5 rounded-[12px] bg-white/[0.03] border border-white/10 text-[12px] font-mono">
+                    <div className="flex items-center gap-2 truncate">
+                      <span className="text-[#59d499]">✓ File Aktif:</span>
+                      <span className="text-white truncate max-w-xs sm:max-w-md">
+                        {project.doc_file_url || project.ppt_file_url}
+                      </span>
+                    </div>
+                    <a
+                      href={project.doc_file_url || project.ppt_file_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:underline shrink-0 ml-3 font-sans font-medium text-[12px]"
+                    >
+                      Buka File ↗
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

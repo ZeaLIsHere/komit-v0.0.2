@@ -41,6 +41,7 @@ export interface Project {
   niche_input?: string | null;
   doc_topic?: string | null;
   doc_details?: string | null;
+  doc_file_url?: string | null;
   generated_ideas?: IdeaItem[] | null;
   selected_idea?: IdeaItem | null;
   github_repo_url?: string | null;
