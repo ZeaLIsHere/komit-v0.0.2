@@ -275,10 +275,10 @@ export default function AdminPage() {
         {/* Header Title & Segmented Control */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/[0.08] pb-6">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] uppercase tracking-[0.12em] text-[#8e8e8e] font-mono">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-white/70 font-mono">
               Panel Operator &amp; Joki
             </span>
-            <h1 className="text-[32px] sm:text-[38px] font-medium leading-[1.1] text-[#ededed] tracking-[-0.035em]">
+            <h1 className="text-[32px] sm:text-[38px] font-medium leading-[1.1] text-white tracking-[-0.035em]">
               Admin Workspace
             </h1>
           </div>
@@ -291,7 +291,7 @@ export default function AdminPage() {
                 className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-all flex items-center gap-2 ${
                   activeTab === 'payments'
                     ? 'bg-white text-[#161616] shadow-sm'
-                    : 'text-[#c2c2c2] hover:text-[#ededed]'
+                    : 'text-white/70 hover:text-white'
                 }`}
               >
                 <span>Verifikasi QRIS</span>
@@ -312,7 +312,7 @@ export default function AdminPage() {
                 className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-all ${
                   activeTab === 'scheduler'
                     ? 'bg-white text-[#161616] shadow-sm'
-                    : 'text-[#c2c2c2] hover:text-[#ededed]'
+                    : 'text-white/70 hover:text-white'
                 }`}
               >
                 Auto-Commit Scheduler
@@ -322,7 +322,7 @@ export default function AdminPage() {
                 className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-all ${
                   activeTab === 'ppt'
                     ? 'bg-white text-[#161616] shadow-sm'
-                    : 'text-[#c2c2c2] hover:text-[#ededed]'
+                    : 'text-white/70 hover:text-white'
                 }`}
               >
                 Upload PPT
@@ -334,20 +334,20 @@ export default function AdminPage() {
         {/* 4 Frosted Glass Summary Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-5 rounded-[20px] bg-white/[0.03] backdrop-blur-md border border-white/[0.08] hover:border-white/15 transition-all flex flex-col justify-between gap-3">
-            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-[#686868]">
+            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/75 font-medium">
               Total Pesanan
             </span>
             <div>
-              <div className="text-[28px] sm:text-[32px] font-medium text-[#ededed] font-mono tracking-tight tabular-nums">
+              <div className="text-[28px] sm:text-[32px] font-medium text-white font-mono tracking-tight tabular-nums">
                 {stats.total}
               </div>
-              <span className="text-[12px] text-[#c2c2c2]">Semua order masuk</span>
+              <span className="text-[12px] text-white/80">Semua order masuk</span>
             </div>
           </div>
 
           <div className="p-5 rounded-[20px] bg-white/[0.03] backdrop-blur-md border border-white/[0.08] hover:border-white/15 transition-all flex flex-col justify-between gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-[#686868]">
+              <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/75 font-medium">
                 Menunggu Verifikasi
               </span>
               {stats.pendingPayment > 0 && (
@@ -357,44 +357,44 @@ export default function AdminPage() {
             <div>
               <div
                 className={`text-[28px] sm:text-[32px] font-medium font-mono tracking-tight tabular-nums ${
-                  stats.pendingPayment > 0 ? 'text-[#ffb829]' : 'text-[#ededed]'
+                  stats.pendingPayment > 0 ? 'text-[#ffb829]' : 'text-white'
                 }`}
               >
                 {stats.pendingPayment}
               </div>
-              <span className="text-[12px] text-[#c2c2c2]">
+              <span className="text-[12px] text-white/80">
                 {stats.pendingPayment > 0 ? 'Perlu tindakan review' : 'Semua sudah diverifikasi'}
               </span>
             </div>
           </div>
 
           <div className="p-5 rounded-[20px] bg-white/[0.03] backdrop-blur-md border border-white/[0.08] hover:border-white/15 transition-all flex flex-col justify-between gap-3">
-            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-[#686868]">
+            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/75 font-medium">
               Sedang Berjalan
             </span>
             <div>
-              <div className="text-[28px] sm:text-[32px] font-medium text-[#ededed] font-mono tracking-tight tabular-nums">
+              <div className="text-[28px] sm:text-[32px] font-medium text-white font-mono tracking-tight tabular-nums">
                 {stats.inProgress}
               </div>
-              <span className="text-[12px] text-[#c2c2c2]">Dalam tahap joki aktif</span>
+              <span className="text-[12px] text-white/80">Dalam tahap joki aktif</span>
             </div>
           </div>
 
           <div className="p-5 rounded-[20px] bg-white/[0.03] backdrop-blur-md border border-white/[0.08] hover:border-white/15 transition-all flex flex-col justify-between gap-3">
-            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-[#686868]">
+            <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/75 font-medium">
               Kredensial GitHub Siap
             </span>
             <div>
               <div className="text-[28px] sm:text-[32px] font-medium text-[#59d499] font-mono tracking-tight tabular-nums">
                 {stats.withCredentials}
               </div>
-              <span className="text-[12px] text-[#c2c2c2]">Akun klien siap disetup</span>
+              <span className="text-[12px] text-white/80">Akun klien siap disetup</span>
             </div>
           </div>
         </div>
 
         {loading ? (
-          <div className="py-20 text-center text-[#686868] font-mono text-[13px] rounded-[24px] border border-white/[0.08] bg-white/[0.02]">
+          <div className="py-20 text-center text-white/70 font-mono text-[13px] rounded-[24px] border border-white/[0.08] bg-white/[0.02]">
             Memuat data internal operator...
           </div>
         ) : (
@@ -404,19 +404,19 @@ export default function AdminPage() {
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <h2 className="text-[18px] font-medium text-[#ededed] tracking-tight">
+                    <h2 className="text-[18px] font-medium text-white tracking-tight">
                       Antrean Pembayaran
                     </h2>
-                    <span className="text-[12px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-[#c2c2c2]">
+                    <span className="text-[12px] font-mono px-2.5 py-0.5 rounded-full bg-white/10 border border-white/20 text-white font-medium">
                       {projects.length}
                     </span>
                   </div>
 
                   <button
                     onClick={loadAllProjects}
-                    className="text-[12px] text-[#c2c2c2] hover:text-[#ededed] border border-white/10 hover:border-white/25 px-3.5 py-1.5 rounded-full bg-white/[0.02] hover:bg-white/[0.06] transition-all font-mono inline-flex items-center gap-1.5"
+                    className="text-[12px] text-white/85 hover:text-white border border-white/20 hover:border-white/35 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] transition-all font-mono inline-flex items-center gap-1.5 cursor-pointer"
                   >
-                    <svg className="w-3.5 h-3.5 text-[#686868]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3.5 h-3.5 text-white/75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <span>Refresh</span>
@@ -426,43 +426,43 @@ export default function AdminPage() {
                 <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.05] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
-                      <thead className="bg-white/[0.06] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
+                      <thead className="bg-white/[0.08] text-white text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/15">
                         <tr>
-                          <th className="py-4 px-5 font-normal">Tanggal &amp; ID</th>
-                          <th className="py-4 px-5 font-normal">Pemesan</th>
-                          <th className="py-4 px-5 font-normal">Layanan &amp; Paket</th>
-                          <th className="py-4 px-5 font-normal">Nominal</th>
-                          <th className="py-4 px-5 font-normal">Bukti QRIS</th>
-                          <th className="py-4 px-5 font-normal">Akun GitHub Klien</th>
-                          <th className="py-4 px-5 font-normal">Status</th>
-                          <th className="py-4 px-5 text-right font-normal">Aksi</th>
+                          <th className="py-4 px-5 font-semibold text-white">Tanggal &amp; ID</th>
+                          <th className="py-4 px-5 font-semibold text-white">Pemesan</th>
+                          <th className="py-4 px-5 font-semibold text-white">Layanan &amp; Paket</th>
+                          <th className="py-4 px-5 font-semibold text-white">Nominal</th>
+                          <th className="py-4 px-5 font-semibold text-white">Bukti QRIS</th>
+                          <th className="py-4 px-5 font-semibold text-white">Akun GitHub Klien</th>
+                          <th className="py-4 px-5 font-semibold text-white">Status</th>
+                          <th className="py-4 px-5 text-right font-semibold text-white">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.06]">
                         {projects.map((p) => (
                           <tr key={p.id} className="hover:bg-white/[0.025] transition-colors duration-150">
                             <td className="py-4 px-5 font-mono text-[12px]">
-                              <div className="text-[#ededed] font-medium">
+                              <div className="text-white font-medium">
                                 {new Date(p.created_at).toLocaleDateString('id-ID', {
                                   day: 'numeric',
                                   month: 'short',
                                   year: 'numeric',
                                 })}
                               </div>
-                              <span className="text-[10px] text-[#8e8e8e] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] w-fit inline-block mt-0.5">
+                              <span className="text-[10px] text-white/90 px-1.5 py-0.5 rounded bg-white/10 border border-white/20 w-fit inline-block mt-0.5 font-mono">
                                 #{p.id.slice(0, 8)}
                               </span>
                             </td>
                             <td className="py-4 px-5">
                               <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 flex items-center justify-center font-mono text-[12px] font-medium text-white shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center font-mono text-[12px] font-medium text-white shrink-0">
                                   {p.buyer_name ? p.buyer_name.charAt(0).toUpperCase() : 'U'}
                                 </div>
                                 <div className="flex flex-col">
-                                  <span className="font-medium text-[#ededed] text-[13px] leading-snug">
+                                  <span className="font-medium text-white text-[13px] leading-snug">
                                     {p.buyer_name}
                                   </span>
-                                  <span className="text-[11px] text-[#8e8e8e] font-mono leading-snug">
+                                  <span className="text-[11px] text-white/80 font-mono leading-snug">
                                     {p.buyer_whatsapp}
                                   </span>
                                 </div>
@@ -470,21 +470,21 @@ export default function AdminPage() {
                             </td>
                             <td className="py-4 px-5">
                               <div className="flex flex-col gap-0.5">
-                                <span className="text-[#ededed] capitalize font-medium text-[13px]">
+                                <span className="text-white capitalize font-medium text-[13px]">
                                   {p.service_type.replace('_', ' ')}
                                 </span>
                                 {p.doc_topic ? (
-                                  <span className="text-[11px] text-white/90 font-medium truncate max-w-[180px]" title={p.doc_topic}>
+                                  <span className="text-[11px] text-white font-medium truncate max-w-[180px]" title={p.doc_topic}>
                                     Topik: {p.doc_topic}
                                   </span>
                                 ) : (
-                                  <span className="text-[11px] text-[#8e8e8e] font-mono">
+                                  <span className="text-[11px] text-white/80 font-mono">
                                     Paket {p.package_type} • {p.member_count} org
                                   </span>
                                 )}
                               </div>
                             </td>
-                            <td className="py-4 px-5 font-mono text-[#ededed] font-medium tabular-nums text-[13px]">
+                            <td className="py-4 px-5 font-mono text-white font-semibold tabular-nums text-[13px]">
                               Rp {p.total_price.toLocaleString('id-ID')}
                             </td>
                             <td className="py-4 px-5">
@@ -499,16 +499,16 @@ export default function AdminPage() {
                                       serviceType: p.service_type,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-[11px] font-mono text-[#ededed] transition-all cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 text-[11px] font-mono text-white transition-all cursor-pointer font-medium"
                                 >
-                                  <svg className="w-3.5 h-3.5 text-[#c2c2c2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                   </svg>
                                   <span>Bukti Bayar</span>
                                 </button>
                               ) : (
-                                <span className="text-[11px] text-[#686868] font-mono">Tidak ada</span>
+                                <span className="text-[11px] text-white/50 font-mono">Tidak ada</span>
                               )}
                             </td>
                             <td className="py-4 px-5 font-mono text-[12px]">
@@ -518,16 +518,16 @@ export default function AdminPage() {
                                     <svg className="w-3.5 h-3.5 text-[#59d499]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span className="text-[#ededed] truncate max-w-[140px]" title={p.github_email}>
+                                    <span className="text-white truncate max-w-[140px]" title={p.github_email}>
                                       {p.github_email}
                                     </span>
                                   </div>
-                                  <span className="text-[#8e8e8e] text-[10px] pl-4.5">
+                                  <span className="text-white/75 text-[10px] pl-4.5">
                                     PW: {p.github_password ? '••••••••' : '-'}
                                   </span>
                                 </div>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-mono text-[#8e8e8e] px-2.5 py-0.5 rounded-full bg-white/[0.02] border border-white/[0.06]">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-mono text-white/75 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/15">
                                   Belum diisi
                                 </span>
                               )}
@@ -571,7 +571,7 @@ export default function AdminPage() {
                               ) : (
                                 <Link
                                   href={`/admin/project/${p.id}`}
-                                  className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#c2c2c2] hover:text-white px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/25 transition-all"
+                                  className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white hover:text-white px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 transition-all font-medium"
                                 >
                                   <span>Kelola Proyek</span>
                                   <span className="text-[10px]">↗</span>
@@ -593,11 +593,11 @@ export default function AdminPage() {
                 {/* Project Selector & Repo URL */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]">
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] uppercase tracking-wider text-[#686868] font-mono">Proyek:</span>
+                    <span className="text-[11px] uppercase tracking-wider text-white/80 font-mono">Proyek:</span>
                     <select
                       value={selectedProjectId}
                       onChange={(e) => setSelectedProjectId(e.target.value)}
-                      className="bg-[#161616] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2 text-[13px] outline-none transition-colors"
+                      className="bg-[#161616] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2 text-[13px] outline-none transition-colors"
                     >
                       {projects.map((p) => (
                         <option key={p.id} value={p.id} className="bg-[#161616]">
@@ -613,7 +613,7 @@ export default function AdminPage() {
                       placeholder="https://github.com/org/repo-uas"
                       value={repoUrlInput}
                       onChange={(e) => setRepoUrlInput(e.target.value)}
-                      className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2 text-[13px] font-mono outline-none transition-colors"
+                      className="flex-1 bg-white/[0.04] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2 text-[13px] font-mono outline-none transition-colors"
                     />
                     <button
                       onClick={handleSaveRepoUrl}
@@ -628,8 +628,8 @@ export default function AdminPage() {
                 {selectedProjectId && (
                   <div className="p-5 rounded-[20px] bg-white/[0.03] border border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-[13px]">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-[#686868] text-[11px] font-mono uppercase tracking-wider">Tahap Proyek:</span>
-                      <span className="font-mono text-[#ededed] capitalize bg-white/[0.06] border border-white/10 px-3 py-1 rounded-[6px]">
+                      <span className="text-white/80 text-[11px] font-mono uppercase tracking-wider">Tahap Proyek:</span>
+                      <span className="font-mono text-white capitalize bg-white/10 border border-white/20 px-3 py-1 rounded-[6px]">
                         {selectedProject?.status || 'waiting_payment'}
                       </span>
                     </div>
@@ -637,7 +637,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleUpdateProjectStatus('in_progress')}
-                        className="bg-transparent hover:bg-white/[0.06] border border-white/15 text-[#c2c2c2] hover:text-white px-3.5 py-1.5 rounded-full text-[12px] transition-colors"
+                        className="bg-transparent hover:bg-white/[0.06] border border-white/20 text-white/80 hover:text-white px-3.5 py-1.5 rounded-full text-[12px] transition-colors"
                       >
                         Tandai In-Progress
                       </button>
@@ -656,10 +656,10 @@ export default function AdminPage() {
                   <div className="p-6 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] flex flex-col gap-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-3">
                       <div className="flex items-center gap-2.5">
-                        <svg className="w-4 h-4 text-[#c2c2c2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
-                        <span className="text-[13px] font-medium text-[#ededed]">
+                        <span className="text-[13px] font-medium text-white">
                           Kredensial Akun GitHub Klien (Setup &amp; Pengerjaan)
                         </span>
                         {selectedProject?.github_email ? (
@@ -677,7 +677,7 @@ export default function AdminPage() {
                         href="https://github.com/login"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[12px] text-[#c2c2c2] hover:text-white underline inline-flex items-center gap-1 self-start sm:self-auto font-mono"
+                        className="text-[12px] text-white/80 hover:text-white underline inline-flex items-center gap-1 self-start sm:self-auto font-mono"
                       >
                         <span>Buka GitHub Login</span>
                         <span>↗</span>
@@ -688,8 +688,8 @@ export default function AdminPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px] font-mono">
                         <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.08] flex items-center justify-between gap-3">
                           <div className="truncate">
-                            <span className="text-[11px] text-[#686868] block mb-0.5">Email Akun:</span>
-                            <span className="text-[#ededed] select-all font-medium">
+                            <span className="text-[11px] text-white/70 block mb-0.5">Email Akun:</span>
+                            <span className="text-white select-all font-medium">
                               {selectedProject.github_email}
                             </span>
                           </div>
@@ -701,7 +701,7 @@ export default function AdminPage() {
                                 setTimeout(() => setCopiedEmail(false), 2000);
                               }
                             }}
-                            className="text-[11px] text-[#c2c2c2] hover:text-white px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] shrink-0 transition-colors"
+                            className="text-[11px] text-white hover:text-white px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 shrink-0 transition-colors font-medium"
                           >
                             {copiedEmail ? 'Tersalin!' : 'Salin'}
                           </button>
@@ -709,8 +709,8 @@ export default function AdminPage() {
 
                         <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.08] flex items-center justify-between gap-3">
                           <div className="truncate">
-                            <span className="text-[11px] text-[#686868] block mb-0.5">Password:</span>
-                            <span className="text-[#ededed] select-all font-medium">
+                            <span className="text-[11px] text-white/70 block mb-0.5">Password:</span>
+                            <span className="text-white select-all font-medium">
                               {adminShowPassword
                                 ? selectedProject.github_password
                                 : '••••••••••••'}
@@ -719,7 +719,7 @@ export default function AdminPage() {
                           <div className="flex items-center gap-1.5 shrink-0">
                             <button
                               onClick={() => setAdminShowPassword(!adminShowPassword)}
-                              className="text-[11px] text-[#c2c2c2] hover:text-white px-2.5 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] transition-colors"
+                              className="text-[11px] text-white px-2.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition-colors font-medium"
                             >
                               {adminShowPassword ? 'Tutup' : 'Lihat'}
                             </button>
@@ -731,7 +731,7 @@ export default function AdminPage() {
                                   setTimeout(() => setCopiedPassword(false), 2000);
                                 }
                               }}
-                              className="text-[11px] text-[#c2c2c2] hover:text-white px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] transition-colors"
+                              className="text-[11px] text-white px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 transition-colors font-medium"
                             >
                               {copiedPassword ? 'Tersalin!' : 'Salin'}
                             </button>
@@ -739,9 +739,9 @@ export default function AdminPage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-[13px] text-[#c2c2c2] leading-relaxed font-sans">
+                      <p className="text-[13px] text-white/80 leading-relaxed font-sans">
                         Klien belum mengisi email &amp; password akun GitHub. Anda dapat menghubungi pemesan via WhatsApp:{' '}
-                        <strong className="text-[#ededed] font-mono">
+                        <strong className="text-white font-mono">
                           {selectedProject?.buyer_whatsapp}
                         </strong>
                       </p>
@@ -754,16 +754,16 @@ export default function AdminPage() {
                   onSubmit={handleAddSchedule}
                   className="p-8 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] flex flex-col gap-5"
                 >
-                  <h3 className="text-[16px] font-medium text-[#ededed]">Tambah Jadwal Commit Baru</h3>
+                  <h3 className="text-[16px] font-medium text-white">Tambah Jadwal Commit Baru</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-[#686868] font-mono">
+                      <label className="text-[11px] uppercase tracking-wider text-white/80 font-mono">
                         Anggota Pengirim
                       </label>
                       <select
                         value={newCommitMemberId}
                         onChange={(e) => setNewCommitMemberId(e.target.value)}
-                        className="bg-[#161616] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none transition-colors"
+                        className="bg-[#161616] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none transition-colors"
                       >
                         {projectMembers.map((m) => (
                           <option key={m.id} value={m.id} className="bg-[#161616]">
@@ -774,7 +774,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-[#686868] font-mono">
+                      <label className="text-[11px] uppercase tracking-wider text-white/80 font-mono">
                         Pesan Commit (Imperative)
                       </label>
                       <input
@@ -783,12 +783,12 @@ export default function AdminPage() {
                         placeholder="feat: implement transaction query controller"
                         value={newCommitMessage}
                         onChange={(e) => setNewCommitMessage(e.target.value)}
-                        className="bg-white/[0.04] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none transition-colors"
+                        className="bg-white/[0.04] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none transition-colors"
                       />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-wider text-[#686868] font-mono">
+                      <label className="text-[11px] uppercase tracking-wider text-white/80 font-mono">
                         Jadwal Eksekusi
                       </label>
                       <input
@@ -796,7 +796,7 @@ export default function AdminPage() {
                         required
                         value={newCommitDate}
                         onChange={(e) => setNewCommitDate(e.target.value)}
-                        className="bg-white/[0.04] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none transition-colors"
+                        className="bg-white/[0.04] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] font-mono outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -812,7 +812,7 @@ export default function AdminPage() {
                 {/* Schedules Table */}
                 <div className="border border-white/10 rounded-[24px] overflow-hidden bg-white/[0.05] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                   <div className="p-4 bg-white/[0.04] border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <span className="text-[13px] font-medium text-[#ededed] font-mono">
+                    <span className="text-[13px] font-medium text-white font-mono">
                       Antrean Commit Proyek Terpilih ({projectSchedules.length})
                     </span>
                     <button
@@ -826,13 +826,13 @@ export default function AdminPage() {
 
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
-                      <thead className="bg-white/[0.02] text-[#8e8e8e] text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/10">
+                      <thead className="bg-white/[0.08] text-white text-[11px] uppercase tracking-[0.1em] font-mono border-b border-white/15">
                         <tr>
-                          <th className="py-4 px-5 font-normal">Anggota</th>
-                          <th className="py-4 px-5 font-normal">Pesan Commit</th>
-                          <th className="py-4 px-5 font-normal">Jadwal</th>
-                          <th className="py-4 px-5 font-normal">Status</th>
-                          <th className="py-4 px-5 text-right font-normal">Eksekusi Push</th>
+                          <th className="py-4 px-5 font-semibold text-white">Anggota</th>
+                          <th className="py-4 px-5 font-semibold text-white">Pesan Commit</th>
+                          <th className="py-4 px-5 font-semibold text-white">Jadwal</th>
+                          <th className="py-4 px-5 font-semibold text-white">Status</th>
+                          <th className="py-4 px-5 text-right font-semibold text-white">Eksekusi Push</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/[0.06]">
@@ -841,13 +841,13 @@ export default function AdminPage() {
                           return (
                             <tr key={s.id} className="hover:bg-white/[0.025] transition-colors duration-150">
                               <td className="py-4 px-5">
-                                <div className="text-[#ededed] font-medium">{member?.name || s.member_name || 'Anggota'}</div>
-                                <div className="text-[12px] text-[#8e8e8e] font-mono">
+                                <div className="text-white font-medium">{member?.name || s.member_name || 'Anggota'}</div>
+                                <div className="text-[12px] text-white/80 font-mono">
                                   @{member?.github_username || s.github_username || 'contributor'}
                                 </div>
                               </td>
-                              <td className="py-4 px-5 font-mono text-[13px] text-[#ededed]">{s.commit_message}</td>
-                              <td className="py-4 px-5 font-mono text-[12px] text-[#c2c2c2]">
+                              <td className="py-4 px-5 font-mono text-[13px] text-white font-medium">{s.commit_message}</td>
+                              <td className="py-4 px-5 font-mono text-[12px] text-white/80">
                                 {new Date(s.scheduled_at).toLocaleString('id-ID')}
                               </td>
                               <td className="py-4 px-5">
@@ -859,19 +859,19 @@ export default function AdminPage() {
                                     </span>
                                   )}
                                   {s.status === 'scheduled' && (
-                                    <span className="bg-white/[0.04] text-[#c2c2c2] border border-white/10 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-[#c2c2c2]" />
+                                    <span className="bg-white/10 text-white/90 border border-white/20 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-white/70" />
                                       <span>scheduled</span>
                                     </span>
                                   )}
                                   {s.status === 'failed' && (
-                                    <span className="bg-red-500/15 text-red-300 border border-red-500/30 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
+                                    <span className="bg-red-500/15 text-red-300 border border-red-500/30 text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5 font-medium">
                                       <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                                       <span>failed</span>
                                     </span>
                                   )}
                                   {s.commit_hash && (
-                                    <span className="text-[11px] font-mono text-[#ededed] bg-white/[0.06] border border-white/10 px-2 py-0.5 rounded-[6px]">
+                                    <span className="text-[11px] font-mono text-white bg-white/10 border border-white/20 px-2 py-0.5 rounded-[6px]">
                                       #{s.commit_hash}
                                     </span>
                                   )}
@@ -895,7 +895,7 @@ export default function AdminPage() {
                         })}
                         {projectSchedules.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="py-8 px-5 text-center text-[#686868] font-mono text-[13px]">
+                            <td colSpan={5} className="py-8 px-5 text-center text-white/70 font-mono text-[13px]">
                               Belum ada jadwal commit untuk proyek ini.
                             </td>
                           </tr>
@@ -910,7 +910,7 @@ export default function AdminPage() {
             {/* TAB 3: UPLOAD PPT */}
             {activeTab === 'ppt' && (
               <div className="flex flex-col gap-4">
-                <h2 className="text-[18px] font-medium text-[#ededed] tracking-tight">
+                <h2 className="text-[18px] font-medium text-white tracking-tight">
                   Unggah Slide Presentasi untuk Add-on
                 </h2>
 
@@ -923,10 +923,10 @@ export default function AdminPage() {
                         className="p-8 rounded-[24px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] flex flex-col md:flex-row md:items-center justify-between gap-6"
                       >
                         <div className="flex flex-col gap-1">
-                          <div className="text-[15px] font-medium text-[#ededed]">
+                          <div className="text-[15px] font-medium text-white">
                             {p.buyer_name} ({p.buyer_whatsapp})
                           </div>
-                          <div className="text-[13px] text-[#686868] font-mono">
+                          <div className="text-[13px] text-white/75 font-mono">
                             Proyek: {p.selected_idea?.title || p.package_type} • ID: {p.id.slice(0, 8)}
                           </div>
                           {p.ppt_file_url && (
@@ -934,7 +934,7 @@ export default function AdminPage() {
                               href={p.ppt_file_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[12px] text-[#ededed] hover:text-white underline mt-1 font-mono inline-flex items-center gap-1"
+                              className="text-[12px] text-white hover:text-white underline mt-1 font-mono inline-flex items-center gap-1"
                             >
                               <span>File aktif: {p.ppt_file_url}</span>
                               <span>↗</span>
@@ -950,7 +950,7 @@ export default function AdminPage() {
                             onChange={(e) =>
                               setPptFileUrlInput({ ...pptFileUrlInput, [p.id]: e.target.value })
                             }
-                            className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-[#ededed] rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none font-mono transition-colors"
+                            className="flex-1 bg-white/[0.04] border border-white/20 focus:border-white text-white rounded-[10px] px-3.5 py-2.5 text-[13px] outline-none font-mono transition-colors"
                           />
                           <button
                             onClick={() => handleSavePptFile(p.id)}
@@ -963,7 +963,7 @@ export default function AdminPage() {
                     ))}
 
                   {projects.filter((p) => p.ppt_addon_paid).length === 0 && (
-                    <div className="p-8 text-center text-[#686868] text-[13px] font-mono border border-white/[0.08] rounded-[24px] bg-white/[0.02]">
+                    <div className="p-8 text-center text-white/70 text-[13px] font-mono border border-white/[0.08] rounded-[24px] bg-white/[0.02]">
                       Belum ada proyek yang mengaktifkan add-on Slide PPT.
                     </div>
                   )}
@@ -987,7 +987,7 @@ export default function AdminPage() {
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div className="flex flex-col">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-[#8e8e8e]">
-                    Bukti Transfer QRIS
+                    Bukti Transfer
                   </span>
                   <h3 className="text-[16px] font-medium text-white">
                     {previewProof.buyerName} •{' '}
@@ -1000,7 +1000,7 @@ export default function AdminPage() {
                   type="button"
                   onClick={() => setPreviewProof(null)}
                   className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all text-[13px] font-mono cursor-pointer"
-                  aria-label="Tutup modal"
+                  aria-label="Tutup"
                 >
                   ✕
                 </button>
