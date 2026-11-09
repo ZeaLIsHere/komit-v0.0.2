@@ -30,6 +30,18 @@ export default function AdminProjectDetailPage({
   const [isGeneratingTopic, setIsGeneratingTopic] = useState<boolean>(false);
   const [copiedTopic, setCopiedTopic] = useState<boolean>(false);
 
+  // Payment proof preview modal
+  const [showProofModal, setShowProofModal] = useState<boolean>(false);
+
+  // Close modal on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowProofModal(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const loadData = async () => {
     try {
       const [pRes, mRes] = await Promise.all([
@@ -303,15 +315,14 @@ export default function AdminProjectDetailPage({
                     </div>
 
                     {project.payment_proof_url && (
-                      <a
-                        href={project.payment_proof_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-white-pill text-[12px] px-4 py-2 rounded-full inline-flex items-center gap-1.5"
+                      <button
+                        type="button"
+                        onClick={() => setShowProofModal(true)}
+                        className="btn-white-pill text-[12px] px-4 py-2 rounded-full inline-flex items-center gap-1.5 cursor-pointer"
                       >
+                        <Eye className="w-3.5 h-3.5" />
                         <span>Buka Gambar Bukti</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -592,6 +603,73 @@ export default function AdminProjectDetailPage({
             ))}
           </div>
         </div>
+
+        {/* Modal Popup Bukti Transfer */}
+        {showProofModal && project.payment_proof_url && (
+          <div
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setShowProofModal(false)}
+          >
+            <div
+              className="relative max-w-2xl w-full max-h-[90vh] bg-[#0c0c0c]/95 border border-white/10 rounded-[28px] p-6 flex flex-col gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#8e8e8e]">
+                    Bukti Transfer QRIS
+                  </span>
+                  <h3 className="text-[16px] font-medium text-white">
+                    {project.buyer_name} •{' '}
+                    <span className="font-mono text-[#ededed]">
+                      Rp {project.total_price.toLocaleString('id-ID')}
+                    </span>
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowProofModal(false)}
+                  className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all text-[13px] font-mono cursor-pointer"
+                  aria-label="Tutup modal"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Image body */}
+              <div className="flex-1 overflow-auto flex items-center justify-center bg-black/60 rounded-[18px] border border-white/[0.06] p-2 min-h-[260px] max-h-[65vh]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={project.payment_proof_url}
+                  alt={`Bukti transfer ${project.buyer_name}`}
+                  className="max-h-[60vh] max-w-full object-contain rounded-[12px]"
+                />
+              </div>
+
+              {/* Footer controls */}
+              <div className="flex items-center justify-between pt-2">
+                <a
+                  href={project.payment_proof_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bukti-transfer-${project.buyer_name}.jpg`}
+                  className="text-[12px] font-mono text-[#8e8e8e] hover:text-white inline-flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Buka Gambar Asli</span>
+                  <span className="text-[10px]">↗</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setShowProofModal(false)}
+                  className="btn-white-pill text-[12px] px-5 py-2 rounded-full font-medium cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

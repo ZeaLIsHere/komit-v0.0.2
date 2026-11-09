@@ -528,6 +528,20 @@
         "topic-doc",
         "markdown"
       ]
+    },
+    {
+      "id": "file:src/lib/image-compress.ts",
+      "type": "file",
+      "name": "image-compress.ts",
+      "filePath": "src/lib/image-compress.ts",
+      "summary": "Modul kompresi gambar bukti transfer berbasis HTML5 Canvas untuk mereduksi foto 4MB menjadi ~40KB sebelum disimpan ke Firestore.",
+      "tags": [
+        "image",
+        "canvas",
+        "compression",
+        "optimization",
+        "firestore-safe"
+      ]
     }
   ],
   "edges": [
@@ -698,6 +712,12 @@
       "target": "endpoint:src/app/api/ai/topic-doc/route.ts:topic-doc",
       "type": "calls",
       "weight": 0.8
+    },
+    {
+      "source": "file:src/app/order/page.tsx",
+      "target": "file:src/lib/image-compress.ts",
+      "type": "imports",
+      "weight": 0.8
     }
   ],
   "layers": [
@@ -731,7 +751,8 @@
         "file:src/lib/supabase.ts",
         "file:src/lib/data.ts",
         "file:src/lib/firebase.ts",
-        "file:src/lib/firestore.ts"
+        "file:src/lib/firestore.ts",
+        "file:src/lib/image-compress.ts"
       ]
     },
     {

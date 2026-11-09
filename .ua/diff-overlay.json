@@ -1,36 +1,21 @@
 {
   "version": "1.0.0",
-  "baseBranch": "master",
-  "generatedAt": "2025-03-01T00:00:00.000Z",
+  "baseBranch": "feat/admin-project-pov-and-topic-doc",
+  "generatedAt": "2026-11-09T00:00:00.000Z",
   "changedFiles": [
-    "src/components/HeroConstellation.tsx",
-    "src/components/CommitHeatmap.tsx",
-    "src/app/page.tsx",
-    "src/app/order/page.tsx",
-    "src/app/project/[id]/page.tsx",
-    "src/app/project/[id]/setup/page.tsx",
-    "src/app/project/[id]/present/page.tsx",
     "src/app/admin/page.tsx",
-    "src/app/api/cron/push-commits/route.ts",
-    "src/lib/data.ts"
+    "src/app/admin/project/[id]/page.tsx",
+    "src/app/order/page.tsx",
+    "src/lib/image-compress.ts"
   ],
   "changedNodeIds": [
-    "file:src/components/HeroConstellation.tsx",
-    "file:src/components/CommitHeatmap.tsx",
-    "file:src/app/page.tsx",
-    "file:src/app/order/page.tsx",
-    "file:src/app/project/[id]/page.tsx",
-    "file:src/app/project/[id]/setup/page.tsx",
-    "file:src/app/project/[id]/present/page.tsx",
     "file:src/app/admin/page.tsx",
-    "endpoint:src/app/api/cron/push-commits/route.ts:cron-push-commits",
-    "file:src/lib/data.ts"
+    "file:src/app/admin/project/[id]/page.tsx",
+    "file:src/app/order/page.tsx"
   ],
   "affectedNodeIds": [
-    "table:supabase/schema.sql:projects",
-    "table:supabase/schema.sql:project_members",
-    "table:supabase/schema.sql:commit_schedules",
-    "file:src/lib/types.ts",
-    "file:src/lib/supabase.ts"
+    "endpoint:src/app/api/admin/commit/push/route.ts:commit-push",
+    "endpoint:src/app/api/projects/route.ts:projects",
+    "endpoint:src/app/api/ai/topic-doc/route.ts:topic-doc"
   ]
 }

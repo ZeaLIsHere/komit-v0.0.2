@@ -32,6 +32,23 @@ export default function AdminPage() {
   // Upload PPT state
   const [pptFileUrlInput, setPptFileUrlInput] = useState<{ [projectId: string]: string }>({});
 
+  // Preview payment proof modal state
+  const [previewProof, setPreviewProof] = useState<{
+    url: string;
+    buyerName: string;
+    totalPrice: number;
+    serviceType?: string;
+  } | null>(null);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreviewProof(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Summary Metrics
   const stats = useMemo(() => {
     const total = projects.length;
@@ -472,19 +489,24 @@ export default function AdminPage() {
                             </td>
                             <td className="py-4 px-5">
                               {p.payment_proof_url ? (
-                                <a
-                                  href={p.payment_proof_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-[11px] font-mono text-[#ededed] transition-all"
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setPreviewProof({
+                                      url: p.payment_proof_url!,
+                                      buyerName: p.buyer_name,
+                                      totalPrice: p.total_price,
+                                      serviceType: p.service_type,
+                                    })
+                                  }
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 hover:border-white/20 text-[11px] font-mono text-[#ededed] transition-all cursor-pointer"
                                 >
                                   <svg className="w-3.5 h-3.5 text-[#c2c2c2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                   </svg>
                                   <span>Bukti Bayar</span>
-                                  <span className="text-[10px] text-[#8e8e8e]">↗</span>
-                                </a>
+                                </button>
                               ) : (
                                 <span className="text-[11px] text-[#686868] font-mono">Tidak ada</span>
                               )}
@@ -949,6 +971,73 @@ export default function AdminPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* Modal Popup Bukti Transfer */}
+        {previewProof && (
+          <div
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setPreviewProof(null)}
+          >
+            <div
+              className="relative max-w-2xl w-full max-h-[90vh] bg-[#0c0c0c]/95 border border-white/10 rounded-[28px] p-6 flex flex-col gap-4 shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#8e8e8e]">
+                    Bukti Transfer QRIS
+                  </span>
+                  <h3 className="text-[16px] font-medium text-white">
+                    {previewProof.buyerName} •{' '}
+                    <span className="font-mono text-[#ededed]">
+                      Rp {previewProof.totalPrice.toLocaleString('id-ID')}
+                    </span>
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewProof(null)}
+                  className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all text-[13px] font-mono cursor-pointer"
+                  aria-label="Tutup modal"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Image body */}
+              <div className="flex-1 overflow-auto flex items-center justify-center bg-black/60 rounded-[18px] border border-white/[0.06] p-2 min-h-[260px] max-h-[65vh]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewProof.url}
+                  alt={`Bukti transfer ${previewProof.buyerName}`}
+                  className="max-h-[60vh] max-w-full object-contain rounded-[12px]"
+                />
+              </div>
+
+              {/* Footer controls */}
+              <div className="flex items-center justify-between pt-2">
+                <a
+                  href={previewProof.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={`bukti-transfer-${previewProof.buyerName}.jpg`}
+                  className="text-[12px] font-mono text-[#8e8e8e] hover:text-white inline-flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Buka Gambar Asli</span>
+                  <span className="text-[10px]">↗</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setPreviewProof(null)}
+                  className="btn-white-pill text-[12px] px-5 py-2 rounded-full font-medium cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </main>
 

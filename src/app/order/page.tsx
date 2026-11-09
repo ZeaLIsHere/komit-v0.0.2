@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ServiceType, PackageType } from '@/lib/types';
+import { compressImageInBrowser } from '@/lib/image-compress';
 
 export default function OrderPage() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function OrderPage() {
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [isCompressingProof, setIsCompressingProof] = useState<boolean>(false);
+  const [proofSizeInfo, setProofSizeInfo] = useState<{ originalKb: number; compressedKb: number } | null>(null);
   const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' | 'duplicate' }>({});
   const [githubProfiles, setGithubProfiles] = useState<{
     [index: number]: {
@@ -162,22 +165,32 @@ export default function OrderPage() {
     });
   };
 
-  // Handle image upload from file picker with 5MB validation
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle image upload from file picker with automatic browser canvas compression
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMsg('Ukuran file maksimal 5 MB');
+      if (file.size > 15 * 1024 * 1024) {
+        setErrorMsg('Ukuran file maksimal 15 MB');
         return;
       }
+
       setErrorMsg(null);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setProofPreview(result);
-        setProofUrl(result);
-      };
-      reader.readAsDataURL(file);
+      setIsCompressingProof(true);
+
+      try {
+        const { base64, originalSizeKb, compressedSizeKb } = await compressImageInBrowser(file, 900, 1200, 0.72);
+        setProofPreview(base64);
+        setProofUrl(base64);
+        setProofSizeInfo({
+          originalKb: originalSizeKb,
+          compressedKb: compressedSizeKb,
+        });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Gagal memproses gambar';
+        setErrorMsg(msg);
+      } finally {
+        setIsCompressingProof(false);
+      }
     }
   };
 
@@ -185,6 +198,7 @@ export default function OrderPage() {
   const handleQuickDemoFill = () => {
     setProofUrl('/dummy-qris-proof.jpg');
     setProofPreview('/dummy-qris-proof.jpg');
+    setProofSizeInfo({ originalKb: 1200, compressedKb: 48 });
   };
 
   // Price Calculation: N x Rp 50.000 for project_joki
@@ -790,13 +804,18 @@ export default function OrderPage() {
 
                   <div className="flex flex-col sm:flex-row items-center gap-3">
                     <label className="cursor-pointer bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
-                      <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span>Pilih Gambar Bukti</span>
+                      {isCompressingProof ? (
+                        <div className="w-4 h-4 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <svg className="w-4 h-4 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      )}
+                      <span>{isCompressingProof ? 'Mengompres...' : 'Pilih Gambar Bukti'}</span>
                       <input
                         type="file"
                         accept="image/*"
+                        disabled={isCompressingProof}
                         onChange={handleFileChange}
                         className="hidden"
                       />
@@ -812,12 +831,27 @@ export default function OrderPage() {
                   </div>
 
                   {proofPreview && (
-                    <div className="mt-2 flex items-center gap-2.5 p-2.5 bg-white/[0.06] rounded-[10px] border border-white/10">
-                      <svg className="w-4 h-4 text-[#59d499] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-[11px] text-white font-medium">Bukti bayar terlampir</span>
-                      <span className="text-[11px] text-white/70 truncate max-w-xs font-mono">{proofUrl.slice(0, 32)}...</span>
+                    <div className="mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-white/[0.06] rounded-[12px] border border-white/10">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <svg className="w-4 h-4 text-[#59d499] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-[12px] text-white font-medium">Bukti bayar siap</span>
+                        {proofSizeInfo && (
+                          <span className="text-[11px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/25">
+                            {proofSizeInfo.compressedKb} KB (dari {proofSizeInfo.originalKb} KB)
+                          </span>
+                        )}
+                      </div>
+
+                      <a
+                        href={proofPreview}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-white/70 hover:text-white underline font-mono self-start sm:self-auto"
+                      >
+                        Lihat Preview ↗
+                      </a>
                     </div>
                   )}
                 </div>
