@@ -325,10 +325,9 @@ export default function AdminPage() {
                           ) : (
                             <Link
                               href={`/admin/project/${p.id}`}
-                              className="inline-flex items-center justify-center gap-1.5 text-[12px] font-sans font-medium text-white hover:text-white px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 transition-all whitespace-nowrap"
+                              className="inline-flex items-center justify-center text-[12px] font-sans font-medium text-white hover:text-white px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/35 transition-all whitespace-nowrap"
                             >
                               <span>Kelola Proyek</span>
-                              <span className="text-[11px]">↗</span>
                             </Link>
                           )}
                         </td>
@@ -391,10 +390,12 @@ export default function AdminPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   download={`bukti-transfer-${previewProof.buyerName}.jpg`}
-                  className="text-[12px] font-mono text-[#8e8e8e] hover:text-white inline-flex items-center gap-1.5 transition-colors"
+                  className="text-[12px] font-mono text-white/80 hover:text-white inline-flex items-center gap-1.5 transition-colors"
                 >
                   <span>Buka Gambar Asli</span>
-                  <span className="text-[10px]">↗</span>
+                  <svg className="w-3.5 h-3.5 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
                 </a>
                 <button
                   type="button"
