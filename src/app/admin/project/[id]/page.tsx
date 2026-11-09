@@ -675,7 +675,6 @@ export default function AdminProjectDetailPage({
             <h2 className="text-[18px] font-medium text-white tracking-tight">
               Data Anggota Kelompok ({members.length} Orang)
             </h2>
-            <span className="text-[11px] font-mono text-white/50">IDENTITAS RESMI TIM</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
