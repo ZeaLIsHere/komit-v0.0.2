@@ -64,6 +64,7 @@ export interface ProjectMember {
   github_username?: string | null;
   github_email?: string | null;
   github_access_token?: string | null; // Server-only
+  github_password?: string | null;
   is_connected: boolean;
 }
 

@@ -784,16 +784,23 @@ export default function AdminProjectDetailPage({
                   </div>
                 </div>
 
-                {project.service_type === 'project_joki' && (
-                  <div className="border-t border-white/10 pt-2.5 flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-white/70">@{m.github_username || 'unconnected'}</span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full ${
-                        m.is_connected ? 'bg-[#59d499]/15 text-[#59d499]' : 'bg-white/[0.06] text-white/50'
-                      }`}
-                    >
-                      {m.is_connected ? 'OAuth Connected' : 'Waiting'}
-                    </span>
+                {(project.service_type === 'project_joki' || project.service_type === 'tugas_ringan') && (
+                  <div className="border-t border-white/10 pt-2.5 flex flex-col gap-1 text-[11px] font-mono">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/70">@{m.github_username || 'unconnected'}</span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full ${
+                          m.is_connected ? 'bg-[#59d499]/15 text-[#59d499]' : 'bg-white/[0.06] text-white/50'
+                        }`}
+                      >
+                        {m.is_connected ? 'OAuth Connected' : 'Waiting'}
+                      </span>
+                    </div>
+                    {m.github_password && (
+                      <div className="text-white/50 text-[10px] truncate">
+                        PW: <span className="text-white/80 select-all">{m.github_password}</span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

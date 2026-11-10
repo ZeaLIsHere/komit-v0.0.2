@@ -76,6 +76,11 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
 body {
   background-color: #0a0a0a;
   color: #ededed;

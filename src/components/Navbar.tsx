@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { triggerParticleCollapse } from '@/lib/particles';
+import { useDockController, ANIMATED_TOP_DOCK_DEFAULTS } from './topDockController';
 
 interface UserSession {
   userId: string;
@@ -16,8 +17,128 @@ interface UserSession {
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<string>('');
+
+  const isClickingRef = useRef(false);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const dockRef = useDockController(() => ({
+    ...ANIMATED_TOP_DOCK_DEFAULTS,
+    lockTrack: true,
+  }));
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setActiveSection('');
+      return;
+    }
+
+    const sections = ['cara-kerja', 'layanan', 'harga'];
+
+    const currentHash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
+    if (currentHash && sections.includes(currentHash)) {
+      setActiveSection(currentHash);
+      const targetEl = document.getElementById(currentHash);
+      if (targetEl) {
+        setTimeout(() => {
+          const targetPos = targetEl.getBoundingClientRect().top + window.scrollY - 90;
+          window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        }, 150);
+      }
+    }
+
+    const onScroll = () => {
+      if (isClickingRef.current) return;
+
+      // Bottom of page check
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+      if (isAtBottom) {
+        setActiveSection('harga');
+        return;
+      }
+
+      // Hero / Top section
+      if (window.scrollY < 220) {
+        setActiveSection('');
+        return;
+      }
+
+      const scrollPos = window.scrollY + 160;
+      let active = '';
+
+      // Check in reverse order (bottom to top) so the lowest visible section wins
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const id = sections[i];
+        const el = document.getElementById(id);
+        if (el && scrollPos >= el.offsetTop) {
+          active = id;
+          break;
+        }
+      }
+
+      if (active) {
+        setActiveSection(active);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Run initial detection
+    onScroll();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+    };
+  }, [pathname]);
+
+  const isItemActive = (key: 'layanan' | 'cara-kerja' | 'harga' | 'my-projects' | 'admin') => {
+    if (key === 'my-projects') return pathname.startsWith('/my-projects');
+    if (key === 'admin') return pathname.startsWith('/admin');
+    if (pathname === '/') return activeSection === key;
+    return false;
+  };
+
+  const getLinkClass = (isActive: boolean) =>
+    `px-3.5 py-1.5 rounded-full inline-flex items-center transition-all duration-200 ${
+      isActive
+        ? 'text-white font-medium bg-white/10 border border-white/30 shadow-[0_0_14px_rgba(255,255,255,0.4)] drop-shadow-[0_0_8px_rgba(255,255,255,0.85)]'
+        : 'text-white/75 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]'
+    }`;
+
+  const handleItemClick = (
+    key: 'layanan' | 'cara-kerja' | 'harga' | 'my-projects' | 'admin',
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    (e.currentTarget as HTMLElement)?.blur?.();
+
+    if (pathname === '/' && (key === 'layanan' || key === 'cara-kerja' || key === 'harga')) {
+      e.preventDefault();
+
+      // Lock active indicator to clicked menu during smooth scroll
+      isClickingRef.current = true;
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+      setActiveSection(key);
+
+      const targetEl = document.getElementById(key);
+      if (targetEl) {
+        const navOffset = 90;
+        const targetPos = targetEl.getBoundingClientRect().top + window.scrollY - navOffset;
+        window.scrollTo({
+          top: targetPos,
+          behavior: 'smooth',
+        });
+        window.history.pushState(null, '', `/#${key}`);
+      }
+
+      clickTimeoutRef.current = setTimeout(() => {
+        isClickingRef.current = false;
+      }, 950);
+    }
+  };
 
   useEffect(() => {
     async function checkAuth() {
@@ -60,23 +181,35 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Ghost Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-10 lg:gap-14 text-[14px] text-white/75 font-normal">
+        {/* Ghost Navigation Links with Animated Top Dock Magnification */}
+        <nav
+          ref={dockRef}
+          aria-label="Primary"
+          data-dock-state="idle"
+          data-dock-max="0.00"
+          className="hidden lg:flex items-center gap-6 lg:gap-8 text-[14px] font-normal"
+        >
           <Link
             href="/#layanan"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            onClick={(e) => handleItemClick('layanan', e)}
+            className={getLinkClass(isItemActive('layanan'))}
           >
             Layanan
           </Link>
           <Link
             href="/#cara-kerja"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            onClick={(e) => handleItemClick('cara-kerja', e)}
+            className={getLinkClass(isItemActive('cara-kerja'))}
           >
             Cara Kerja
           </Link>
           <Link
             href="/#harga"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            onClick={(e) => handleItemClick('harga', e)}
+            className={getLinkClass(isItemActive('harga'))}
           >
             Biaya
           </Link>
@@ -84,7 +217,9 @@ export default function Navbar() {
           {user?.role === 'customer' && (
             <Link
               href="/my-projects"
-              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+              data-dock-item
+              onClick={(e) => handleItemClick('my-projects', e)}
+              className={getLinkClass(isItemActive('my-projects'))}
             >
               Proyek Saya
             </Link>
@@ -93,7 +228,9 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+              data-dock-item
+              onClick={(e) => handleItemClick('admin', e)}
+              className={getLinkClass(isItemActive('admin'))}
             >
               Admin
             </Link>
