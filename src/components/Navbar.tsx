@@ -77,6 +77,7 @@ export default function Navbar() {
           <Link
             href="/#layanan"
             data-dock-item
+            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
             className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Layanan
@@ -84,6 +85,7 @@ export default function Navbar() {
           <Link
             href="/#cara-kerja"
             data-dock-item
+            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
             className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Cara Kerja
@@ -91,6 +93,7 @@ export default function Navbar() {
           <Link
             href="/#harga"
             data-dock-item
+            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
             className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Biaya
@@ -100,6 +103,7 @@ export default function Navbar() {
             <Link
               href="/my-projects"
               data-dock-item
+              onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
               className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
             >
               Proyek Saya
@@ -110,6 +114,7 @@ export default function Navbar() {
             <Link
               href="/admin"
               data-dock-item
+              onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
               className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
             >
               Admin

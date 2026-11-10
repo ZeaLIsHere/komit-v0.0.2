@@ -80,7 +80,14 @@ export function createTopDockController(
         stateMap.set(item, state);
       }
 
-      if (item === document.activeElement || item.contains(document.activeElement)) {
+      let isFocused = false;
+      try {
+        isFocused = item.matches(':focus-visible') || Boolean(item.querySelector(':focus-visible'));
+      } catch {
+        isFocused = false;
+      }
+
+      if (isFocused) {
         state.targetVal = 1;
       } else if (pointerActive) {
         const rect = item.getBoundingClientRect();
@@ -180,6 +187,12 @@ export function createTopDockController(
     }
   };
 
+  const onPointerDown = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   const onFocusIn = () => {
     startLoop();
   };
@@ -189,6 +202,8 @@ export function createTopDockController(
   };
 
   window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerdown', onPointerDown, { passive: true });
+  root.addEventListener('pointerleave', onPointerLeave, { passive: true });
   document.addEventListener('pointerleave', onPointerLeave, { passive: true });
   window.addEventListener('blur', onPointerLeave);
   root.addEventListener('focusin', onFocusIn);
@@ -197,6 +212,8 @@ export function createTopDockController(
   return () => {
     cancelAnimationFrame(rAF);
     window.removeEventListener('pointermove', onPointerMove);
+    window.removeEventListener('pointerdown', onPointerDown);
+    root.removeEventListener('pointerleave', onPointerLeave);
     document.removeEventListener('pointerleave', onPointerLeave);
     window.removeEventListener('blur', onPointerLeave);
     root.removeEventListener('focusin', onFocusIn);
