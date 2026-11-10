@@ -20,9 +20,6 @@ export default function HomePage() {
 
           {/* Foreground Content Stack */}
           <div className="relative z-10 max-w-4xl flex flex-col items-center gap-6">
-            <span className="text-[11px] sm:text-[12px] font-mono tracking-[0.1em] text-white/80 uppercase px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-xl">
-              Partner Tugas Kuliah Andalan
-            </span>
             <h1 className="text-[44px] sm:text-[60px] md:text-[72px] leading-[1.0] font-medium tracking-[-0.035em] text-white">
               Tugas kuliah kelar, lo tinggal santai.
             </h1>
