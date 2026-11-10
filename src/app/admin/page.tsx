@@ -54,6 +54,9 @@ export default function AdminPage() {
   };
 
   const handlePaymentStatus = async (projectId: string, newStatus: 'paid' | 'rejected') => {
+    if (newStatus === 'rejected') {
+      if (!confirm('Tolak bukti transfer pesanan ini? Status akan ditandai Rejected.')) return;
+    }
     try {
       const res = await fetch(`/api/projects/${projectId}`, {
         method: 'PATCH',

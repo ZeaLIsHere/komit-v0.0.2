@@ -297,13 +297,13 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-6 rounded-full bg-white/[0.1] hover:bg-white/[0.18] border border-white/20 text-white text-[14px] font-medium transition-all flex items-center justify-center gap-2 cursor-pointer mt-1"
+            className="w-full btn-white-pill text-[14px] font-medium py-3.5 px-6 rounded-full flex items-center justify-center gap-2 cursor-pointer mt-1 shadow-[0_0_24px_rgba(255,255,255,0.15)] hover:scale-[1.01] active:scale-[0.99] transition-all"
           >
             {loading
               ? 'Memproses...'
               : isRegisterMode
-              ? 'Daftar'
-              : 'Masuk'}
+              ? 'Daftar Akun'
+              : 'Masuk Akun'}
           </button>
         </form>
 
@@ -399,7 +399,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col">
         <Link

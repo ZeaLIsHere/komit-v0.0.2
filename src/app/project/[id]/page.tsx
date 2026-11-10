@@ -110,14 +110,14 @@ export default function ProjectDashboardPage({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ppt_addon_paid: true,
-          ppt_file_url: 'https://komit-v2.storage/demo-slide-presentasi.pdf',
+          ppt_file_url: null,
         }),
       });
       if (res.ok) {
         const data = await res.json();
         setProject(data.project);
         setShowPptModal(false);
-        alert('Add-on Slide PPT berhasil dipesan!');
+        alert('Add-on Slide PPT berhasil dipesan! Operator joki akan menyiapkannya.');
       }
     } catch {
       alert('Gagal memproses add-on');
@@ -244,7 +244,7 @@ export default function ProjectDashboardPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         {/* Setup Banner */}
         {project.status === 'setup' && (() => {
           const needsGitHub = project.service_type === 'project_joki' || project.service_type === 'tugas_ringan';
@@ -454,7 +454,7 @@ export default function ProjectDashboardPage({
                   >
                     <div>
                       <div className="text-[16px] font-medium text-white">{m.name}</div>
-                      <div className="text-[12px] text-white/60 font-mono mt-1">
+                      <div className="text-[12px] text-white/60 font-mono mt-1 tabular-nums whitespace-nowrap">
                         NIM: {m.nim} • KOM {m.kom}
                       </div>
                     </div>
@@ -516,7 +516,7 @@ export default function ProjectDashboardPage({
                             <span className="text-[12px] font-mono text-white bg-white/[0.08] border border-white/15 px-2.5 py-0.5 rounded-[6px]">
                               @{s.github_username || 'member'}
                             </span>
-                            <span className="text-[12px] text-white/60 font-mono">
+                            <span className="text-white/60 text-[11px] font-mono tabular-nums whitespace-nowrap">
                               {new Date(s.scheduled_at).toLocaleDateString('id-ID', {
                                 day: 'numeric',
                                 month: 'short',
@@ -529,7 +529,7 @@ export default function ProjectDashboardPage({
 
                         <div className="flex items-center gap-3 shrink-0 self-end sm:self-auto">
                           {s.commit_hash && (
-                            <span className="text-[11px] font-mono text-white/80 bg-white/[0.06] border border-white/10 px-2.5 py-0.5 rounded-[6px]">
+                            <span className="text-[11px] font-mono text-white/80 bg-white/[0.06] border border-white/10 px-2.5 py-0.5 rounded-[6px] tabular-nums whitespace-nowrap">
                               #{s.commit_hash}
                             </span>
                           )}
@@ -553,7 +553,7 @@ export default function ProjectDashboardPage({
         ) : (
           /* SEKSI UNTUK MAKALAH, PPT, DAN TUGAS RINGAN (NON-GIT) */
           <div className="flex flex-col gap-6">
-            {/* Card File Hasil Pengerjaan dari Tim Joki */}
+            {/* Card File Hasil Pengerjaan Dokumen Utama */}
             <div className="p-7 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
@@ -562,32 +562,36 @@ export default function ProjectDashboardPage({
                   </span>
                   <span
                     className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-medium ${
-                      project.doc_file_url || project.ppt_file_url
+                      project.doc_file_url
                         ? 'bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30'
                         : 'bg-[#ffb829]/15 text-[#ffb829] border border-[#ffb829]/30'
                     }`}
                   >
-                    {project.doc_file_url || project.ppt_file_url ? '✓ Siap Diunduh' : 'Sedang Dikerjakan'}
+                    {project.doc_file_url ? '✓ Siap Diunduh' : 'Sedang Dikerjakan'}
                   </span>
                 </div>
                 <h3 className="text-[20px] font-medium text-white">
-                  {project.service_type === 'makalah' ? 'Dokumen Makalah Resmi' : 'Slide Presentasi PPT'}
+                  {project.service_type === 'makalah'
+                    ? 'Dokumen Makalah Resmi'
+                    : project.service_type === 'ppt'
+                    ? 'Slide Presentasi PPT'
+                    : 'Kode Sumber & Dokumentasi Tugas'}
                 </h3>
                 <p className="text-[14px] text-white/80 leading-relaxed max-w-xl">
-                  {project.doc_file_url || project.ppt_file_url
-                    ? 'File hasil pengerjaan telah diselesaikan oleh tim joki dan siap Anda unduh untuk tugas kuliah kelompok Anda.'
-                    : 'Tim kami sedang menyusun materi, format dokumen, dan sitasi sesuai pesanan Anda. File akan otomatis muncul di sini setelah selesai.'}
+                  {project.doc_file_url
+                    ? 'File hasil pengerjaan telah diselesaikan oleh tim joki dan siap Anda unduh untuk tugas kuliah Anda.'
+                    : 'Tim kami sedang menyelesaikan pengerjaan tugas sesuai instruksi dan acuan topik Anda. File otomatis siap unduh di sini setelah selesai.'}
                 </p>
               </div>
 
-              {project.doc_file_url || project.ppt_file_url ? (
+              {project.doc_file_url ? (
                 <a
-                  href={project.doc_file_url || project.ppt_file_url || '#'}
+                  href={project.doc_file_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-white-pill text-[13px] px-6 py-3 rounded-full shrink-0 inline-flex items-center justify-center font-medium shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
-                  Unduh {project.service_type === 'makalah' ? 'Makalah' : 'Slide PPT'} ↗
+                  Unduh {project.service_type === 'makalah' ? 'Makalah' : project.service_type === 'ppt' ? 'Slide PPT' : 'Kode Sumber'} ↗
                 </a>
               ) : (
                 <div className="text-[12px] font-mono text-white/70 bg-white/[0.04] border border-white/10 px-4 py-2.5 rounded-full shrink-0 text-center">
@@ -595,6 +599,34 @@ export default function ProjectDashboardPage({
                 </div>
               )}
             </div>
+
+            {/* Card Terpisah untuk Slide PPT Tambahan jika Tersedia */}
+            {project.ppt_file_url && project.service_type !== 'ppt' && (
+              <div className="p-7 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-white/60">
+                      Deliverable Slide Presentasi
+                    </span>
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full font-medium bg-[#59d499]/15 text-[#59d499] border border-[#59d499]/30">
+                      ✓ Siap Diunduh
+                    </span>
+                  </div>
+                  <h3 className="text-[20px] font-medium text-white">Slide Presentasi Tambahan</h3>
+                  <p className="text-[14px] text-white/80 leading-relaxed max-w-xl">
+                    Slide presentasi pendukung tugas telah selesai disiapkan oleh tim.
+                  </p>
+                </div>
+                <a
+                  href={project.ppt_file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-white-pill text-[13px] px-6 py-3 rounded-full shrink-0 inline-flex items-center justify-center font-medium"
+                >
+                  Unduh Slide PPT ↗
+                </a>
+              </div>
+            )}
 
             {project.doc_topic && (
               <div className="p-6 sm:p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-3">
@@ -642,8 +674,8 @@ export default function ProjectDashboardPage({
           </div>
         )}
 
-        {/* UAS Presentation Materials Section (HANYA UNTUK LAYANAN KODING) */}
-        {(project.service_type === 'project_joki' || project.service_type === 'tugas_ringan') && (
+        {/* UAS Presentation Materials Section (HANYA UNTUK PROYEK KELOMPOK KODING) */}
+        {project.service_type === 'project_joki' && (
           <section className="flex flex-col gap-4">
             <h2 className="text-[24px] font-medium text-white tracking-tight">
               Bahan Presentasi &amp; Panduan Tanya Jawab Dosen
