@@ -226,16 +226,17 @@ export default function AdminProjectDetailPage({
   }
 
   // Format WhatsApp Link
-  const cleanPhone = project.buyer_whatsapp.replace(/\D/g, '');
-  const waUrl = cleanPhone.startsWith('0')
-    ? `https://wa.me/62${cleanPhone.slice(1)}`
-    : `https://wa.me/${cleanPhone}`;
+  const cleanPhone = project.buyer_whatsapp ? project.buyer_whatsapp.replace(/\D/g, '') : '';
+  const waNumber = cleanPhone.startsWith('0')
+    ? `62${cleanPhone.slice(1)}`
+    : cleanPhone;
+  const waUrl = `https://wa.me/${waNumber}`;
 
   return (
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1100px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-24 flex flex-col gap-8">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-24 flex flex-col gap-8">
         {/* Top Breadcrumb & Quick Nav */}
         <div className="flex items-center justify-between border-b border-white/10 pb-5">
           <Link
@@ -543,10 +544,10 @@ export default function AdminProjectDetailPage({
                   type="button"
                   onClick={handleGenerateTopicDoc}
                   disabled={isGeneratingTopic}
-                  className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full inline-flex items-center gap-2 shrink-0 shadow-[0_0_24px_rgba(255,255,255,0.15)] hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full inline-flex items-center gap-2 shrink-0 shadow-[0_0_24px_rgba(255,255,255,0.15)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-[#ffb829]" />
-                  <span>{isGeneratingTopic ? 'Menyusun via Groq...' : 'Buat topik.md ⚡'}</span>
+                  <span>{isGeneratingTopic ? 'Menyusun via Groq...' : 'Buat topik.md'}</span>
                 </button>
               </div>
 

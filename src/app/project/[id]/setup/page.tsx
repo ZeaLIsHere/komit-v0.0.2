@@ -241,22 +241,6 @@ export default function ProjectSetupPage({
     }
   };
 
-  const handleSimulatePaymentApprove = async () => {
-    try {
-      const res = await fetch(`/api/projects/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ payment_status: 'paid', status: 'setup' }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setProject(data.project);
-      }
-    } catch {
-      alert('Gagal memperbarui status');
-    }
-  };
-
   const handleSendChat = async (overridePrompt?: string) => {
     const text = (overridePrompt || chatInput || niche).trim();
     if (!text || isGeneratingIdeas) return;
@@ -444,12 +428,15 @@ export default function ProjectSetupPage({
             </div>
 
             <div className="mt-4 pt-4 border-t border-[#e5e5e5]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-[13px] text-[#686868]">Mode pengujian cepat:</span>
+              <span className="text-[13px] text-white/70">
+                Setelah admin memverifikasi bukti pembayaran, halaman ini otomatis terbuka.
+              </span>
               <button
-                onClick={handleSimulatePaymentApprove}
-                className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full"
+                type="button"
+                onClick={() => window.location.reload()}
+                className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full cursor-pointer shrink-0"
               >
-                Simulasi Approve Pembayaran
+                Cek Status Terbaru
               </button>
             </div>
           </div>
