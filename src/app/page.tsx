@@ -20,11 +20,14 @@ export default function HomePage() {
 
           {/* Foreground Content Stack */}
           <div className="relative z-10 max-w-4xl flex flex-col items-center gap-6">
+            <span className="text-[11px] sm:text-[12px] font-mono tracking-[0.1em] text-white/80 uppercase px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-xl">
+              Partner Tugas Kuliah Andalan
+            </span>
             <h1 className="text-[44px] sm:text-[60px] md:text-[72px] leading-[1.0] font-medium tracking-[-0.035em] text-white">
-              Proyek kelompok selesai. Commit natural di mata dosen.
+              Tugas kuliah kelar, lo tinggal santai.
             </h1>
             <p className="text-[16px] md:text-[18px] text-white/80 leading-[1.6] max-w-2xl mx-auto font-normal">
-              Cicil commit GitHub terjadwal otomatis menggunakan akun asli masing-masing anggota kelompok hingga UAS. Dilengkapi rekomendasi ide AI dengan fitur pemikat nilai dan bahan presentasi.
+              Capek begadang tiap malam atau dapet temen kelompok yang ngilang? Dari proyek koding cicil commit, tugas praktikum harian, makalah rapi, sampe slide presentasi siap tampil — serahin ke sini, beres tanpa drama.
             </p>
           </div>
 
@@ -35,13 +38,13 @@ export default function HomePage() {
               onMouseLeave={() => triggerParticleCollapse(false)}
               className="btn-white-pill text-[14px] px-7 py-3.5 rounded-full"
             >
-              Mulai Pesan Proyek
+              Gas Order Sekarang
             </Link>
             <Link
               href="/project/demo-proyek-uas"
               className="btn-hairline-ghost text-[14px] px-6 py-3 rounded-full"
             >
-              Lihat Demo Dashboard
+              Kepoin Dashboard
             </Link>
           </div>
         </section>
