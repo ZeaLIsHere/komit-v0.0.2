@@ -9,43 +9,53 @@ Sebelum menulis, membangun, atau melanjutkan fitur apa pun, AI Agent **WAJIB** m
    - Gunakan `understand` / `understand-chat` / `understand-explain` untuk membaca peta arsitektur (`.ua/knowledge-graph.json`) agar tidak buta konteks saat melanjutkan fitur.
    - Gunakan `understand-domain` untuk memastikan alur bisnis baru selaras dengan domain yang sudah ada.
    - Gunakan `understand-diff` setelah selesai mengubah kode untuk mengecek dampak perubahan (*ripple effect*) sebelum selesai/commit.
-   - Setelah fondasi aplikasi (Tahap 1) terbangun, jalankan `understand` untuk menginisialisasi graph `.ua/knowledge-graph.json` dan update secara inkremental setiap ada fitur baru.
+   - Jalankan `understand` secara inkremental setiap ada penambahan atau perubahan fitur signifikan.
 3. **Aktifkan Skills UI/Visual yang Relevan** — Panggil skill sesuai tugas (`impeccable`, `design-taste-frontend`, `unslop`, `anatomy`).
-4. **Baca [`PRD.md`](./PRD.md)** — Pastikan fitur, alur bisnis, formula harga (`N x Rp 50.000`), dan skema database sesuai spesifikasi.
-5. **Baca [`DESIGN.md`](./DESIGN.md)** — Terapkan sistem desain Dala (*Dark Void `#000000`*, *Electric Iris `#8052ff`*, *Saffron Spark `#ffb829`*, tipografi *PPNeueMontreal / Inter* weight 400 display & weight 200 body, base spacing `6px`, tanpa card border/shadow).
+4. **Baca [`PRD.md`](./PRD.md)** — Pastikan fitur, alur bisnis 4 kategori layanan, formula harga, dan skema data sesuai spesifikasi resmi.
+5. **Baca [`DESIGN.md`](./DESIGN.md)** — Terapkan sistem desain Dimension (*Dusk-lit frosted glass pada kanvas void `#000000` / `#0a0a0a`*, *frosted glass `bg-white/[0.04]`*, *aksen putih salju `#ffffff` & warm bone `#ededed`*, tipografi medium 500 display, rounded-full pill buttons, border hairline `1px solid rgba(255,255,255,0.12)`*).
 
-> **Aturan Prioritas Visual:** Jika ada aturan umum di skill yang berbeda dengan spesifikasi eksplisit di [`DESIGN.md`](./DESIGN.md) (seperti penggunaan aksen `#8052ff` Electric Iris, base unit `6px`, atau label uppercase `14px` `#ffb829`), **`DESIGN.md` selalu menang (The Brief Wins).**
+> **Aturan Prioritas Visual:** Jika ada aturan umum di skill yang berbeda dengan spesifikasi eksplisit di [`DESIGN.md`](./DESIGN.md) atau aturan proyek, **`DESIGN.md` selalu menang (The Brief Wins).**
 
 ---
 
 ## 1. Konteks Produk
-**Komit-V2** adalah platform Productized Service & SaaS untuk mahasiswa IT (detail lengkap di [`PRD.md`](./PRD.md)):
-- Layanan utama: Joki Proyek Kuliah Berkelompok (cicil commit GitHub terjadwal atas nama akun GitHub masing-masing anggota kelompok hingga UAS), Makalah, PPT, dan Tugas Ringan.
-- Alur utama:
-  1. `/order` — Pilih layanan, paket (`full`, `code_only`, `idea_only`), jumlah anggota (`N x Rp 50.000`), lalu bayar via QRIS Statis + upload bukti bayar.
-  2. `/project/[id]/setup` — Terbuka setelah pembayaran di-approve. Input niche -> AI generate 3 rekomendasi ide + gimmick pemikat dosen -> kunci ide -> isi data anggota (Nama, NIM, KOM) -> bagikan link undangan anggota untuk **Connect GitHub (OAuth)**.
-  3. `/project/[id]` — Client Dashboard: pantau progress aplikasi, riwayat & jadwal commit per anggota, generate README (bahan presentasi gratis), atau beli add-on PPT jadi.
-  4. `/admin` — Panel tim joki/admin: verifikasi bukti QRIS, kelola proyek, jadwalkan *auto-commit* menggunakan token OAuth anggota, dan upload file PPT.
+**Komit-V2** adalah platform *Productized Service & SaaS* terpadu untuk mahasiswa IT yang menyediakan jasa pengerjaan berbagai jenis tugas kuliah (detail lengkap di [`PRD.md`](./PRD.md)):
+- **4 Kategori Layanan:**
+  1. **Proyek Kelompok Kuliah (`project_joki`):** Pengerjaan proyek koding kelompok dari awal hingga UAS. Dilengkapi otomasi *Cicil Commit GitHub Terjadwal* atas nama akun GitHub asli tiap anggota kelompok, AI generator ide + gimmick pemikat dosen, README panduan presentasi, dan add-on PPT.
+  2. **Koding Ringan (`tugas_ringan`):** Tugas pemrograman harian, algoritma, script, praktikum mandiri, atau perbaikan bug dengan turnaround cepat dan kode bersih.
+  3. **Makalah Akademik (`makalah`):** Penulisan makalah resmi, laporan praktikum, review jurnal, dan diagram sistem (UML/ERD) terstruktur, bebas plagiasi, standar sitasi IEEE/APA, didukung AI topic outline builder (`topik.md`).
+  4. **Slide Presentasi (`ppt`):** Pembuatan slide presentasi modern dan persuasif (PPTX/PDF) untuk seminar, sidang, atau ujian kelompok.
+
+- **Alur Utama:**
+  1. `/order` — Pilih dari 4 layanan. Form beradaptasi secara cerdas:
+     - Makalah & PPT: **NOL kredensial GitHub**. Hanya minta Nama, NIM, `doc_topic` (Judul), dan `doc_details` (Instruksi pengerjaan).
+     - Proyek Kelompok & Koding: Minta jumlah anggota, paket koding, dan akun GitHub.
+     - Pembayaran: QRIS Statis. Foto bukti bayar (3–8MB) otomatis dikompresi di browser via HTML5 Canvas menjadi ~30–60KB JPEG (`src/lib/image-compress.ts`) lalu disimpan ke Cloud Firestore (tanpa biaya Firebase Storage Blaze).
+  2. `/admin` — Workspace operator: antrean bukti bayar pending, verifikasi cepat via **Popup Modal** tanpa reload/buka tab baru.
+  3. `/admin/project/[id]` — POV Inspeksi Proyek oleh Admin: data kontak WhatsApp klien, kredensial GitHub (jika koding), AI generator acuan penulisan `topik.md` via Groq LPU, dan form pengiriman link hasil pengerjaan (Google Drive/PDF/PPTX) langsung ke dashboard klien.
+  4. `/project/[id]/setup` — Setup proyek pasca pembayaran: ide AI + gimmick dosen + OAuth GitHub (jika koding kelompok), atau konfirmasi data tim (jika makalah/PPT).
+  5. `/project/[id]` — Client Dashboard: pantau timeline koding & commit (proyek koding) atau unduh file deliverable resmi dari tim joki (makalah & PPT).
 
 ---
 
 ## 2. Daftar Skill & Kapan Menggunakannya
 Gunakan tool `skill` sesuai kebutuhan tugas:
 - **`impeccable` & `design-taste-frontend`:** Saat merancang layout halaman baru, mengatur tipografi, komposisi two-column asymmetric, dan membedakan mode *Persuade* (`/`) vs *Operate* (`/order`, `/project/*`, `/admin`).
-- **`unslop`:** Saat melakukan audit visual agar UI bersih dari ornamen AI murahan (tanpa glowing card borders, tanpa emoji, tanpa angka statistik palsu).
-- **`anatomy`:** Saat membangun visual utama (Hero / Explainer) berupa instrumen isometrik interaktif maupun visualisasi partikel konstelasi di atas kanvas hitam `#000000`.
+- **`unslop`:** Saat melakukan audit visual agar UI bersih dari ornamen AI murahan (tanpa emoji sebagai ikon UI, tanpa glowing neon norak, tanpa angka statistik palsu).
+- **`anatomy`:** Saat membangun visual instrumen interaktif maupun visualisasi partikel konstelasi di atas kanvas hitam.
 - **`understand` / `understand-domain` / `understand-diff` / `understand-explain` / `understand-chat`:**
-  - **Saat mulai sesi / lanjut fitur:** Baca `.ua/knowledge-graph.json` atau panggil `understand-chat` / `understand-explain` untuk langsung tahu hubungan antar file tanpa meraba-raba.
-  - **Saat selesai bangun fitur baru:** Jalankan `understand` (incremental update) dan `understand-diff` agar knowledge graph selalu sinkron dengan kode terbaru.
+  - **Saat mulai sesi / lanjut fitur:** Baca `.ua/knowledge-graph.json` atau panggil `understand-chat` / `understand-explain` untuk langsung tahu arsitektur tanpa meraba-raba.
+  - **Saat selesai bangun fitur baru:** Jalankan `understand-diff` untuk validasi ripple effect dan sinkronkan knowledge graph.
 
 ---
 
 ## 3. Tech Stack Utama
-- **Framework:** Next.js (App Router, Fullstack TypeScript)
-- **Styling:** Tailwind CSS v4 (menggunakan token `@theme` dari [`DESIGN.md`](./DESIGN.md))
-- **Database & Storage:** Supabase (PostgreSQL + Supabase Storage untuk bukti QRIS & file PPT)
-- **GitHub Integration:** GitHub OAuth App (`scope: repo, workflow`) untuk push commit menggunakan token asli anggota kelompok
-- **Visual Engine:** `anatomy` (`kit/iso-kit.ts` + `kit/react/`) & Canvas/SVG Constellation sesuai [`DESIGN.md`](./DESIGN.md)
+- **Framework:** Next.js 15 (App Router, Fullstack TypeScript)
+- **Styling:** Tailwind CSS v4 (menggunakan token frosted glass dari [`DESIGN.md`](./DESIGN.md))
+- **Database & Auth:** Firebase (Cloud Firestore untuk database utama, Firebase Auth untuk Google + Email/Password + GitHub OAuth)
+- **AI Engine:** Groq LPU API (`llama-3.3-70b-versatile`) untuk generator ide, README UAS, dan dokumen acuan `topik.md`
+- **In-Browser Image Engine:** HTML5 Canvas (`src/lib/image-compress.ts`) untuk kompresi foto bukti transfer sebelum persistensi
+- **Visual Engine:** Three.js / Canvas 20k particle vortex (`HeroConstellation.tsx`) dengan singularity collapse trigger
 
 ---
 
@@ -53,35 +63,33 @@ Gunakan tool `skill` sesuai kebutuhan tugas:
 1. **YAGNI:** Jangan buat abstraksi, factory, interface tunggal, atau konfigurasi untuk fitur yang belum diminta di [`PRD.md`](./PRD.md).
 2. **Stdlib & Native First:** Gunakan `fetch` bawaan, Web APIs, form action standar, CSS native sebelum menambah package npm baru.
 3. **Fewest Files Possible:** Satu fitur cukup di file yang relevan. Hindari memecah komponen kecil menjadi puluhan file.
-4. **Ponytail Comments:** Jika membuat penyederhanaan yang disengaja (misal: mock state sebelum koneksi API live), tandai dengan `// ponytail: <batas saat ini> -> <jalur upgrade>`.
-5. **Keamanan Wajib:** Validasi semua input di batas API/Server Action, jangan pernah mengekspos `github_access_token` ke response client/browser, dan simpan kredensial hanya di environment variables (`.env.local`).
+4. **Ponytail Comments:** Jika membuat penyederhanaan yang disengaja, tandai dengan `// ponytail: <batas saat ini> -> <jalur upgrade>`.
+5. **Keamanan Wajib:** Validasi semua input di batas API/Server Action, jangan pernah mengekspos token OAuth atau password GitHub ke browser pengguna lain, simpan kredensial hanya di environment variables (`.env.local`).
 
 ---
 
 ## 5. Aturan UI & Desain (Mengacu pada [`DESIGN.md`](./DESIGN.md))
 - **Kanvas & Warna:**
-  - Background wajib Pure Black Void (`#000000` / `--color-void`), bukan abu-abu gelap.
-  - Teks utama `#ffffff` (`--color-bone-white`), sekunder `#9a9a9a` (`--color-ash-gray`), tersier `#bdbdbd` (`--color-silver-mist`).
-  - Tombol CTA utama tunggal menggunakan pill `#8052ff` (`--color-electric-iris`), radius `24px` / pill. Jangan pernah menaruh dua tombol `#8052ff` berdekatan.
-  - Highlight & aksen perhatian menggunakan `#ffb829` (`--color-saffron-spark`), tint sekunder `#15846e` (`--color-deep-verdant`).
-- **Tipografi:**
-  - Satu keluarga font (`PPNeueMontreal` dengan fallback `Inter`).
-  - Semua Headline menggunakan **weight 400** (bukan bold) dengan ukuran besar (`42px`–`113px`) dan negative letter-spacing (`-0.04em`).
-  - Semua Body copy (`18px`) menggunakan **weight 200 (extra-light)**.
-  - Gunakan `tabular-nums` untuk semua harga, NIM, tanggal, dan hash commit.
-- **Spacing & Komposisi:**
-  - Base spacing unit `6px` (`6, 12, 18, 24, 30, 36, 60, 96, 120px`), max-width `1280px`.
-  - Elemen melayang di atas kanvas hitam `#000000` dengan pemisah whitespace — **dilarang membuat kotak kartu dengan border tebal, drop shadow, atau background abu-abu**.
-  - Hanya pada tabel/form operasional (`/order`, `/project/*`, `/admin`) diperbolehkan garis bantu sangat halus seperlunya agar input tetap jelas digunakan.
-- **Anti-Slop:** Dilarang menggunakan emoji sebagai ikon UI, dilarang menggunakan `#0000ee` (link biru default), dan dilarang mengarang testimoni/angka statistik palsu.
+  - Background kanvas utama `#000000` / `#0a0a0a` (`--color-void-canvas`).
+  - Panel mengambang menggunakan frosted glass `bg-white/[0.04]` dengan `backdrop-blur-xl` dan border hairline `border-white/10`.
+  - Teks utama `#ffffff` / `#ededed`, teks sekunder `#c2c2c2` / `white/80`, label pembantu `white/70`.
+  - Tombol CTA utama menggunakan pill putih salju `btn-white-pill` (`bg-white text-[#161616] rounded-full`).
+  - Highlight status menggunakan warna semantik terukur: Amber `#ffb829` (pending/perhatian), Hijau `#59d499` (sukses/terverifikasi), Merah (rejected).
+- **Tipografi & Spacing:**
+  - Font keluarga `Inter` / `DM Sans` / `Geist` dengan headline medium weight (bukan bold berat) dan letter-spacing rapat (`-0.035em`).
+  - Wajib `tabular-nums` dan `whitespace-nowrap` untuk harga, NIM, tanggal, kode hash, dan tombol aksi tabel.
+  - Lebar kontainer utama `max-w-[1280px]` untuk tabel dan form operasional agar muat tanpa terpotong.
+- **Anti-Slop:**
+  - Dilarang keras memakai emoji sebagai ikon UI (gunakan SVG Lucide atau inline SVG stroke native).
+  - Dilarang membuat link biru `#0000ee` default.
+  - Dilarang scrollbar hitam pekat (wajib gunakan frosted scrollbar transparan).
 
 ---
 
-## 6. Skema Inti Database (3 Tabel — Detail di [`PRD.md`](./PRD.md))
-Jangan menambah tabel baru kecuali benar-benar dibutuhkan:
-1. `projects` — Menyimpan status order, paket, jumlah anggota, bukti QRIS, ide AI, URL repo, README, dan add-on PPT.
-2. `project_members` — Menyimpan Nama, NIM, KOM, `github_username`, `github_email`, dan `github_access_token` (server-only).
-3. `commit_schedules` — Menyimpan antrean jadwal push commit (`member_id`, `commit_message`, `scheduled_at`, `status`, `commit_hash`).
+## 6. Skema Inti Database (Cloud Firestore)
+1. `projects` — Menyimpan seluruh data pesanan: status verifikasi, kategori layanan (4 jenis), bukti QRIS (Base64 terkompresi), ide AI, URL repo, instruksi dokumen (`doc_topic`, `doc_details`), link deliverable (`doc_file_url`, `ppt_file_url`), dan status pengerjaan.
+2. `project_members` — Menyimpan data identitas mahasiswa (Nama, NIM, KOM) dan relasi akun GitHub (jika koding).
+3. `commit_schedules` — Menyimpan antrean jadwal commit mingguan (khusus proyek koding).
 
 ---
 

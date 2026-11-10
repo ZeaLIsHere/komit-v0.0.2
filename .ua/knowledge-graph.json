@@ -16,7 +16,7 @@
       "Supabase",
       "Firebase & Firestore"
     ],
-    "description": "Productized Service & SaaS platform for university IT group projects with scheduled GitHub auto-commits via authentic student accounts.",
+    "description": "Platform Productized Service & SaaS terpadu jasa tugas kuliah IT: Proyek Kelompok Kuliah, Koding Ringan, Makalah, dan Slide Presentasi.",
     "analyzedAt": "2026-11-08T18:23:23.046Z",
     "gitCommitHash": "fb9dd87caf55ec0c4e0eb40e7838ceff1063a2a1"
   },
@@ -26,7 +26,7 @@
       "type": "document",
       "name": "PRD.md",
       "filePath": "PRD.md",
-      "summary": "Product Requirements Document: Joki proyek kuliah, pricing formula, 3 core database tables, user flows.",
+      "summary": "Product Requirements Document: 4 pilar layanan tugas kuliah IT (Proyek Kelompok, Koding Ringan, Makalah, Slide Presentasi), pricing formula, alur pesanan, dan arsitektur database.",
       "tags": [
         "requirements",
         "business-logic",

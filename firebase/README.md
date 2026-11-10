@@ -1,58 +1,61 @@
 # Rancangan Arsitektur Database & Backend Firebase — Komit-V2
 
-Dokumen ini berisi analisis end-to-end, pemodelan entitas, relasi (PK/FK), struktur Cloud Firestore, serta aturan keamanan (Security Rules) untuk migrasi dan implementasi backend berbasis **Firebase (Auth, Firestore, Storage, Cloud Functions)**.
+Dokumen ini berisi analisis end-to-end, pemodelan entitas, relasi (PK/FK), struktur Cloud Firestore, serta aturan keamanan (Security Rules) untuk implementasi backend berbasis **Firebase (Auth, Firestore, dan integrasi Groq AI)**.
 
 ---
 
 ## 1. Review Alur Bisnis & Sistem (End-to-End Flow)
 
-Sistem **Komit-V2** memiliki 5 alur proses utama:
+Sistem **Komit-V2** beroperasi sebagai platform terpadu pemesanan jasa tugas kuliah IT dengan 4 kategori layanan:
+1. **Proyek Kelompok Kuliah (`project_joki`):** Pengerjaan proyek koding kelompok dari awal hingga UAS + otomasi cicil commit GitHub.
+2. **Koding Ringan (`tugas_ringan`):** Pengerjaan tugas pemrograman mandiri, skrip, algoritma, atau praktikum mingguan.
+3. **Makalah Akademik (`makalah`):** Penulisan makalah resmi, laporan praktikum, atau dokumen perancangan sistem (UML/ERD).
+4. **Slide Presentasi (`ppt`):** Pembuatan slide presentasi modern untuk ujian, seminar, atau sidang kelompok.
 
 ```
-[1. Order & Pay]       [2. Admin Verify]      [3. Setup & AI Idea]     [4. Member OAuth]       [5. Auto-Commit & UAS]
-/order                 /admin                 /project/[id]/setup      /join/[id]              /api/cron/push-commits
-User input anggota  -> Admin cek bukti     -> Generate 3 ide AI     -> Tiap anggota hubungkan -> Cron push commit
-& upload bukti QRIS    transfer & approve     & input identitas tim    akun GitHub asli          berkala atas nama anggota
+[1. Order & Pay]             [2. Admin Verify]         [3. Setup & AI Topic]          [4. Delivery & UAS]
+/order                       /admin                    /project/[id]/setup            /project/[id]
+Pilih 1 dari 4 Layanan    -> Verifikasi via Modal   -> Ide AI + Gimmick Dosen      -> Koding: Timeline Commit & README
+Form adaptif + Kompresi      Popup instan (Approve     (Proyek Koding) ATAU           -> Makalah/PPT: Unduh Dokumen
+foto bukti transfer di       / Reject)                 Identitas Resmi & topik.md        Resmi yang Diunggah Admin
+browser -> Firestore                                   (Makalah / Slide PPT)
 ```
 
 ### A. Alur Pemesanan & Pembayaran (`/order`)
 1. User masuk ke `/order` (wajib login via Google / GitHub / Email).
-2. Memilih kategori layanan (`service_type`: `project_joki`, `makalah`, `ppt`, `tugas_ringan`) dan paket (`full`, `code_only`, `idea_only`).
-3. Menentukan jumlah anggota kelompok ($N = 1..8$). Total harga dihitung: $N \times \text{Rp } 50.000$.
-4. Sistem menyajikan QRIS Statis. User transfer dan mengunggah foto bukti bayar ke Firebase Storage: `/proofs/{projectId}/payment.jpg`.
-5. Dokumen `projects` dibuat dengan status `payment_status: 'pending'` dan `status: 'waiting_payment'`.
+2. Memilih kategori layanan (`service_type`: `project_joki`, `tugas_ringan`, `makalah`, `ppt`).
+3. Form beradaptasi secara cerdas:
+   - **Makalah & Slide PPT:** Hanya meminta Nama Pemesan, NIM, Topik Dokumen (`doc_topic`), dan Instruksi Khusus (`doc_details`). Tidak meminta kredensial GitHub.
+   - **Proyek Kelompok & Koding Ringan:** Meminta jumlah anggota kelompok ($N = 1..8$), paket koding (`full`, `code_only`, `idea_only`), dan akun GitHub.
+4. Sistem menyajikan QRIS Statis. User melakukan transfer dan mengunggah foto bukti bayar.
+5. **In-Browser Image Compression (`src/lib/image-compress.ts`):** Foto bukti bayar (3–8MB) otomatis dikompresi di browser via HTML5 Canvas menjadi format JPEG ~30–60KB sebelum disimpan ke dokumen Firestore pada field `payment_proof_url`. Hal ini mengeliminasi kebutuhan paket berbayar Firebase Storage Blaze.
+6. Dokumen `projects` dibuat dengan status `payment_status: 'pending'` dan `status: 'waiting_payment'`.
 
 ### B. Alur Verifikasi Admin (`/admin`)
-1. Admin melihat antrean bukti bayar pending.
-2. Admin mengecek gambar bukti di Firebase Storage.
-3. Klik **Approve** $\rightarrow$ `payment_status: 'paid'`, `status: 'setup'`. Proyek terbuka untuk tahap setup.
+1. Admin melihat antrean bukti bayar pending di workspace operator.
+2. Mengklik tombol **Bukti Bayar** yang membuka **Popup Modal** langsung di halaman yang sama tanpa reload.
+3. Klik **Approve** $\rightarrow$ `payment_status: 'paid'`, `status: 'setup'`. Proyek terbuka untuk tahap pengerjaan.
 4. Klik **Reject** $\rightarrow$ `payment_status: 'rejected'`.
 
-### C. Alur Setup, Ide AI & Data Anggota (`/project/[id]/setup`)
-1. Ketua kelompok memasukkan topik/niche matkul.
-2. Endpoint `/api/ai/ideas` menghasilkan 3 rekomendasi ide dengan **Gimmick Pemikat Dosen** (fitur unik untuk demo nilai A).
-3. Ketua mengunci 1 ide dan mengisi data identitas tim ($N$ anggota: Nama, NIM, KOM, Username GitHub).
-4. Dokumen `project_members` tersimpan, dan sistem otomatis membuat draf jadwal commit mingguan di `commit_schedules`.
-5. Sistem menghasilkan link undangan `/join/{projectId}`.
+### C. Alur Setup & Penyiapan Bahan (`/project/[id]/setup` & `/admin/project/[id]`)
+1. **Jika Proyek Koding Kelompok (`project_joki`):**
+   - Ketua kelompok memasukkan niche matkul. Endpoint `/api/ai/ideas` menghasilkan 3 ide dengan **Gimmick Pemikat Dosen**.
+   - Ketua mengunci 1 ide dan mengisi data identitas tim.
+   - Sistem membagikan tautan undangan `/join/{projectId}` untuk koneksi GitHub OAuth anggota (`is_connected`).
+2. **Jika Makalah / Slide PPT (`makalah` / `ppt`):**
+   - Klien mengonfirmasi data identitas tim (Nama & NIM).
+   - Di sisi Admin (`/admin/project/[id]`), Admin dapat menekan tombol **"Buat topik.md ⚡"** via Groq LPU API (`/api/ai/topic-doc`) untuk menyusun rancangan outline terstruktur, struktur bab/slide, poin pembahasan, dan referensi jurnal ilmiah terkini.
 
-### D. Alur Hubungkan GitHub Anggota (`/join/[id]`)
-1. Anggota membuka link undangan.
-2. Mengklik **Hubungkan Akun GitHub** (Firebase Auth GitHub / OAuth dengan scope `repo, workflow`).
-3. **Penting:** Access Token GitHub yang didapat disimpan secara terisolasi pada koleksi aman (`member_secrets/{memberId}`), bukan di dokumen publik anggota.
-4. Flag `is_connected` diubah menjadi `true`. Jika semua anggota sudah terhubung, status proyek berganti menjadi `in_progress`.
-
-### E. Alur Auto-Commit & Bahan Presentasi (`/project/[id]` & `/api/cron/push-commits`)
-1. Cron job berkala memicu `/api/cron/push-commits`.
-2. Query jadwal commit yang due (`status == 'scheduled'` && `scheduled_at <= now`).
-3. Backend membaca `github_access_token` dari `member_secrets`, lalu memanggil GitHub Contents API untuk melakukan commit dan push ke repo mahasiswa atas nama akun mereka.
-4. Update `commit_schedules` menjadi `status: 'pushed'` dengan `commit_hash`.
-5. Di dashboard, ketua dapat meng-generate **README Bahan Presentasi** via AI atau memesan add-on Slide PPT Jadi.
+### D. Alur Pengiriman Hasil Deliverable & Akses Mahasiswa (`/project/[id]`)
+1. **Proyek Koding:** Cron job berkala `/api/cron/push-commits` mengeksekusi jadwal commit atas nama token OAuth anggota ke GitHub repo mahasiswa. Klien dapat meng-generate README bahan presentasi UAS.
+2. **Makalah & Slide PPT:** Admin memasukkan URL file hasil pengerjaan (Google Drive publik / Dropbox / tautan langsung dokumen) di `/admin/project/[id]` dan menekan **"Kirim & Selesaikan"** (mengupdate `doc_file_url` dan `status: 'completed'`).
+3. Di Client Dashboard (`/project/[id]`), kartu deliverable berubah menjadi **"✓ Siap Diunduh"** dengan tombol unduh langsung bagi mahasiswa.
 
 ---
 
 ## 2. Analisis Entitas, Atribut & Relasi (Data Modeling)
 
-Dalam arsitektur Cloud Firestore, kita memodelkan data relasional ke dalam **Root Collections** dengan referensi ID terindeks. Ini memastikan efisiensi query scheduler lintas proyek tanpa terkendala batasan collection group.
+Dalam arsitektur Cloud Firestore, data dimodelkan ke dalam **Root Collections** dengan referensi ID terindeks:
 
 ### Matriks Relasi Entitas
 
@@ -77,15 +80,14 @@ Menyimpan profil pengguna yang terdaftar melalui Firebase Authentication.
   - `name` (string, required) — Nama lengkap
   - `role` (string, enum: `'customer' | 'admin'`, default: `'customer'`)
   - `whatsapp` (string, optional) — Nomor WhatsApp aktif
-  - `github_username` (string, optional) — Username GitHub tanpa tanda `@`
   - `photo_url` (string, optional) — URL avatar pengguna
-  - `created_at` (timestamp, required) — Waktu pendaftaran
-  - `updated_at` (timestamp, required) — Waktu modifikasi terakhir
+  - `created_at` (timestamp, required)
+  - `updated_at` (timestamp, required)
 
 ---
 
 ### 2. Koleksi: `projects`
-Menyimpan seluruh data order, status verifikasi, ide proyek, dan aset presentasi.
+Menyimpan seluruh data order dari 4 kategori layanan, bukti transfer QRIS, instruksi dokumen, link deliverable, dan status pengerjaan.
 
 - **Document ID (PK):** `projectId` (string, auto-generated UUID / Firestore Auto-ID)
 - **Atribut:**
@@ -93,108 +95,89 @@ Menyimpan seluruh data order, status verifikasi, ide proyek, dan aset presentasi
   - `buyer_name` (string, required) — Nama pemesan/ketua
   - `buyer_email` (string, nullable) — Email konfirmasi
   - `buyer_whatsapp` (string, required) — Nomor kontak WhatsApp
-  - `service_type` (string, enum: `'project_joki' | 'makalah' | 'ppt' | 'tugas_ringan'`)
+  - `service_type` (string, enum: `'project_joki' | 'tugas_ringan' | 'makalah' | 'ppt'`)
   - `package_type` (string, enum: `'full' | 'code_only' | 'idea_only'`)
   - `member_count` (number, range: 1–8) — Jumlah anggota kelompok
-  - `total_price` (number, required) — Formula: $N \times 50.000$
-  - `payment_proof_url` (string, nullable) — URL file bukti bayar QRIS di Storage
+  - `total_price` (number, required) — Total tagihan
+  - `payment_proof_url` (string, nullable) — Foto bukti bayar QRIS (Base64 JPEG terkompresi di browser atau Storage URL)
   - `payment_status` (string, enum: `'pending' | 'paid' | 'rejected'`)
   - `payment_verified_at` (timestamp, nullable) — Tanggal verifikasi admin
-  - `payment_verified_by` (string, nullable, FK $\rightarrow$ `users.id`)
-  - `niche_input` (string, nullable) — Topik yang diinput ketua
-  - `generated_ideas` (array of maps, nullable) — 3 opsi ide AI:
-    - `id` (string)
-    - `title` (string)
-    - `description` (string)
-    - `gimmick` (string)
-    - `techStack` (array of strings)
-  - `selected_idea` (map, nullable) — 1 ide yang dipilih & dikunci
-  - `github_repo_url` (string, nullable) — Link GitHub repository kelompok
-  - `readme_content` (string, nullable) — Markdown bahan presentasi UAS
-  - `ppt_addon_paid` (boolean, default: false) — Status pembelian add-on slide
-  - `ppt_proof_url` (string, nullable) — Bukti transfer add-on PPT
-  - `ppt_file_url` (string, nullable) — Link download file PPT dari admin
   - `status` (string, enum: `'waiting_payment' | 'setup' | 'in_progress' | 'completed'`)
+  - `doc_topic` (string, nullable) — Judul/topik dokumen makalah atau slide presentasi
+  - `doc_details` (string, nullable) — Catatan instruksi penulisan dari pemesan
+  - `doc_file_url` (string, nullable) — Link download file deliverable resmi (Makalah / PPT / Script)
+  - `ppt_file_url` (string, nullable) — Link download file PPT (add-on atau layanan utama)
+  - `ppt_addon_paid` (boolean, default: false) — Status pembelian add-on PPT pada proyek koding
+  - `github_repo_url` (string, nullable) — Link GitHub repository kelompok (jika koding)
+  - `github_email` (string, nullable) — Email akun GitHub pemesan (opsional untuk tim joki)
+  - `github_password` (string, nullable) — Password akun GitHub pemesan (server-only)
+  - `niche_input` (string, nullable) — Topik yang diinput ketua
+  - `generated_ideas` (array of maps, nullable) — 3 opsi ide AI dengan gimmick dosen
+  - `selected_idea` (map, nullable) — 1 ide yang dipilih & dikunci
+  - `readme_content` (string, nullable) — Markdown bahan presentasi UAS / acuan topik
   - `created_at` (timestamp, required)
   - `updated_at` (timestamp, required)
 
 ---
 
 ### 3. Koleksi: `project_members`
-Menyimpan daftar mahasiswa dalam kelompok dan status koneksi GitHub.
+Menyimpan daftar mahasiswa dalam tim dan status koneksi GitHub (jika proyek koding).
 
 - **Document ID (PK):** `memberId` (string, auto-generated UUID)
 - **Atribut:**
   - `project_id` (string, required, FK $\rightarrow$ `projects.id`) — Relasi ke proyek
   - `name` (string, required) — Nama mahasiswa
   - `nim` (string, required) — Nomor Induk Mahasiswa
-  - `kom` (string, required) — Kelas / KOM (misal: "A", "B", "C")
-  - `github_username` (string, nullable) — Username akun GitHub
-  - `github_email` (string, nullable) — Email yang digunakan untuk commit author
-  - `is_connected` (boolean, default: false) — Apakah OAuth token sudah aktif
+  - `kom` (string, required) — Kelas / KOM (misal: "A", "B", "TI-1")
+  - `github_username` (string, nullable) — Username akun GitHub (hanya untuk proyek koding)
+  - `github_email` (string, nullable) — Email author commit
+  - `is_connected` (boolean, default: false) — Status koneksi OAuth GitHub
   - `connected_at` (timestamp, nullable)
   - `created_at` (timestamp, required)
   - `updated_at` (timestamp, required)
 
-> **Catatan Keamanan Penting:** `github_access_token` **TIDAK DISIMPAN DI SINI**. Firestore mengembalikan seluruh dokumen saat dibaca client. Menyimpan token di sini akan membocorkannya ke browser anggota lain.
-
 ---
 
 ### 4. Koleksi: `member_secrets` (Koleksi Rahasia — Server-Only)
-Menyimpan kredensial OAuth token sensitif yang hanya boleh dibaca dan ditulis oleh Firebase Admin SDK (Server / Cloud Functions).
+Menyimpan token OAuth sensitif yang hanya boleh diakses melalui Firebase Admin SDK.
 
-- **Document ID (PK):** `memberId` (sama persis dengan `project_members.id`)
+- **Document ID (PK):** `memberId` (1:1 dengan `project_members.id`)
 - **Atribut:**
   - `project_id` (string, required, FK $\rightarrow$ `projects.id`)
   - `github_access_token` (string, required) — Token OAuth scope `repo, workflow`
   - `token_type` (string, default: `'bearer'`)
   - `scope` (string, default: `'repo,workflow'`)
   - `updated_at` (timestamp, required)
-- **Firestore Security Rules:** `allow read, write: if false;` (Client tidak dapat mengakses langsung).
 
 ---
 
-### 5. Koleksi: `commit_schedules`
-Menyimpan jadwal commit otomatis untuk tiap anggota hingga masa UAS.
+### 5. Koleksi: `commit_schedules` (Khusus Proyek Koding)
+Menyimpan antrean jadwal commit otomatis untuk tiap anggota hingga masa UAS.
 
 - **Document ID (PK):** `scheduleId` (string, auto-generated UUID)
 - **Atribut:**
   - `project_id` (string, required, FK $\rightarrow$ `projects.id`)
   - `member_id` (string, required, FK $\rightarrow$ `project_members.id`)
-  - `member_name` (string, denormalized) — Cache nama untuk efisiensi UI
-  - `github_username` (string, denormalized) — Cache username untuk UI
-  - `commit_message` (string, required) — Pesan commit (imperative style)
-  - `scheduled_at` (timestamp, required) — Waktu jadwal eksekusi push
+  - `member_name` (string, denormalized)
+  - `github_username` (string, denormalized)
+  - `commit_message` (string, required)
+  - `scheduled_at` (timestamp, required)
   - `status` (string, enum: `'scheduled' | 'pushed' | 'failed'`)
-  - `commit_hash` (string, nullable) — 7 karakter SHA commit hash setelah push
-  - `error_message` (string, nullable) — Catatan kegagalan bila terjadi error
-  - `pushed_at` (timestamp, nullable) — Waktu aktual saat commit berhasil
+  - `commit_hash` (string, nullable)
+  - `pushed_at` (timestamp, nullable)
   - `created_at` (timestamp, required)
 
 ---
 
-## 4. Struktur Firebase Storage
+## 4. Efisiensi Biaya: Zero Storage Cost Architecture
 
-Bucket Storage diorganisasi per domain keamanan dan tipe file:
-
-```
-gs://<bucket-name>/
-├── proofs/                      # Bukti transfer pembayaran
-│   └── {projectId}/
-│       ├── payment_{timestamp}.jpg
-│       └── ppt_payment_{timestamp}.jpg
-│
-└── presentations/               # File PPT yang diunggah admin
-    └── {projectId}/
-        └── uas_presentation_{timestamp}.pptx
-```
+Untuk menghindari kewajiban paket berbayar Firebase Blaze (yang mensyaratkan kartu kredit untuk Firebase Storage):
+1. **Bukti Bayar QRIS:** Foto bukti bayar di-render dan di-downscale di browser menggunakan HTML5 Canvas (`src/lib/image-compress.ts`). Hasil kompresi JPEG berkisar antara 30–60KB dengan Base64 data URL yang disimpan langsung pada field `payment_proof_url` di Cloud Firestore (jauh di bawah batas 1MB per dokumen).
+2. **File Deliverable Klien:** File makalah (`.docx`/`.pdf`), slide presentasi (`.pptx`), maupun arsip koding diunggah oleh admin ke Google Drive publik / Dropbox / layanan cloud gratis, dan tautannya disimpan pada `doc_file_url` agar dapat diunduh langsung oleh mahasiswa dari dashboard klien.
 
 ---
 
 ## 5. Kebutuhan Index Firestore (`firestore.indexes.json`)
-
-Untuk mendukung query scheduler dan dashboard tanpa error `FAILED_PRECONDITION`:
-
 1. **Query Cron Jadwal Commit:**
    - Collection: `commit_schedules`
    - Fields: `status` (ASCENDING), `scheduled_at` (ASCENDING)
@@ -204,6 +187,3 @@ Untuk mendukung query scheduler dan dashboard tanpa error `FAILED_PRECONDITION`:
 3. **Query Anggota Proyek:**
    - Collection: `project_members`
    - Fields: `project_id` (ASCENDING), `created_at` (ASCENDING)
-4. **Query Jadwal Proyek:**
-   - Collection: `commit_schedules`
-   - Fields: `project_id` (ASCENDING), `scheduled_at` (ASCENDING)
