@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { triggerParticleCollapse } from '@/lib/particles';
@@ -22,6 +22,9 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<string>('');
 
+  const isClickingRef = useRef(false);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const dockRef = useDockController(() => ({
     ...ANIMATED_TOP_DOCK_DEFAULTS,
     lockTrack: true,
@@ -33,41 +36,62 @@ export default function Navbar() {
       return;
     }
 
+    const sections = ['cara-kerja', 'layanan', 'harga'];
+
     const currentHash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
-    if (currentHash) {
+    if (currentHash && sections.includes(currentHash)) {
       setActiveSection(currentHash);
+      const targetEl = document.getElementById(currentHash);
+      if (targetEl) {
+        setTimeout(() => {
+          const targetPos = targetEl.getBoundingClientRect().top + window.scrollY - 90;
+          window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        }, 150);
+      }
     }
 
-    const sections = ['layanan', 'cara-kerja', 'harga'];
-    const elements = sections
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
+    const onScroll = () => {
+      if (isClickingRef.current) return;
 
-    if (elements.length === 0) return;
+      // Bottom of page check
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+      if (isAtBottom) {
+        setActiveSection('harga');
+        return;
+      }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
+      // Hero / Top section
+      if (window.scrollY < 220) {
+        setActiveSection('');
+        return;
+      }
+
+      const scrollPos = window.scrollY + 160;
+      let active = '';
+
+      // Check in reverse order (bottom to top) so the lowest visible section wins
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const id = sections[i];
+        const el = document.getElementById(id);
+        if (el && scrollPos >= el.offsetTop) {
+          active = id;
+          break;
         }
-      },
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0.1 }
-    );
+      }
 
-    elements.forEach((el) => observer.observe(el));
-
-    const onHashChange = () => {
-      const h = window.location.hash.replace('#', '');
-      if (h) setActiveSection(h);
+      if (active) {
+        setActiveSection(active);
+      }
     };
 
-    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Run initial detection
+    onScroll();
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('scroll', onScroll);
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
     };
   }, [pathname]);
 
@@ -85,10 +109,34 @@ export default function Navbar() {
         : 'text-white/75 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]'
     }`;
 
-  const handleItemClick = (key: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleItemClick = (
+    key: 'layanan' | 'cara-kerja' | 'harga' | 'my-projects' | 'admin',
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     (e.currentTarget as HTMLElement)?.blur?.();
-    if (pathname === '/') {
+
+    if (pathname === '/' && (key === 'layanan' || key === 'cara-kerja' || key === 'harga')) {
+      e.preventDefault();
+
+      // Lock active indicator to clicked menu during smooth scroll
+      isClickingRef.current = true;
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
       setActiveSection(key);
+
+      const targetEl = document.getElementById(key);
+      if (targetEl) {
+        const navOffset = 90;
+        const targetPos = targetEl.getBoundingClientRect().top + window.scrollY - navOffset;
+        window.scrollTo({
+          top: targetPos,
+          behavior: 'smooth',
+        });
+        window.history.pushState(null, '', `/#${key}`);
+      }
+
+      clickTimeoutRef.current = setTimeout(() => {
+        isClickingRef.current = false;
+      }, 950);
     }
   };
 
