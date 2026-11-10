@@ -17,18 +17,19 @@ export default function ProjectSetupPage({
 
   const [project, setProject] = useState<Project | null>(null);
   const [memberCount, setMemberCount] = useState<number>(4);
-  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string; github_password?: string }>>([]);
-  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string; kom?: string }>>([]);
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string; kom?: string; github_password?: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
   const [activeModalMemberIndex, setActiveModalMemberIndex] = useState<number | null>(null);
   const [modalData, setModalData] = useState<{
     name: string;
     nim: string;
+    kom: string;
     github_username: string;
     github_password: string;
   }>({
     name: '',
     nim: '',
+    kom: '',
     github_username: '',
     github_password: '',
   });
@@ -95,6 +96,7 @@ export default function ProjectSetupPage({
     setModalData({
       name: m.name || '',
       nim: m.nim || '',
+      kom: m.kom || '',
       github_username: m.github_username || '',
       github_password: m.github_password || '',
     });
@@ -286,6 +288,7 @@ export default function ProjectSetupPage({
                 github_username: m.github_username || '',
                 nim: m.nim && m.nim !== '-' ? m.nim : '',
                 kom: m.kom && m.kom !== '-' ? m.kom : '',
+                github_password: '',
               }))
             );
             setMemberCount(mData.members.length);
@@ -296,6 +299,7 @@ export default function ProjectSetupPage({
                 github_username: '',
                 nim: '',
                 kom: '',
+                github_password: '',
               }))
             );
           }
@@ -964,83 +968,11 @@ export default function ProjectSetupPage({
                           <span className="text-white/60 font-mono text-[13px]">
                             NIM: {m.nim}
                           </span>
-            {members.map((m, idx) => (
-              <div
-                key={idx}
-                className="p-4 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col gap-3"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-mono font-medium text-white">
-                    {idx === 0 ? 'Ketua Kelompok' : `Anggota ${idx + 1}`}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                      Nama Lengkap
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Nama lengkap"
-                      value={m.name}
-                      onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
-                      NIM Mahasiswa
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Contoh: 211401001"
-                      value={m.nim || ''}
-                      onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
-                      Kelas / KOM
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Contoh: A, B, TI-1"
-                      value={m.kom || ''}
-                      onChange={(e) => handleMemberChange(idx, 'kom', e.target.value)}
-                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors uppercase"
-                    />
-                  </div>
-                </div>
-
-                {project?.service_type === 'project_joki' && (
-                  <div className="flex flex-col gap-1.5 pt-2 border-t border-white/10">
-                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
-                      Akun GitHub (Untuk Commit)
-                    </span>
-                    <div className="relative flex items-center">
-                      <input
-                        type="text"
-                        placeholder="username GitHub"
-                        value={m.github_username}
-                        onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                        onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                        className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-11 py-2 text-[14px] font-mono text-white outline-none transition-colors ${
-                          githubStatus[idx] === 'invalid'
-                            ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                            : githubStatus[idx] === 'valid'
-                            ? 'border-[#59d499] focus:border-[#59d499]'
-                            : 'border-white/15 focus:border-white'
-                        }`}
-                      />
-
-                      <div className="absolute right-4 flex items-center pointer-events-none">
-                        {githubStatus[idx] === 'checking' && (
-                          <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                        )}
+                        {m.kom?.trim() && (
+                          <span className="text-white/60 font-mono text-[13px] uppercase">
+                            KOM: {m.kom}
+                          </span>
                         )}
                         {!isDoc && m.github_username?.trim() && (
                           <span className="text-white/80 font-mono text-[13px] flex items-center gap-1">
@@ -1061,32 +993,11 @@ export default function ProjectSetupPage({
                     <button
                       type="button"
                       onClick={() => openMemberModal(idx)}
-                      className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full self-start sm:self-auto shrink-0 flex items-center gap-2"
+                      className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full self-start sm:self-auto shrink-0 flex items-center gap-2 cursor-pointer"
                     >
                       <span>{isFilled ? 'Ubah Data' : 'Isi Data'}</span>
                       <span className="text-white/50 text-[12px]">↗</span>
                     </button>
-                    {/* Status feedback */}
-                    {githubStatus[idx] === 'invalid' && (
-                      <span className="text-[12px] text-red-400 font-mono mt-1 flex items-center gap-1 font-medium">
-                        Akun @{m.github_username.trim().replace(/^@/, '')} tidak ditemukan di GitHub
-                      </span>
-                    )}
-                    {githubStatus[idx] === 'duplicate' && (
-                      <span className="text-[12px] text-[#ffb829] font-mono mt-1 flex items-center gap-1 font-medium">
-                        Username ini sudah diinput untuk anggota lain
-                      </span>
-                    )}
-                    {githubStatus[idx] === 'empty' && (
-                      <span className="text-[12px] text-white/50 font-mono mt-1 flex items-center gap-1">
-                        Akun GitHub belum diisi
-                      </span>
-                    )}
-                    {githubStatus[idx] === 'valid' && (
-                      <span className="text-[12px] text-[#59d499] font-mono mt-1 flex items-center gap-1 font-medium">
-                        ✓ Akun GitHub terverifikasi
-                      </span>
-                    )}
                   </div>
                 );
               })}
@@ -1245,6 +1156,20 @@ export default function ProjectSetupPage({
                     value={modalData.nim}
                     onChange={(e) => setModalData((prev) => ({ ...prev, nim: e.target.value }))}
                     className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
+                  />
+                </div>
+
+                {/* 3. Kelas / KOM */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono font-medium">
+                    3. Kelas / KOM
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: A, B, TI-1"
+                    value={modalData.kom}
+                    onChange={(e) => setModalData((prev) => ({ ...prev, kom: e.target.value }))}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors uppercase"
                   />
                 </div>
 

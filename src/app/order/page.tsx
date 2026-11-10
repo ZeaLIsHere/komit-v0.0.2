@@ -337,22 +337,13 @@ export default function OrderPage() {
     }
 
     // Validasi data setiap anggota
-    for (let i = 0; i < members.length; i++) {
-      const m = members[i];
-      if (!m.name.trim()) {
-        setErrorMsg(`Data untuk Anggota ${i + 1} belum diisi! Silakan klik tombol "Isi Data".`);
-        alert(`Tolong isi data untuk Anggota ${i + 1} terlebih dahulu!`);
-        openMemberModal(i);
-        return;
-      }
-      if (needsGitHub) {
-    // Validasi data anggota hanya jika Proyek Kelompok Koding
     if (isCodingProject) {
       for (let i = 0; i < members.length; i++) {
         const m = members[i];
         if (!m.name.trim()) {
-          setErrorMsg(`Nama untuk Anggota ${i + 1} belum diisi!`);
-          alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
+          setErrorMsg(`Data untuk Anggota ${i + 1} belum diisi! Silakan klik tombol "Isi Data".`);
+          alert(`Tolong isi data untuk Anggota ${i + 1} terlebih dahulu!`);
+          openMemberModal(i);
           return;
         }
         if (!m.github_username?.trim()) {
@@ -683,89 +674,6 @@ export default function OrderPage() {
                       className="p-4 sm:p-5 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-white/20 transition-all"
                     >
                       <div className="flex flex-col gap-1.5 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[12px] font-mono uppercase tracking-[0.08em] text-white/60">
-                            {idx === 0 ? 'Ketua Kelompok (Anda)' : `Anggota ${idx + 1}`}
-                          </span>
-                          {isFilled ? (
-                            <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
-                              ✓ Data Lengkap
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-yellow-300/80 font-mono px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/25">
-                              Belum Diisi
-                            </span>
-                          )}
-                <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
-                  <span className="font-medium text-white">
-                    Petunjuk Pengisian Anggota (Joki Proyek &amp; GitHub):
-                  </span>
-                  <p className="text-white/70 text-[12px]">
-                    Gunakan username GitHub asli setiap anggota. Sistem akan otomatis memverifikasi akun (tanda ✓ hijau). Kontribusi commit mingguan akan dicatat atas nama akun masing-masing.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-3 mt-1">
-                  {members.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
-                    >
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
-                          value={m.name}
-                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                          className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          Akun GitHub
-                        </label>
-                        <div className="relative flex items-center">
-                          <input
-                            type="text"
-                            required
-                            placeholder="username GitHub"
-                            value={m.github_username}
-                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                            onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                            className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
-                              githubStatus[idx] === 'invalid'
-                                ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                                : githubStatus[idx] === 'empty'
-                                ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
-                                : githubStatus[idx] === 'valid'
-                                ? 'border-[#59d499] focus:border-[#59d499]'
-                                : 'border-white/15 focus:border-white'
-                            }`}
-                          />
-
-                          {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
-                          <div className="absolute right-3.5 flex items-center pointer-events-none">
-                            {githubStatus[idx] === 'checking' && (
-                              <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
-                            )}
-                            {githubStatus[idx] === 'valid' && (
-                              <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                            {githubStatus[idx] === 'invalid' && (
-                              <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px]">
                           <span className="text-white font-medium">
                             {m.name.trim() || 'Nama belum diisi'}
@@ -794,7 +702,7 @@ export default function OrderPage() {
                       <button
                         type="button"
                         onClick={() => openMemberModal(idx)}
-                        className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full self-start sm:self-auto shrink-0 flex items-center gap-2"
+                        className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full self-start sm:self-auto shrink-0 flex items-center gap-2 cursor-pointer"
                       >
                         <span>{isFilled ? 'Ubah Data' : 'Isi Data'}</span>
                         <span className="text-white/50 text-[12px]">↗</span>
@@ -802,12 +710,10 @@ export default function OrderPage() {
                     </div>
                   );
                 })}
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
