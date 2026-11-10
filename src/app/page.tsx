@@ -9,7 +9,7 @@ import { triggerParticleCollapse } from '@/lib/particles';
 
 export default function HomePage() {
   return (
-    <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
+    <div className="bg-[#0a0a0a] text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 max-w-[1200px] w-full mx-auto px-6 sm:px-12 pb-20 flex flex-col gap-28 md:gap-36">
@@ -304,17 +304,37 @@ export default function HomePage() {
         <ScrollReveal yOffset={32}>
           <section
             id="harga"
-            className="p-10 sm:p-14 md:p-16 rounded-[36px] bg-white/[0.04] backdrop-blur-2xl border border-white/15 shadow-[0_12px_48px_rgba(0,0,0,0.2)] flex flex-col lg:flex-row lg:items-center justify-between gap-10 md:gap-14"
+            className="p-10 sm:p-14 md:p-16 rounded-[36px] bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-[0_12px_48px_rgba(0,0,0,0.2)] flex flex-col lg:flex-row lg:items-center justify-between gap-10 md:gap-14"
           >
-            {/* Left Column: Value Proposition & Relief Copy */}
+            {/* Left Column: Value Proposition & 4-Service Breakdown */}
             <div className="flex flex-col gap-5 max-w-2xl">
               <h2 className="text-[32px] sm:text-[42px] md:text-[46px] font-medium leading-[1.08] text-white tracking-[-0.03em]">
-                Satu proyek tuntas, nilai aman untuk seluruh kelompok.
+                Biaya transparan, hasil tuntas untuk semua jenis tugas.
               </h2>
 
               <p className="text-[16px] md:text-[17px] text-white/80 leading-[1.65]">
-                Hanya <strong className="text-white font-medium">Rp 50.000 per anggota</strong> untuk memastikan kode aplikasi selesai terstandar, riwayat commit aktif atas nama akun GitHub masing-masing, dan materi presentasi UAS siap diuji dosen.
+                Pilih layanan sesuai kebutuhan akademikmu: proyek koding kelompok ber-commit teratur, koding modul praktikum mandiri, penulisan makalah berstandar ilmiah, atau slide presentasi siap uji.
               </p>
+
+              {/* 4-Tier Pricing Chips */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+                <div className="p-3 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-white/50 font-mono uppercase">Proyek Kelompok</span>
+                  <span className="text-[14px] text-white font-medium font-mono tabular-nums mt-0.5">Rp 50k / org</span>
+                </div>
+                <div className="p-3 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-white/50 font-mono uppercase">Koding Ringan</span>
+                  <span className="text-[14px] text-white font-medium font-mono tabular-nums mt-0.5">Mulai Rp 50k</span>
+                </div>
+                <div className="p-3 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-white/50 font-mono uppercase">Makalah / Paper</span>
+                  <span className="text-[14px] text-white font-medium font-mono tabular-nums mt-0.5">Mulai Rp 75k</span>
+                </div>
+                <div className="p-3 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-white/50 font-mono uppercase">Slide Presentasi</span>
+                  <span className="text-[14px] text-white font-medium font-mono tabular-nums mt-0.5">Rp 75k</span>
+                </div>
+              </div>
             </div>
 
             {/* Right Column: Price Anchor & High-Converting CTA */}
@@ -323,11 +343,11 @@ export default function HomePage() {
                 <span className="text-[12px] text-white/60 font-mono uppercase tracking-[0.12em]">
                   Investasi Mulai Dari
                 </span>
-                <div className="text-[40px] sm:text-[52px] font-medium text-white font-mono leading-none tracking-tight tabular-nums mt-1">
+                <div className="text-[40px] sm:text-[52px] font-medium text-white font-mono leading-none tracking-tight tabular-nums mt-1 whitespace-nowrap">
                   Rp 50.000
                 </div>
                 <span className="text-[13px] text-white/60 mt-1.5">
-                  / anggota / proyek
+                  / mahasiswa / modul
                 </span>
               </div>
 
@@ -336,7 +356,7 @@ export default function HomePage() {
                   href="/order"
                   className="btn-white-pill text-[15px] font-medium px-9 py-4 rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 w-full sm:w-auto text-center"
                 >
-                  <span>Amankan Proyek Sekarang</span>
+                  <span>Pesan Tugas Sekarang</span>
                   <span>↗</span>
                 </Link>
               </div>
