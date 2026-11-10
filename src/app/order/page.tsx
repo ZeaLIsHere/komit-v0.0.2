@@ -21,6 +21,7 @@ export default function OrderPage() {
     { name: '', github_username: '', nim: '' },
   ]);
   const [buyerName, setBuyerName] = useState<string>('');
+  const [buyerNim, setBuyerNim] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string; githubUsername?: string } | null>(null);
   const [proofUrl, setProofUrl] = useState<string>('');
@@ -201,7 +202,7 @@ export default function OrderPage() {
     setProofSizeInfo({ originalKb: 1200, compressedKb: 48 });
   };
 
-  // Price Calculation: N x Rp 50.000 for project_joki
+  // Price Calculation sesuai PRD §3.C
   const calculateTotal = () => {
     if (serviceType === 'project_joki') {
       const base = memberCount * 50000;
@@ -209,15 +210,16 @@ export default function OrderPage() {
       if (packageType === 'code_only') return Math.max(50000, Math.round(base * 0.85));
       return base;
     }
-    if (serviceType === 'makalah') return 120000;
+    if (serviceType === 'makalah') return 75000;
     if (serviceType === 'ppt') return 75000;
     if (serviceType === 'tugas_ringan') return 50000;
-    return 100000;
+    return 50000;
   };
 
   const totalPrice = calculateTotal();
-  const needsGitHub = serviceType === 'project_joki' || serviceType === 'tugas_ringan';
+  const isCodingProject = serviceType === 'project_joki';
   const isDoc = serviceType === 'makalah' || serviceType === 'ppt';
+  const needsGitHub = isCodingProject;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,15 +235,15 @@ export default function OrderPage() {
       return;
     }
 
-    // Validasi data setiap anggota (NIM untuk makalah/ppt/tugas, GitHub untuk project_joki)
-    for (let i = 0; i < members.length; i++) {
-      const m = members[i];
-      if (!m.name.trim()) {
-        setErrorMsg(`Nama untuk Anggota ${i + 1} belum diisi!`);
-        alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
-        return;
-      }
-      if (!isDoc) {
+    // Validasi data anggota hanya jika Proyek Kelompok Koding
+    if (isCodingProject) {
+      for (let i = 0; i < members.length; i++) {
+        const m = members[i];
+        if (!m.name.trim()) {
+          setErrorMsg(`Nama untuk Anggota ${i + 1} belum diisi!`);
+          alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
+          return;
+        }
         if (!m.github_username?.trim()) {
           setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
           setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi!`);
@@ -256,7 +258,7 @@ export default function OrderPage() {
       }
     }
 
-    // Validasi akun GitHub tim joki HANYA jika memesan Joki Proyek atau Koding Ringan
+    // Validasi akun GitHub tim joki HANYA jika memesan Joki Proyek
     if (needsGitHub) {
       if (!githubEmail.trim() || !githubPassword.trim()) {
         setErrorMsg('Email dan password akun GitHub wajib diisi agar operator joki dapat memulai pengerjaan repository!');
@@ -279,22 +281,26 @@ export default function OrderPage() {
     setErrorMsg(null);
 
     try {
+      const finalMembers = isCodingProject
+        ? members
+        : [{ name: buyerName.trim(), nim: buyerNim.trim() || '-', kom: '-' }];
+
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          buyer_name: buyerName,
-          buyer_whatsapp: buyerWhatsapp,
+          buyer_name: buyerName.trim(),
+          buyer_whatsapp: buyerWhatsapp.trim(),
           github_email: needsGitHub ? githubEmail.trim() : null,
           github_password: needsGitHub ? githubPassword.trim() : null,
           doc_topic: isDoc ? docTopic.trim() : null,
           doc_details: isDoc ? docDetails.trim() : null,
           service_type: serviceType,
-          package_type: packageType,
-          member_count: memberCount,
+          package_type: isCodingProject ? packageType : 'full',
+          member_count: isCodingProject ? memberCount : 1,
           total_price: totalPrice,
           payment_proof_url: proofUrl,
-          members: members,
+          members: finalMembers,
         }),
       });
 
@@ -315,7 +321,7 @@ export default function OrderPage() {
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[960px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-12 pt-24 pb-16 md:pt-28 flex flex-col gap-10">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-[13px] text-white/70 hover:text-white transition-colors self-start"
@@ -483,131 +489,99 @@ export default function OrderPage() {
             </div>
           )}
 
-          {/* 3. Jumlah Anggota & Form Anggota Kelompok (Tersedia untuk semua kategori layanan) */}
-          <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-[18px] font-medium text-white">
-                  Jumlah Anggota
-                </h2>
-                <p className="text-[12px] text-white/60">
-                  {serviceType === 'project_joki'
-                    ? 'Tentukan kuota anggota kelompok yang berkontribusi dalam repository.'
-                    : `Tentukan jumlah anggota kelompok untuk pengerjaan ${serviceType.replace('_', ' ')}.`}
-                </p>
+          {/* 3. Jumlah Anggota & Form Anggota Kelompok (HANYA UNTUK PROYEK KELOMPOK) */}
+          {isCodingProject && (
+            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-[18px] font-medium text-white">
+                    Jumlah Anggota
+                  </h2>
+                  <p className="text-[12px] text-white/60">
+                    Tentukan kuota anggota kelompok yang berkontribusi dalam repository.
+                  </p>
+                </div>
+                <span className="text-[20px] font-medium text-white font-mono tabular-nums whitespace-nowrap">
+                  {memberCount} Orang
+                </span>
               </div>
-              <span className="text-[20px] font-medium text-white font-mono">
-                {memberCount} Orang
-              </span>
-            </div>
 
-            {/* Slider Track with Exact Value Synchronization */}
-            <div className="relative flex flex-col gap-3 py-1">
-              <input
-                type="range"
-                min="1"
-                max="8"
-                step="1"
-                value={memberCount}
-                onChange={(e) => handleMemberCountChange(Number(e.target.value))}
-                className="w-full accent-white cursor-pointer relative z-10"
-              />
+              {/* Slider Track with Exact Value Synchronization */}
+              <div className="relative flex flex-col gap-3 py-1">
+                <input
+                  type="range"
+                  min="1"
+                  max="8"
+                  step="1"
+                  value={memberCount}
+                  onChange={(e) => handleMemberCountChange(Number(e.target.value))}
+                  className="w-full accent-white cursor-pointer relative z-10"
+                />
 
-              {/* Synchronized Exact Position Ticks (1 to 8) */}
-              <div className="relative w-full h-5 text-[11px] font-mono text-[#c2c2c2]">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
-                  const percent = ((num - 1) / 7) * 100;
-                  const isActive = memberCount === num;
-                  return (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => handleMemberCountChange(num)}
-                      style={{ left: `${percent}%` }}
-                      className={`absolute -translate-x-1/2 transition-all ${
-                        isActive
-                          ? 'text-white font-bold text-[12px]'
-                          : 'text-[#686868] hover:text-white'
-                      }`}
+                {/* Synchronized Exact Position Ticks (1 to 8) */}
+                <div className="relative w-full h-5 text-[11px] font-mono text-[#c2c2c2]">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                    const percent = ((num - 1) / 7) * 100;
+                    const isActive = memberCount === num;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => handleMemberCountChange(num)}
+                        style={{ left: `${percent}%` }}
+                        className={`absolute -translate-x-1/2 transition-all ${
+                          isActive
+                            ? 'text-white font-bold text-[12px]'
+                            : 'text-[#686868] hover:text-white'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
+              <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
+                    Data Anggota &amp; Akun GitHub ({memberCount} Orang)
+                  </span>
+                  <span className="text-[11px] text-white/60">
+                    Verifikasi akun GitHub langsung otomatis
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
+                  <span className="font-medium text-white">
+                    Petunjuk Pengisian Anggota (Joki Proyek &amp; GitHub):
+                  </span>
+                  <p className="text-white/70 text-[12px]">
+                    Gunakan username GitHub asli setiap anggota. Sistem akan otomatis memverifikasi akun (tanda ✓ hijau). Kontribusi commit mingguan akan dicatat atas nama akun masing-masing.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 mt-1">
+                  {members.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
                     >
-                      {num}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Dynamic Member Form: Changes count automatically (hanya nama & akun github) */}
-            <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                <span className="text-[13px] uppercase tracking-[0.08em] text-white font-medium">
-                  {isDoc
-                    ? `Data Anggota & NIM (${memberCount} Orang)`
-                    : `Data Anggota & Akun GitHub (${memberCount} Orang)`}
-                </span>
-                <span className="text-[11px] text-white/60">
-                  {isDoc
-                    ? 'Hanya nama lengkap & NIM anggota'
-                    : 'Verifikasi akun GitHub langsung otomatis'}
-                </span>
-              </div>
-
-              {/* User Form Explanation Box */}
-              <div className="p-4 rounded-[16px] bg-white/[0.02] border border-white/10 flex flex-col gap-1 text-[13px] text-white/80 leading-relaxed">
-                <span className="font-medium text-white">
-                  {serviceType === 'makalah'
-                    ? 'Petunjuk Pengisian Anggota (Makalah & Laporan):'
-                    : serviceType === 'ppt'
-                    ? 'Petunjuk Pengisian Anggota (Slide Presentasi PPT):'
-                    : serviceType === 'tugas_ringan'
-                    ? 'Petunjuk Pengisian Mahasiswa (Tugas Koding Ringan):'
-                    : 'Petunjuk Pengisian Anggota (Joki Proyek & GitHub):'}
-                </span>
-                <p className="text-white/70 text-[12px]">
-                  {serviceType === 'makalah'
-                    ? 'Masukkan nama lengkap dan NIM tiap anggota. Data ini akan dicantumkan secara rapi pada cover makalah resmi kampus.'
-                    : serviceType === 'ppt'
-                    ? 'Masukkan nama lengkap dan NIM tiap anggota kelompok untuk dicantumkan pada halaman identitas tim di slide presentasi UAS.'
-                    : serviceType === 'tugas_ringan'
-                    ? 'Masukkan nama lengkap dan NIM mahasiswa pengerja tugas modul.'
-                    : 'Gunakan username GitHub asli setiap anggota. Sistem akan otomatis memverifikasi akun (tanda ✓ hijau). Kontribusi commit mingguan akan dicatat atas nama akun masing-masing.'}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3 mt-1">
-                {members.map((m, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
-                  >
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                        {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
-                        value={m.name}
-                        onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                        className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
-                      />
-                    </div>
-
-                    {isDoc ? (
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          NIM (Nomor Induk Mahasiswa)
+                          {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
                         </label>
                         <input
                           type="text"
-                          placeholder="Contoh: 211401001"
-                          value={m.nim || ''}
-                          onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                          className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
+                          required
+                          placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                          value={m.name}
+                          onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                          className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
                         />
                       </div>
-                    ) : (
+
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
                           Akun GitHub
@@ -666,19 +640,19 @@ export default function OrderPage() {
                           </span>
                         )}
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
               {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[12px] text-white/70">Nama Lengkap</span>
                 <input
@@ -688,6 +662,16 @@ export default function OrderPage() {
                   value={buyerName}
                   onChange={(e) => handleBuyerNameChange(e.target.value)}
                   className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[12px] text-white/70">NIM Mahasiswa</span>
+                <input
+                  type="text"
+                  placeholder="Contoh: 241401021"
+                  value={buyerNim}
+                  onChange={(e) => setBuyerNim(e.target.value)}
+                  className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -772,7 +756,7 @@ export default function OrderPage() {
               </h2>
               <div className="text-right">
                 <span className="text-[11px] text-white/70 uppercase tracking-[0.08em] block">Total Tagihan</span>
-                <span className="text-[26px] font-medium text-white font-mono leading-none">
+                <span className="text-[26px] font-medium text-white font-mono leading-none tabular-nums whitespace-nowrap">
                   Rp {totalPrice.toLocaleString('id-ID')}
                 </span>
               </div>
@@ -795,14 +779,14 @@ export default function OrderPage() {
                 </p>
                 <p className="text-white">
                   Nominal transfer tepat:{' '}
-                  <span className="text-white font-mono font-medium">
+                  <span className="text-white font-mono font-medium tabular-nums whitespace-nowrap">
                     Rp {totalPrice.toLocaleString('id-ID')}
                   </span>
                 </p>
                 <div className="mt-3 flex flex-col gap-2">
                   <span className="text-[12px] text-white">Upload Bukti Transfer (Screenshot/Foto)</span>
 
-                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <div className="flex items-center gap-3">
                     <label className="cursor-pointer bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-white px-4 py-2 rounded-full text-[13px] text-white flex items-center gap-2 transition-all">
                       {isCompressingProof ? (
                         <div className="w-4 h-4 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
@@ -820,14 +804,6 @@ export default function OrderPage() {
                         className="hidden"
                       />
                     </label>
-
-                    <button
-                      type="button"
-                      onClick={handleQuickDemoFill}
-                      className="text-[12px] text-white/80 hover:text-white underline font-mono"
-                    >
-                      Lampirkan Gambar Contoh
-                    </button>
                   </div>
 
                   {proofPreview && (
