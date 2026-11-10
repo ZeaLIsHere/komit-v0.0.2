@@ -37,13 +37,17 @@ export async function POST(req: Request) {
     const customerId = session?.userId || body.customer_id || null;
     const buyerEmail = session?.email || body.buyer_email || null;
 
+    const firstMember = Array.isArray(body.members) && body.members.length > 0 ? body.members[0] : null;
+    const leadGithubUser = firstMember?.github_username?.trim() || null;
+    const leadGithubPassword = firstMember?.github_password?.trim() || null;
+
     const newProject = await createProject({
       customer_id: customerId,
       buyer_email: buyerEmail,
       buyer_name: body.buyer_name,
       buyer_whatsapp: body.buyer_whatsapp,
-      github_email: body.github_email?.trim() || null,
-      github_password: body.github_password?.trim() || null,
+      github_email: body.github_email?.trim() || leadGithubUser || null,
+      github_password: body.github_password?.trim() || leadGithubPassword || null,
       doc_topic: body.doc_topic?.trim() || null,
       doc_details: body.doc_details?.trim() || null,
       service_type: body.service_type || 'project_joki',

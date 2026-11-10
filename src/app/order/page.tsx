@@ -14,11 +14,11 @@ export default function OrderPage() {
   const [serviceType, setServiceType] = useState<ServiceType>('project_joki');
   const [packageType, setPackageType] = useState<PackageType>('full');
   const [memberCount, setMemberCount] = useState<number>(4);
-  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string }>>([
-    { name: '', github_username: '', nim: '' },
-    { name: '', github_username: '', nim: '' },
-    { name: '', github_username: '', nim: '' },
-    { name: '', github_username: '', nim: '' },
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string; github_password?: string }>>([
+    { name: '', github_username: '', nim: '', github_password: '' },
+    { name: '', github_username: '', nim: '', github_password: '' },
+    { name: '', github_username: '', nim: '', github_password: '' },
+    { name: '', github_username: '', nim: '', github_password: '' },
   ]);
   const [buyerName, setBuyerName] = useState<string>('');
   const [buyerWhatsapp, setBuyerWhatsapp] = useState<string>('');
@@ -38,7 +38,20 @@ export default function OrderPage() {
   }>({});
   const [githubEmail, setGithubEmail] = useState<string>('');
   const [githubPassword, setGithubPassword] = useState<string>('');
-  const [showGithubPassword, setShowGithubPassword] = useState<boolean>(false);
+  const [activeModalMemberIndex, setActiveModalMemberIndex] = useState<number | null>(null);
+  const [modalData, setModalData] = useState<{
+    name: string;
+    nim: string;
+    github_username: string;
+    github_password: string;
+  }>({
+    name: '',
+    nim: '',
+    github_username: '',
+    github_password: '',
+  });
+  const [modalGithubStatus, setModalGithubStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid' | 'empty' | 'duplicate'>('idle');
+  const [showModalPassword, setShowModalPassword] = useState<boolean>(false);
   const [docTopic, setDocTopic] = useState<string>('');
   const [docDetails, setDocDetails] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -134,11 +147,99 @@ export default function OrderPage() {
           name: '',
           github_username: '',
           nim: '',
+          github_password: '',
         }));
         return [...prev, ...added];
       }
       return prev.slice(0, validCount);
     });
+  };
+
+  const openMemberModal = (idx: number) => {
+    const m = members[idx];
+    setModalData({
+      name: m.name || '',
+      nim: m.nim || '',
+      github_username: m.github_username || '',
+      github_password: m.github_password || '',
+    });
+    setModalGithubStatus(githubStatus[idx] || 'idle');
+    setShowModalPassword(false);
+    setActiveModalMemberIndex(idx);
+  };
+
+  const checkModalGitHubAccount = async (username: string) => {
+    const clean = username.trim().replace(/^@/, '');
+    if (!clean) {
+      setModalGithubStatus('empty');
+      return;
+    }
+
+    if (activeModalMemberIndex !== null) {
+      const isDuplicate = members.some(
+        (m, i) => i !== activeModalMemberIndex && m.github_username.trim().replace(/^@/, '').toLowerCase() === clean.toLowerCase()
+      );
+      if (isDuplicate) {
+        setModalGithubStatus('duplicate');
+        return;
+      }
+    }
+
+    setModalGithubStatus('checking');
+    try {
+      const res = await fetch(`/api/auth/github/check?username=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+      if (data.exists) {
+        setModalGithubStatus('valid');
+      } else {
+        setModalGithubStatus('invalid');
+      }
+    } catch {
+      setModalGithubStatus('invalid');
+    }
+  };
+
+  const saveModalMemberData = () => {
+    if (activeModalMemberIndex === null) return;
+
+    if (!modalData.name.trim()) {
+      alert('Tolong isi nama lengkap anggota terlebih dahulu!');
+      return;
+    }
+
+    if (needsGitHub) {
+      if (!modalData.github_username.trim()) {
+        alert('Tolong isi username GitHub terlebih dahulu!');
+        return;
+      }
+      if (modalGithubStatus === 'invalid') {
+        alert(`Akun GitHub @${modalData.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
+        return;
+      }
+      if (!modalData.github_password?.trim()) {
+        alert('Tolong isi password akun GitHub anggota!');
+        return;
+      }
+    }
+
+    setMembers((prev) => {
+      const copy = [...prev];
+      copy[activeModalMemberIndex] = { ...modalData };
+      return copy;
+    });
+
+    if (activeModalMemberIndex === 0) {
+      setBuyerName(modalData.name);
+      if (modalData.github_username) setGithubEmail(modalData.github_username);
+      if (modalData.github_password) setGithubPassword(modalData.github_password);
+    }
+
+    setGithubStatus((prev) => ({
+      ...prev,
+      [activeModalMemberIndex]: modalGithubStatus,
+    }));
+
+    setActiveModalMemberIndex(null);
   };
 
   const handleMemberChange = (index: number, field: 'name' | 'github_username' | 'nim', value: string) => {
@@ -233,24 +334,33 @@ export default function OrderPage() {
       return;
     }
 
-    // Validasi data setiap anggota (NIM untuk makalah/ppt/tugas, GitHub untuk project_joki)
+    // Validasi data setiap anggota
     for (let i = 0; i < members.length; i++) {
       const m = members[i];
       if (!m.name.trim()) {
-        setErrorMsg(`Nama untuk Anggota ${i + 1} belum diisi!`);
-        alert(`Tolong isi nama untuk Anggota ${i + 1} terlebih dahulu!`);
+        setErrorMsg(`Data untuk Anggota ${i + 1} belum diisi! Silakan klik tombol "Isi Data".`);
+        alert(`Tolong isi data untuk Anggota ${i + 1} terlebih dahulu!`);
+        openMemberModal(i);
         return;
       }
-      if (!isDoc) {
+      if (needsGitHub) {
         if (!m.github_username?.trim()) {
           setGithubStatus((prev) => ({ ...prev, [i]: 'empty' }));
-          setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi!`);
+          setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} belum diisi! Silakan klik tombol "Isi Data".`);
           alert(`Tolong isi akun GitHub untuk Anggota ${i + 1} terlebih dahulu!`);
+          openMemberModal(i);
           return;
         }
         if (githubStatus[i] === 'invalid') {
           setErrorMsg(`Akun GitHub untuk Anggota ${i + 1} (@${m.github_username}) tidak dapat ditemukan!`);
           alert(`Akun GitHub @${m.github_username} tidak dapat ditemukan di GitHub. Periksa kembali username!`);
+          openMemberModal(i);
+          return;
+        }
+        if (!m.github_password?.trim()) {
+          setErrorMsg(`Password akun GitHub untuk Anggota ${i + 1} belum diisi! Silakan klik tombol "Isi Data".`);
+          alert(`Tolong isi password akun GitHub untuk Anggota ${i + 1} di menu "Isi Data"!`);
+          openMemberModal(i);
           return;
         }
       }
@@ -575,100 +685,67 @@ export default function OrderPage() {
               </div>
 
               <div className="flex flex-col gap-3 mt-1">
-                {members.map((m, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3"
-                  >
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                        {idx === 0 ? 'Nama Ketua (Anda)' : `Nama Anggota ${idx + 1}`}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder={idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
-                        value={m.name}
-                        onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                        className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
-                      />
-                    </div>
-
-                    {isDoc ? (
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          NIM (Nomor Induk Mahasiswa)
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Contoh: 211401001"
-                          value={m.nim || ''}
-                          onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                          className="w-full bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                          Akun GitHub
-                        </label>
-                        <div className="relative flex items-center">
-                          <input
-                            type="text"
-                            required
-                            placeholder="username GitHub"
-                            value={m.github_username}
-                            onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
-                            onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                            className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
-                              githubStatus[idx] === 'invalid'
-                                ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
-                                : githubStatus[idx] === 'empty'
-                                ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
-                                : githubStatus[idx] === 'valid'
-                                ? 'border-[#59d499] focus:border-[#59d499]'
-                                : 'border-white/15 focus:border-white'
-                            }`}
-                          />
-
-                          {/* Status Icon on Right Side - Enlarged (w-6 h-6) */}
-                          <div className="absolute right-3.5 flex items-center pointer-events-none">
-                            {githubStatus[idx] === 'checking' && (
-                              <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
-                            )}
-                            {githubStatus[idx] === 'valid' && (
-                              <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                            {githubStatus[idx] === 'invalid' && (
-                              <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                              </svg>
-                            )}
-                          </div>
+                {members.map((m, idx) => {
+                  const isFilled = Boolean(
+                    m.name.trim() && (isDoc ? m.nim?.trim() : m.github_username?.trim() && m.github_password?.trim())
+                  );
+                  return (
+                    <div
+                      key={idx}
+                      className="p-4 sm:p-5 rounded-[16px] bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-white/20 transition-all"
+                    >
+                      <div className="flex flex-col gap-1.5 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[12px] font-mono uppercase tracking-[0.08em] text-white/60">
+                            {idx === 0 ? 'Ketua Kelompok (Anda)' : `Anggota ${idx + 1}`}
+                          </span>
+                          {isFilled ? (
+                            <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/15 border border-[#59d499]/30">
+                              ✓ Data Lengkap
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-yellow-300/80 font-mono px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/25">
+                              Belum Diisi
+                            </span>
+                          )}
                         </div>
 
-                        {/* Notification messages */}
-                        {githubStatus[idx] === 'invalid' && (
-                          <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ✕ tidak dapat menemukan akun
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px]">
+                          <span className="text-white font-medium">
+                            {m.name.trim() || 'Nama belum diisi'}
                           </span>
-                        )}
-                        {githubStatus[idx] === 'empty' && (
-                          <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ⚠️ Akun GitHub belum diisi
-                          </span>
-                        )}
-                        {githubStatus[idx] === 'valid' && (
-                          <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
-                            ✓ Akun GitHub terverifikasi
-                          </span>
-                        )}
+                          {m.nim?.trim() && (
+                            <span className="text-white/60 font-mono text-[13px]">
+                              NIM: {m.nim}
+                            </span>
+                          )}
+                          {needsGitHub && m.github_username?.trim() && (
+                            <span className="text-white/80 font-mono text-[13px] flex items-center gap-1">
+                              @{m.github_username}
+                              {githubStatus[idx] === 'valid' && (
+                                <span className="text-[#59d499]">✓</span>
+                              )}
+                            </span>
+                          )}
+                          {needsGitHub && m.github_password && (
+                            <span className="text-white/40 text-[12px] font-mono">
+                              PW: ••••••••
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      <button
+                        type="button"
+                        onClick={() => openMemberModal(idx)}
+                        className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full self-start sm:self-auto shrink-0 flex items-center gap-2"
+                      >
+                        <span>{isFilled ? 'Ubah Data' : 'Isi Data'}</span>
+                        <span className="text-white/50 text-[12px]">↗</span>
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -676,7 +753,7 @@ export default function OrderPage() {
           {/* 4. Data Pemesan */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-4">
             <h2 className="text-[18px] font-medium text-white">
-              {serviceType === 'project_joki' ? 'Data Ketua Kelompok' : 'Data Pemesan'}
+              {serviceType === 'project_joki' ? 'Data Kontak Pemesan' : 'Data Pemesan'}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -704,67 +781,7 @@ export default function OrderPage() {
             </div>
           </div>
 
-          {/* 5. Kredensial Akun GitHub untuk Tim Joki (HANYA UNTUK JOKI PROYEK & KODING RINGAN) */}
-          {needsGitHub && (
-            <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-5">
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono uppercase tracking-[0.08em] text-white/60">
-                    Setup Repository
-                  </span>
-                  <span className="text-[10px] text-[#59d499] font-mono px-2 py-0.5 rounded-full bg-[#59d499]/10 border border-[#59d499]/25">
-                    Terkirim ke Admin
-                  </span>
-                </div>
-                <h2 className="text-[18px] font-medium text-white">
-                  Akun GitHub untuk Pengerjaan Proyek
-                </h2>
-                <p className="text-[13px] text-[#c2c2c2] leading-relaxed">
-                  Masukkan email atau username akun GitHub serta password Anda. Data ini akan diteruskan ke panel admin agar operator joki kami dapat langsung login, membuat repository, dan memproses cicil commit atas nama Anda.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-[12px] text-white/70">Email / Username GitHub</span>
-                  <input
-                    type="text"
-                    required
-                    placeholder="contoh: akun@gmail.com atau usergh"
-                    value={githubEmail}
-                    onChange={(e) => setGithubEmail(e.target.value)}
-                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] text-white/70">Password Akun GitHub</span>
-                    <button
-                      type="button"
-                      onClick={() => setShowGithubPassword(!showGithubPassword)}
-                      className="text-[11px] text-white/60 hover:text-white"
-                    >
-                      {showGithubPassword ? 'Sembunyikan' : 'Lihat'}
-                    </button>
-                  </div>
-                  <input
-                    type={showGithubPassword ? 'text' : 'password'}
-                    required
-                    placeholder="••••••••••••"
-                    value={githubPassword}
-                    onChange={(e) => setGithubPassword(e.target.value)}
-                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-4 py-2.5 text-[14px] text-white outline-none font-mono"
-                  />
-                </div>
-              </div>
-              <p className="text-[11px] text-white/50 font-mono">
-                Data hanya diteruskan secara aman ke operator joki untuk inisialisasi git repository proyek.
-              </p>
-            </div>
-          )}
-
-          {/* 6. Pembayaran QRIS Statis */}
+          {/* 5. Pembayaran QRIS Statis */}
           <div className="p-8 rounded-[14px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] font-medium text-white">
@@ -870,6 +887,187 @@ export default function OrderPage() {
             </button>
           </div>
         </form>
+
+        {/* MODAL POPUP: ISI DATA 4 FORM INPUT (NAMA, NIM, GITHUB, PASSWORD) SESUAI DESIGN.MD */}
+        {activeModalMemberIndex !== null && (
+          <div
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+            onClick={() => setActiveModalMemberIndex(null)}
+          >
+            <div
+              className="bg-[#0a0a0a] border border-white/15 rounded-[24px] p-6 sm:p-8 max-w-[480px] w-full shadow-[0_24px_64px_rgba(0,0,0,0.8)] relative flex flex-col gap-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[11px] font-mono uppercase tracking-[0.12em] text-white/60">
+                    {activeModalMemberIndex === 0 ? 'Data Ketua Kelompok' : `Data Anggota ${activeModalMemberIndex + 1}`}
+                  </span>
+                  <h3 className="text-[20px] font-medium text-white tracking-[-0.02em]">
+                    Lengkapi Data Anggota
+                  </h3>
+                  <p className="text-[12px] text-white/60">
+                    {needsGitHub
+                      ? 'Isi nama, NIM, akun GitHub, dan password untuk pengerjaan proyek.'
+                      : 'Isi nama lengkap dan NIM anggota kelompok.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModalMemberIndex(null)}
+                  className="text-white/50 hover:text-white p-1 rounded-full transition-colors text-[18px] leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* 4 Form Inputs in Modal */}
+              <div className="flex flex-col gap-4">
+                {/* 1. Nama Lengkap */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono font-medium">
+                    1. Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="Contoh: Budi Santoso"
+                    value={modalData.name}
+                    onChange={(e) => setModalData((prev) => ({ ...prev, name: e.target.value }))}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                  />
+                </div>
+
+                {/* 2. NIM */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono font-medium">
+                    2. NIM (Nomor Induk Mahasiswa)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: 211401001"
+                    value={modalData.nim}
+                    onChange={(e) => setModalData((prev) => ({ ...prev, nim: e.target.value }))}
+                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
+                  />
+                </div>
+
+                {/* 3 & 4: Akun GitHub & Password GitHub (Khusus Proyek & Coding Ringan) */}
+                {needsGitHub && (
+                  <>
+                    {/* 3. Akun GitHub */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono font-medium">
+                        3. Akun GitHub
+                      </label>
+                      <div className="relative flex items-center">
+                        <input
+                          type="text"
+                          required
+                          placeholder="username GitHub"
+                          value={modalData.github_username}
+                          onChange={(e) => {
+                            setModalData((prev) => ({ ...prev, github_username: e.target.value }));
+                            setModalGithubStatus('idle');
+                          }}
+                          onBlur={(e) => checkModalGitHubAccount(e.target.value)}
+                          className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-12 py-2.5 text-[14px] font-mono text-white outline-none transition-colors ${
+                            modalGithubStatus === 'invalid'
+                              ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
+                              : modalGithubStatus === 'duplicate'
+                              ? 'border-yellow-500/80 focus:border-yellow-500 bg-yellow-950/20'
+                              : modalGithubStatus === 'valid'
+                              ? 'border-[#59d499] focus:border-[#59d499]'
+                              : 'border-white/15 focus:border-white'
+                          }`}
+                        />
+
+                        <div className="absolute right-3.5 flex items-center pointer-events-none">
+                          {modalGithubStatus === 'checking' && (
+                            <div className="w-5 h-5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
+                          )}
+                          {modalGithubStatus === 'valid' && (
+                            <svg className="w-6 h-6 text-[#59d499]" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                          {modalGithubStatus === 'invalid' && (
+                            <svg className="w-6 h-6 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      {modalGithubStatus === 'invalid' && (
+                        <span className="text-[12px] text-red-400 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ✕ tidak dapat menemukan akun
+                        </span>
+                      )}
+                      {modalGithubStatus === 'duplicate' && (
+                        <span className="text-[12px] text-yellow-300 font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ⚠️ Username ini sudah diinput untuk anggota lain
+                        </span>
+                      )}
+                      {modalGithubStatus === 'valid' && (
+                        <span className="text-[12px] text-[#59d499] font-mono mt-0.5 flex items-center gap-1 font-medium">
+                          ✓ Akun GitHub terverifikasi
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 4. Password Akun GitHub */}
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[12px] uppercase tracking-[0.08em] text-white/70 font-mono font-medium">
+                          4. Password Akun GitHub
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setShowModalPassword(!showModalPassword)}
+                          className="text-[11px] text-white/60 hover:text-white transition-colors"
+                        >
+                          {showModalPassword ? 'Sembunyikan' : 'Lihat'}
+                        </button>
+                      </div>
+                      <input
+                        type={showModalPassword ? 'text' : 'password'}
+                        required
+                        placeholder="••••••••••••"
+                        value={modalData.github_password}
+                        onChange={(e) => setModalData((prev) => ({ ...prev, github_password: e.target.value }))}
+                        className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
+                      />
+                      <p className="text-[11px] text-white/50 leading-relaxed font-mono">
+                        Digunakan tim operator untuk inisialisasi dan push commit ke repository.
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setActiveModalMemberIndex(null)}
+                  className="btn-hairline-ghost text-[13px] px-5 py-2 rounded-full"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={saveModalMemberData}
+                  className="btn-white-pill text-[13px] px-6 py-2.5 rounded-full"
+                >
+                  Simpan Data
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
