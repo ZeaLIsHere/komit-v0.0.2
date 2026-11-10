@@ -17,7 +17,7 @@ export default function ProjectSetupPage({
 
   const [project, setProject] = useState<Project | null>(null);
   const [memberCount, setMemberCount] = useState<number>(4);
-  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string }>>([]);
+  const [members, setMembers] = useState<Array<{ name: string; github_username: string; nim?: string; kom?: string }>>([]);
   const [dbMembers, setDbMembers] = useState<ProjectMember[]>([]);
   const [githubStatus, setGithubStatus] = useState<{ [index: number]: 'idle' | 'checking' | 'valid' | 'invalid' | 'empty' | 'duplicate' }>({});
   const [githubProfiles, setGithubProfiles] = useState<{
@@ -187,6 +187,7 @@ export default function ProjectSetupPage({
                 name: m.name,
                 github_username: m.github_username || '',
                 nim: m.nim && m.nim !== '-' ? m.nim : '',
+                kom: m.kom && m.kom !== '-' ? m.kom : '',
               }))
             );
             setMemberCount(mData.members.length);
@@ -196,6 +197,7 @@ export default function ProjectSetupPage({
                 name: i === 0 && data.project.buyer_name ? data.project.buyer_name : '',
                 github_username: '',
                 nim: '',
+                kom: '',
               }))
             );
           }
@@ -323,7 +325,7 @@ export default function ProjectSetupPage({
     }
   };
 
-  const handleMemberChange = (index: number, field: 'name' | 'github_username' | 'nim', val: string) => {
+  const handleMemberChange = (index: number, field: 'name' | 'github_username' | 'nim' | 'kom', val: string) => {
     const updated = [...members];
     updated[index] = { ...updated[index], [field]: val };
     setMembers(updated);
@@ -451,7 +453,7 @@ export default function ProjectSetupPage({
     <div className="text-[#ededed] min-h-screen flex flex-col selection:bg-[#6b62f2]/30 selection:text-white font-sans">
       <Navbar />
 
-      <main className="flex-1 max-w-[1040px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto px-6 sm:px-12 pt-28 sm:pt-32 pb-20 flex flex-col gap-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-[36px] sm:text-[44px] font-medium leading-[1.1] text-white tracking-[-0.03em]">
             Setup Proyek & Data Kelompok
@@ -752,19 +754,12 @@ export default function ProjectSetupPage({
               <h2 className="text-[20px] font-medium text-white">
                 Data Anggota Kelompok ({memberCount} Orang)
               </h2>
-              <p className="text-[14px] text-[#bbc7c6]">
+              <p className="text-[14px] text-white/70">
                 {project?.service_type === 'makalah' || project?.service_type === 'ppt'
-                  ? 'Ubah jumlah anggota jika diperlukan. Form otomatis menyesuaikan (hanya nama & NIM).'
-                  : 'Ubah jumlah anggota jika diperlukan. Form otomatis menyesuaikan (hanya nama & akun GitHub).'}
+                  ? 'Lengkapi data identitas anggota tim (nama, NIM, dan kelas/KOM).'
+                  : 'Lengkapi identitas anggota dan akun GitHub untuk sinkronisasi commit.'}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleQuickFillMembers}
-              className="text-[12px] text-white/80 hover:text-white underline self-start sm:self-auto shrink-0 font-mono"
-            >
-              Isi Template Nama
-            </button>
           </div>
 
           {/* Member Count Dynamic Slider */}
@@ -839,47 +834,69 @@ export default function ProjectSetupPage({
             {members.map((m, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-[10px] bg-white/[0.03] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 items-center"
+                className="p-4 rounded-[12px] bg-white/[0.03] border border-white/10 flex flex-col gap-3"
               >
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
-                    {idx === 0 ? 'Nama Ketua Kelompok' : `Nama Anggota ${idx + 1}`}
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-mono font-medium text-white">
+                    {idx === 0 ? 'Ketua Kelompok' : `Anggota ${idx + 1}`}
                   </span>
-                  <input
-                    type="text"
-                    required
-                    placeholder={idx === 0 ? 'Nama Lengkap Ketua' : `Nama Anggota ${idx + 1}`}
-                    value={m.name}
-                    onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                    className="bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 py-3 text-[14px] text-white outline-none transition-colors"
-                  />
                 </div>
 
-                {project?.service_type === 'makalah' || project?.service_type === 'ppt' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70">
+                      Nama Lengkap
+                    </span>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nama lengkap"
+                      value={m.name}
+                      onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] text-white outline-none transition-colors"
+                    />
+                  </div>
+
                   <div className="flex flex-col gap-1.5">
                     <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
-                      NIM (Nomor Induk Mahasiswa)
+                      NIM Mahasiswa
                     </span>
                     <input
                       type="text"
                       placeholder="Contoh: 211401001"
                       value={m.nim || ''}
                       onChange={(e) => handleMemberChange(idx, 'nim', e.target.value)}
-                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-full px-5 py-3 text-[14px] font-mono text-white outline-none transition-colors"
+                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors"
                     />
                   </div>
-                ) : (
+
                   <div className="flex flex-col gap-1.5">
                     <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
-                      Akun GitHub
+                      Kelas / KOM
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Contoh: A, B, TI-1"
+                      value={m.kom || ''}
+                      onChange={(e) => handleMemberChange(idx, 'kom', e.target.value)}
+                      className="bg-white/[0.04] border border-white/15 focus:border-white rounded-[10px] px-3.5 py-2.5 text-[14px] font-mono text-white outline-none transition-colors uppercase"
+                    />
+                  </div>
+                </div>
+
+                {project?.service_type === 'project_joki' && (
+                  <div className="flex flex-col gap-1.5 pt-2 border-t border-white/10">
+                    <span className="text-[11px] uppercase tracking-[0.06em] text-white/70 font-mono">
+                      Akun GitHub (Untuk Commit)
                     </span>
                     <div className="relative flex items-center">
                       <input
                         type="text"
+                        placeholder="username GitHub"
                         value={m.github_username}
                         onChange={(e) => handleMemberChange(idx, 'github_username', e.target.value)}
                         onBlur={(e) => checkGitHubAccount(idx, e.target.value)}
-                        className={`w-full bg-white/[0.04] border rounded-full px-5 pr-11 py-3 text-[14px] font-mono text-white outline-none transition-colors ${
+                        className={`w-full bg-white/[0.04] border rounded-[10px] px-3.5 pr-11 py-2 text-[14px] font-mono text-white outline-none transition-colors ${
                           githubStatus[idx] === 'invalid'
                             ? 'border-red-500/80 focus:border-red-500 bg-red-950/20'
                             : githubStatus[idx] === 'valid'
@@ -888,7 +905,6 @@ export default function ProjectSetupPage({
                         }`}
                       />
 
-                      {/* Status Icon on Right Side */}
                       <div className="absolute right-4 flex items-center pointer-events-none">
                         {githubStatus[idx] === 'checking' && (
                           <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
@@ -906,45 +922,26 @@ export default function ProjectSetupPage({
                       </div>
                     </div>
 
-                    {/* Notification messages */}
+                    {/* Status feedback */}
                     {githubStatus[idx] === 'invalid' && (
                       <span className="text-[12px] text-red-400 font-mono mt-1 flex items-center gap-1 font-medium">
-                        <span>Akun @{m.github_username.trim().replace(/^@/, '')} tidak ditemukan di GitHub</span>
+                        Akun @{m.github_username.trim().replace(/^@/, '')} tidak ditemukan di GitHub
                       </span>
                     )}
                     {githubStatus[idx] === 'duplicate' && (
-                      <span className="text-[12px] text-yellow-300 font-mono mt-1 flex items-center gap-1 font-medium">
-                        <span>Username ini sudah diinput untuk anggota lain</span>
+                      <span className="text-[12px] text-[#ffb829] font-mono mt-1 flex items-center gap-1 font-medium">
+                        Username ini sudah diinput untuk anggota lain
                       </span>
                     )}
                     {githubStatus[idx] === 'empty' && (
-                      <span className="text-[12px] text-yellow-300 font-mono mt-1 flex items-center gap-1 font-medium">
-                        <span>Akun GitHub belum diisi</span>
+                      <span className="text-[12px] text-white/50 font-mono mt-1 flex items-center gap-1">
+                        Akun GitHub belum diisi
                       </span>
                     )}
-                    {githubStatus[idx] === 'valid' && githubProfiles[idx] && (
-                      <div className="mt-2 p-2 rounded-[8px] bg-white/[0.04] border border-[#59d499]/30 flex items-center justify-between gap-2.5">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <img
-                            src={githubProfiles[idx]!.avatar_url}
-                            alt={githubProfiles[idx]!.username}
-                            className="w-5 h-5 rounded-full border border-white/20 shrink-0"
-                          />
-                          <div className="flex items-center gap-1.5 truncate text-[11px] font-mono">
-                            <span className="text-[#59d499] font-medium">✓ Terverifikasi:</span>
-                            <span className="text-white truncate font-medium">{githubProfiles[idx]!.name}</span>
-                            <span className="text-white/60">(@{githubProfiles[idx]!.username})</span>
-                          </div>
-                        </div>
-                        <a
-                          href={githubProfiles[idx]!.html_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] text-white/70 hover:text-white underline font-mono shrink-0"
-                        >
-                          Buka ↗
-                        </a>
-                      </div>
+                    {githubStatus[idx] === 'valid' && (
+                      <span className="text-[12px] text-[#59d499] font-mono mt-1 flex items-center gap-1 font-medium">
+                        ✓ Akun GitHub terverifikasi
+                      </span>
                     )}
                   </div>
                 )}
@@ -961,8 +958,8 @@ export default function ProjectSetupPage({
           </form>
         </section>
 
-        {/* STEP 3: CONNECT GITHUB INVITATION */}
-        {project?.service_type !== 'makalah' && project?.service_type !== 'ppt' && (
+        {/* STEP 3: CONNECT GITHUB INVITATION (HANYA UNTUK PROYEK KODING KELOMPOK) */}
+        {project?.service_type === 'project_joki' && (
           <section className="p-8 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10 flex flex-col gap-6">
             <div className="flex flex-col gap-1">
               <h2 className="text-[20px] font-medium text-white">
