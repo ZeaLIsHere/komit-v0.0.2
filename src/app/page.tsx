@@ -33,15 +33,9 @@ export default function HomePage() {
               href="/order"
               onMouseEnter={() => triggerParticleCollapse(true)}
               onMouseLeave={() => triggerParticleCollapse(false)}
-              className="btn-white-pill text-[14px] px-7 py-3.5 rounded-full"
+              className="btn-white-pill text-[14px] px-8 py-3.5 rounded-full"
             >
               Gas Order Sekarang
-            </Link>
-            <Link
-              href="/project/demo-proyek-uas"
-              className="btn-hairline-ghost text-[14px] px-6 py-3 rounded-full"
-            >
-              Kepoin Dashboard
             </Link>
           </div>
         </section>
