@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { triggerParticleCollapse } from '@/lib/particles';
 import { useDockController, ANIMATED_TOP_DOCK_DEFAULTS } from './topDockController';
 
@@ -17,13 +17,80 @@ interface UserSession {
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<string>('');
 
   const dockRef = useDockController(() => ({
     ...ANIMATED_TOP_DOCK_DEFAULTS,
     lockTrack: true,
   }));
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setActiveSection('');
+      return;
+    }
+
+    const currentHash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
+    if (currentHash) {
+      setActiveSection(currentHash);
+    }
+
+    const sections = ['layanan', 'cara-kerja', 'harga'];
+    const elements = sections
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0.1 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    const onHashChange = () => {
+      const h = window.location.hash.replace('#', '');
+      if (h) setActiveSection(h);
+    };
+
+    window.addEventListener('hashchange', onHashChange);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('hashchange', onHashChange);
+    };
+  }, [pathname]);
+
+  const isItemActive = (key: 'layanan' | 'cara-kerja' | 'harga' | 'my-projects' | 'admin') => {
+    if (key === 'my-projects') return pathname.startsWith('/my-projects');
+    if (key === 'admin') return pathname.startsWith('/admin');
+    if (pathname === '/') return activeSection === key;
+    return false;
+  };
+
+  const getLinkClass = (isActive: boolean) =>
+    `px-3.5 py-1.5 rounded-full inline-flex items-center transition-all duration-200 ${
+      isActive
+        ? 'text-white font-medium bg-white/10 border border-white/30 shadow-[0_0_14px_rgba(255,255,255,0.4)] drop-shadow-[0_0_8px_rgba(255,255,255,0.85)]'
+        : 'text-white/75 hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]'
+    }`;
+
+  const handleItemClick = (key: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    (e.currentTarget as HTMLElement)?.blur?.();
+    if (pathname === '/') {
+      setActiveSection(key);
+    }
+  };
 
   useEffect(() => {
     async function checkAuth() {
@@ -72,29 +139,29 @@ export default function Navbar() {
           aria-label="Primary"
           data-dock-state="idle"
           data-dock-max="0.00"
-          className="hidden lg:flex items-center gap-8 lg:gap-12 text-[14px] text-white/75 font-normal"
+          className="hidden lg:flex items-center gap-6 lg:gap-8 text-[14px] font-normal"
         >
           <Link
             href="/#layanan"
             data-dock-item
-            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
-            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
+            onClick={(e) => handleItemClick('layanan', e)}
+            className={getLinkClass(isItemActive('layanan'))}
           >
             Layanan
           </Link>
           <Link
             href="/#cara-kerja"
             data-dock-item
-            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
-            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
+            onClick={(e) => handleItemClick('cara-kerja', e)}
+            className={getLinkClass(isItemActive('cara-kerja'))}
           >
             Cara Kerja
           </Link>
           <Link
             href="/#harga"
             data-dock-item
-            onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
-            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
+            onClick={(e) => handleItemClick('harga', e)}
+            className={getLinkClass(isItemActive('harga'))}
           >
             Biaya
           </Link>
@@ -103,8 +170,8 @@ export default function Navbar() {
             <Link
               href="/my-projects"
               data-dock-item
-              onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
-              className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
+              onClick={(e) => handleItemClick('my-projects', e)}
+              className={getLinkClass(isItemActive('my-projects'))}
             >
               Proyek Saya
             </Link>
@@ -114,8 +181,8 @@ export default function Navbar() {
             <Link
               href="/admin"
               data-dock-item
-              onClick={(e) => (e.currentTarget as HTMLElement)?.blur?.()}
-              className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
+              onClick={(e) => handleItemClick('admin', e)}
+              className={getLinkClass(isItemActive('admin'))}
             >
               Admin
             </Link>
