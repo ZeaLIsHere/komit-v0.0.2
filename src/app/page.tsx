@@ -46,7 +46,7 @@ export default function HomePage() {
           <ScrollReveal>
             <div className="border-b border-white/10 pb-6">
               <h2 className="text-[32px] md:text-[42px] font-medium text-white tracking-[-0.03em] leading-[1.1]">
-                Pengerjaan bertahap hingga nilai A
+                Alur simpel, tugas beres tanpa ribet
               </h2>
             </div>
           </ScrollReveal>
@@ -56,23 +56,23 @@ export default function HomePage() {
             {[
               {
                 step: '01',
-                title: 'Order & Bayar QRIS',
-                desc: 'Pilih paket > Set - Up > dan Bayar lewat QRIS yang tersedia',
+                title: 'Pilih Layanan & Bayar QRIS',
+                desc: 'Tentukan jenis tugasmu (proyek kelompok, koding praktikum, makalah, atau slide), cantumkan detail instruksi, lalu selesaikan pembayaran via QRIS.',
               },
               {
                 step: '02',
-                title: 'Ide AI & Gimmick Dosen',
-                desc: 'Ketik topik mata kuliah, AI menyajikan 3 rekomendasi ide berdaya saing dengan fitur unik pemikat nilai saat demo pengujian.',
+                title: 'Eksekusi Rapi Sesuai Target',
+                desc: 'Tim langsung garap tugasmu: kodingan bersih berpenjelasan, riset makalah sitasi ilmiah bebas plagiasi, atau slide presentasi visual terarah.',
               },
               {
                 step: '03',
-                title: 'Connect GitHub Anggota',
-                desc: 'Tautan dibagikan ke grup kelompok. Tiap anggota menghubungkan akun GitHub resmi via OAuth aman agar kontribusi tercatat.',
+                title: 'Pantau Progress di Dashboard',
+                desc: 'Cek status pengerjaan secara real-time. Khusus proyek kelompok, undang anggota untuk sinkronisasi jadwal commit GitHub otomatis.',
               },
               {
                 step: '04',
-                title: 'Cicil Commit & README',
-                desc: 'Kode di-push terjadwal mingguan. Saat UAS tiba, gunakan mode presentasi interaktif atau generate README anti-tanya dosen.',
+                title: 'Terima Jadi & Siap Ujian',
+                desc: 'Unduh file hasil pengerjaan (dokumen, slide PPT, atau repo koding) langsung dari dashboard. Tinggal pelajari dan siap demo nilai A.',
               },
             ].map((item, idx) => (
               <ScrollReveal key={item.step} delay={idx * 70} yOffset={20}>
