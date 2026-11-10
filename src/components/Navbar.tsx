@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { triggerParticleCollapse } from '@/lib/particles';
+import { useDockController, ANIMATED_TOP_DOCK_DEFAULTS } from './topDockController';
 
 interface UserSession {
   userId: string;
@@ -18,6 +19,11 @@ export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const dockRef = useDockController(() => ({
+    ...ANIMATED_TOP_DOCK_DEFAULTS,
+    lockTrack: true,
+  }));
 
   useEffect(() => {
     async function checkAuth() {
@@ -60,23 +66,32 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Ghost Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-10 lg:gap-14 text-[14px] text-white/75 font-normal">
+        {/* Ghost Navigation Links with Animated Top Dock Magnification */}
+        <nav
+          ref={dockRef}
+          aria-label="Primary"
+          data-dock-state="idle"
+          data-dock-max="0.00"
+          className="hidden lg:flex items-center gap-8 lg:gap-12 text-[14px] text-white/75 font-normal"
+        >
           <Link
             href="/#layanan"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Layanan
           </Link>
           <Link
             href="/#cara-kerja"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Cara Kerja
           </Link>
           <Link
             href="/#harga"
-            className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+            data-dock-item
+            className="px-3 py-1.5 rounded-full inline-flex items-center hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
           >
             Biaya
           </Link>
@@ -84,7 +99,8 @@ export default function Navbar() {
           {user?.role === 'customer' && (
             <Link
               href="/my-projects"
-              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+              data-dock-item
+              className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
             >
               Proyek Saya
             </Link>
@@ -93,7 +109,8 @@ export default function Navbar() {
           {user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-all duration-200"
+              data-dock-item
+              className="px-3 py-1.5 rounded-full inline-flex items-center text-white font-medium hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.7)] transition-colors duration-150"
             >
               Admin
             </Link>
