@@ -12,7 +12,7 @@ Sebelum menulis, membangun, atau melanjutkan fitur apa pun, AI Agent **WAJIB** m
    - Jalankan `understand` secara inkremental setiap ada penambahan atau perubahan fitur signifikan.
 3. **Aktifkan Skills UI/Visual yang Relevan** — Panggil skill sesuai tugas (`impeccable`, `design-taste-frontend`, `unslop`, `anatomy`).
 4. **Baca [`PRD.md`](./PRD.md)** — Pastikan fitur, alur bisnis 4 kategori layanan, formula harga, dan skema data sesuai spesifikasi resmi.
-5. **Baca [`DESIGN.md`](./DESIGN.md)** — Terapkan sistem desain Dimension (*Dusk-lit frosted glass pada kanvas void `#000000` / `#0a0a0a`*, *frosted glass `bg-white/[0.04]`*, *aksen putih salju `#ffffff` & warm bone `#ededed`*, tipografi medium 500 display, rounded-full pill buttons, border hairline `1px solid rgba(255,255,255,0.12)`*).
+5. **Baca [`DESIGN.md`](./DESIGN.md)** — Terapkan sistem desain Dimension (*Dusk sky wallpaper canvas `/assets/background.jpg` yang tembus pandang tanpa solid black cover*, *frosted glass `bg-white/[0.04]` dengan `backdrop-blur-xl`*, *aksen putih salju `#ffffff` & warm bone `#ededed`*, tipografi medium 500 display, rounded-full pill buttons, border hairline `1px solid rgba(255,255,255,0.10)`*).
 
 > **Aturan Prioritas Visual:** Jika ada aturan umum di skill yang berbeda dengan spesifikasi eksplisit di [`DESIGN.md`](./DESIGN.md) atau aturan proyek, **`DESIGN.md` selalu menang (The Brief Wins).**
 
@@ -70,8 +70,8 @@ Gunakan tool `skill` sesuai kebutuhan tugas:
 
 ## 5. Aturan UI & Desain (Mengacu pada [`DESIGN.md`](./DESIGN.md))
 - **Kanvas & Warna:**
-  - Background kanvas utama `#000000` / `#0a0a0a` (`--color-void-canvas`).
-  - Panel mengambang menggunakan frosted glass `bg-white/[0.04]` dengan `backdrop-blur-xl` dan border hairline `border-white/10`.
+  - Background kanvas utama adalah wallpaper atmosfer langit senja (`/assets/background.jpg` yang sudah diatur fixed di `body`). **DILARANG** menambahkan kelas `bg-[#0a0a0a]` atau `bg-[#000000]` yang menutupi gambar latar.
+  - Panel mengambang murni menggunakan frosted glass `bg-white/[0.04]` dengan `backdrop-blur-xl` dan border hairline `border-white/10`.
   - Teks utama `#ffffff` / `#ededed`, teks sekunder `#c2c2c2` / `white/80`, label pembantu `white/70`.
   - Tombol CTA utama menggunakan pill putih salju `btn-white-pill` (`bg-white text-[#161616] rounded-full`).
   - Highlight status menggunakan warna semantik terukur: Amber `#ffb829` (pending/perhatian), Hijau `#59d499` (sukses/terverifikasi), Merah (rejected).

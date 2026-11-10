@@ -1,27 +1,24 @@
 # Dimension — Style Reference
-> dusk-lit workspace with frosted glass panels
+> dusk sky workspace with pure floating frosted glass panels
 
-**Theme:** dark
+**Theme:** Dusk Frosted Glass (Bukan Matte-Black Padat)
 
 Source measurements are normalized; roles and recommendations are interpreted. Font summary lists are independent, not paired by position. HTML examples are reconstructions, not source components.
 
-Dimension operates as a dusk-lit AI workspace: deep matte-black canvases (#0a0a0a) carry frosted-glass panels, pill-shaped controls, and whisper-weight headlines that lean on medium weights (500) rather than bold statements. The system is almost entirely achromatic — white and warm grays do all the talking — punctuated by a signature gradient hero that transitions from warm amber through to cobalt blue, evoking a sunset bleeding into a product UI. Components are lightweight and round: 9999px pill buttons, 10px UI radii, 24px card radii, with hairline 1px borders rather than heavy shadows. The visual rhythm is quiet, controlled, and editorial — every element feels placed rather than dropped, with generous breathing room and a single violet glow (#6b62f2 at 0.565 alpha) as the only chromatic accent, used sparingly in linear gradient washes.
+Dimension beroperasi sebagai **dusk-sky workspace**: kanvas utama adalah wallpaper atmosfer langit senja (`/assets/background.jpg`) yang fixed di `body`. Di atas langit senja ini, seluruh komponen melayang murni sebagai panel **kaca buram transparan (*pure frosted glass*)** tanpa background hitam pekat (`#000000` atau `#0a0a0a` dilarang menutupi kanvas). Menggunakan kontrol pill bulat (9999px), border hairline putih tipis (1px solid `rgba(255, 255, 255, 0.10)`), dan tipografi bobot medium 500 yang tenang. Kontras terbentuk murni antara kaca buram tembus pandang, teks putih salju `#ffffff` / bone `#ededed`, dan warna langit senja di belakangnya.
 
 ## Tokens — Colors
 
 | Name | Value | Token | Role |
 |------|-------|-------|------|
-| Void Canvas | `#0a0a0a` | `--color-void-canvas` | Primary page background, base surface for the dark UI shell |
-| Graphite | `#161616` | `--color-graphite` | Elevated surface for floating panels, pill nav bar, modal bodies — one step above canvas |
-| Frosted Glass | `#d4d4d4` | `--color-frosted-glass` | Translucent panel fill at 10% opacity over dark surfaces — creates the frosted overlay look on the floating nav and feature cards |
-| Ink Black | `#000000` | `--color-ink-black` | Icon strokes, SVG fill, deep contrast elements on light surfaces |
-| Snow White | `#ffffff` | `--color-snow-white` | Primary CTA fill, headline text on dark surfaces, card backgrounds — the inverted counterweight to the dark canvas |
-| Bone | `#ededed` | `--color-bone` | Primary readable text on dark surfaces — slightly warmer than pure white, reduces glare |
-| Ash | `#c2c2c2` | `--color-ash` | Secondary body text, helper copy, de-emphasized labels |
-| Slate | `#686868` | `--color-slate` | Muted text, link text, tertiary metadata, timestamp-style labels |
-| Smoke | `#b2b2b2` | `--color-smoke` | Disabled or idle button text, integration label text in ghost controls |
-| Hairline | `#e5e5e5` | `--color-hairline` | 1px borders on dark-surface controls — appears as a light edge against the dark canvas, creating definition without weight |
-| Dusk Violet | `linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 40%, rgba(107, 98, 242, 0.565) 50%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0))` | `--color-dusk-violet` | The only chromatic accent — used at 0.565 alpha in a horizontal gradient wash to add a single pulse of color to the dark UI; Radial glow accent — concentrated violet center fading to white, used as spotlight or product reveal moment |
+| Dusk Wallpaper | `url(/assets/background.jpg)` | `--bg-dusk-wallpaper` | Latar belakang atmosfer senja yang tembus pandang di seluruh halaman |
+| Pure Frosted Glass | `rgba(255, 255, 255, 0.04)` | `bg-white/[0.04]` | Lapisan panel utama tembus pandang dengan `backdrop-blur-xl` |
+| Frosted Highlight | `rgba(255, 255, 255, 0.08)` | `bg-white/[0.08]` | Panel atau tombol aktif saat hover / kartu prioritas |
+| Snow White | `#ffffff` | `--color-snow-white` | Tombol CTA utama (`btn-white-pill`), judul teks primer |
+| Bone | `#ededed` | `--color-bone` | Teks isi utama yang nyaman dan kontras di atas kaca buram |
+| Ash | `#c2c2c2` / `white/80` | `--color-ash` | Teks sekunder, deskripsi paragraf |
+| Hairline | `rgba(255, 255, 255, 0.12)` | `border-white/10` | Garis batas 1px super halus pembatas panel kaca |
+| Dusk Violet | `#6b62f2` | `--color-dusk-violet` | Aksen seleksi teks dan bias halus |
 
 ## Tokens — Typography
 
