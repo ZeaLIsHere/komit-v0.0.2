@@ -30,9 +30,11 @@ export default function AdminProjectDetailPage({
   const [isGeneratingTopic, setIsGeneratingTopic] = useState<boolean>(false);
   const [copiedTopic, setCopiedTopic] = useState<boolean>(false);
 
-  // Deliverable file (PPT/Makalah) state
+  // Deliverable file state
   const [docFileUrlInput, setDocFileUrlInput] = useState<string>('');
   const [isSavingDocFile, setIsSavingDocFile] = useState<boolean>(false);
+  const [pptFileUrlInput, setPptFileUrlInput] = useState<string>('');
+  const [isSavingPptFile, setIsSavingPptFile] = useState<boolean>(false);
 
   // Payment proof preview modal
   const [showProofModal, setShowProofModal] = useState<boolean>(false);
@@ -57,7 +59,8 @@ export default function AdminProjectDetailPage({
       const pData = await pRes.json();
       setProject(pData.project);
       setRepoUrlInput(pData.project.github_repo_url || '');
-      setDocFileUrlInput(pData.project.doc_file_url || pData.project.ppt_file_url || '');
+      setDocFileUrlInput(pData.project.doc_file_url || '');
+      setPptFileUrlInput(pData.project.ppt_file_url || '');
       if (pData.project.readme_content) {
         setTopicMarkdown(pData.project.readme_content);
       }
@@ -179,8 +182,10 @@ export default function AdminProjectDetailPage({
     try {
       const updatePayload: Record<string, unknown> = {
         doc_file_url: docFileUrlInput.trim(),
-        ppt_file_url: docFileUrlInput.trim(),
       };
+      if (project?.service_type === 'ppt') {
+        updatePayload.ppt_file_url = docFileUrlInput.trim();
+      }
       if (markCompleted) {
         updatePayload.status = 'completed';
       }
@@ -203,6 +208,31 @@ export default function AdminProjectDetailPage({
       alert('Terjadi kesalahan jaringan saat menyimpan file');
     } finally {
       setIsSavingDocFile(false);
+    }
+  };
+
+  const handleSavePptAddonFile = async () => {
+    if (!pptFileUrlInput.trim()) {
+      alert('Masukkan link file slide presentasi PPT');
+      return;
+    }
+    setIsSavingPptFile(true);
+    try {
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ppt_file_url: pptFileUrlInput.trim() }),
+      });
+      if (res.ok) {
+        alert('Link file slide presentasi PPT berhasil disimpan!');
+        await loadData();
+      } else {
+        alert('Gagal menyimpan file slide PPT');
+      }
+    } catch {
+      alert('Terjadi kesalahan jaringan');
+    } finally {
+      setIsSavingPptFile(false);
     }
   };
 
@@ -524,6 +554,60 @@ export default function AdminProjectDetailPage({
                     ))}
                   </div>
                 )}
+
+                {/* Upload Slide PPT (Add-on untuk Proyek Koding) */}
+                <div className="p-6 rounded-[20px] bg-white/[0.04] border border-white/10 flex flex-col gap-4 mt-2">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#59d499]" />
+                      <h4 className="text-[15px] font-medium text-white">
+                        Kirim Slide Presentasi (Add-on PPT)
+                      </h4>
+                    </div>
+                    <span className="text-[11px] font-mono text-white/60">
+                      {project.ppt_addon_paid ? '✓ Add-on Aktif' : 'Opsional'}
+                    </span>
+                  </div>
+
+                  <p className="text-[13px] text-white/80 leading-relaxed">
+                    Masukkan URL file slide presentasi PowerPoint / PDF untuk kelompok ini (Google Drive, Dropbox, atau link publik).
+                  </p>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <input
+                      type="url"
+                      placeholder="https://drive.google.com/.../slide-uas.pptx"
+                      value={pptFileUrlInput}
+                      onChange={(e) => setPptFileUrlInput(e.target.value)}
+                      className="flex-1 bg-white/[0.04] border border-white/15 focus:border-white text-white rounded-[12px] px-4 py-2.5 text-[13px] font-mono outline-none transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSavePptAddonFile}
+                      disabled={isSavingPptFile}
+                      className="btn-white-pill text-[12px] px-5 py-2.5 rounded-full font-medium transition-all cursor-pointer whitespace-nowrap shrink-0"
+                    >
+                      {isSavingPptFile ? 'Menyimpan...' : 'Tautkan File PPT'}
+                    </button>
+                  </div>
+
+                  {project.ppt_file_url && (
+                    <div className="flex items-center justify-between p-3 rounded-[12px] bg-white/[0.03] border border-white/10 text-[12px] font-mono">
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="text-[#59d499]">✓ File Aktif:</span>
+                        <span className="text-white truncate max-w-xs sm:max-w-md">{project.ppt_file_url}</span>
+                      </div>
+                      <a
+                        href={project.ppt_file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white hover:underline shrink-0 ml-3 font-sans font-medium text-[12px]"
+                      >
+                        Buka File ↗
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="p-8 text-center text-white/60 font-mono text-[13px] border border-white/10 rounded-[16px] bg-white/[0.02]">
@@ -607,7 +691,13 @@ export default function AdminProjectDetailPage({
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#59d499]" />
                     <h3 className="text-[16px] font-medium text-white">
-                      Kirim Hasil Pengerjaan {project.service_type === 'makalah' ? 'Makalah / Dokumen' : 'Slide PPT'}
+                      Kirim Hasil Pengerjaan {
+                        project.service_type === 'makalah'
+                          ? 'Makalah / Dokumen'
+                          : project.service_type === 'ppt'
+                          ? 'Slide PPT'
+                          : 'Source Code / Script'
+                      }
                     </h3>
                   </div>
                   <span className="text-[11px] font-mono text-white/60 uppercase">
@@ -647,16 +737,16 @@ export default function AdminProjectDetailPage({
                   </div>
                 </div>
 
-                {(project.doc_file_url || project.ppt_file_url) && (
+                {project.doc_file_url && (
                   <div className="flex items-center justify-between p-3.5 rounded-[12px] bg-white/[0.03] border border-white/10 text-[12px] font-mono">
                     <div className="flex items-center gap-2 truncate">
                       <span className="text-[#59d499]">✓ File Aktif:</span>
                       <span className="text-white truncate max-w-xs sm:max-w-md">
-                        {project.doc_file_url || project.ppt_file_url}
+                        {project.doc_file_url}
                       </span>
                     </div>
                     <a
-                      href={project.doc_file_url || project.ppt_file_url || '#'}
+                      href={project.doc_file_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white hover:underline shrink-0 ml-3 font-sans font-medium text-[12px]"
